@@ -93,7 +93,7 @@ public class Window extends BasicColorGuiElement {
 		GL.createCapabilities();
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
-		glDepthFunc(GL_ALWAYS);
+		glDepthFunc(GL_LEQUAL);
 
 		ShaderHandler.initShader();
 		AssetLoader.loadAll();
@@ -196,7 +196,7 @@ public class Window extends BasicColorGuiElement {
 	private void render() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		Matrix4f projection_matrix = new Matrix4f().perspective((float)Math.PI/3, ((float) width)/height,0.0000001f, 1250f);
+		Matrix4f projection_matrix = new Matrix4f().perspective((float)Math.PI/3, ((float) width)/height,0.001f, 1250f);
 		Matrix4f view_matrix = new Matrix4f().lookAt(position, new Vector3f(lookingDirection).add(position), upNormal);
 		Matrix4f transformationMatrix = new Matrix4f(
 				1, 0, 0, 0,
@@ -210,8 +210,8 @@ public class Window extends BasicColorGuiElement {
 		uniform.setVector3fs(new Vector3f(1, 0, 1));
 
 		//Renderer.render(ShaderHandler.ShaderType.DEFAULT, ObjHandler.loadOBJ("pawn"), uniform);
-		super.renderGui();
 		ParticleSpawner.renderAll(projection_matrix, view_matrix);
+		super.renderGui();
 
 		glfwSwapBuffers(window);
 	}

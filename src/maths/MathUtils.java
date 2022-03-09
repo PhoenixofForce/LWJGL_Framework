@@ -23,13 +23,14 @@ public class MathUtils {
 	 */
 	public static float random(float lower, float upper) {
 		float range = Math.abs(upper - lower);
-		return lower + range * upper;
+		return (float) (lower + range * Math.random());
 	}
 
-	public static Vector3f randomVectorAround(Vector3f direction, float angle) {
+	public static Vector3f randomVectorAround(Vector3f dir, float angle) {
+		Vector3f direction = new Vector3f(dir);
 		direction.normalize();
 
-		float z = random(-1, 1);
+		float z = random((float) Math.cos(angle / 2), 1);
 		float phi = random(0, (float) (2 * Math.PI));
 
 		Vector3f firstVector = new Vector3f((float) (Math.sqrt(1 - z * z) * Math.cos(phi)), (float) (Math.sqrt(1 - z * z) * Math.sin(phi)), z);
@@ -39,7 +40,8 @@ public class MathUtils {
 		Vector3f ax1 = new Vector3f(0, 0, 1).cross(direction);
 		Vector3f ax2 = new Vector3f(ax1).cross(direction);
 
-		return ax1.mul(firstVector.x).add(ax2.mul(firstVector.y)).mul(new Vector3f(direction).mul(firstVector.z));
+		Vector3f res = ax1.mul(firstVector.x).add(ax2.mul(firstVector.y)).add(new Vector3f(direction).mul(firstVector.z));
+		return res;
 	}
 
 }

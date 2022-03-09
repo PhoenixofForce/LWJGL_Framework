@@ -2,7 +2,8 @@
 
 
 in vec2 fragTexCoord;
-in vec3 color;
+layout(location = 400) uniform vec3 color;
+
 
 out vec4 finalColor;
 

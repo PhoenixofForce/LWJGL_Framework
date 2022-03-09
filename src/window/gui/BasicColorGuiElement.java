@@ -63,9 +63,9 @@ public class BasicColorGuiElement extends GuiElement {
 		if(isMouseEntered()) {
 			renderColor = color2;
 
-			float ratio = glWidth / glHeight;
+			/*float ratio = glWidth / glHeight;
 			glHeight *= 1.2;
-			glWidth = ratio * glHeight;
+			glWidth = ratio * glHeight;*/
 		}
 
 		Matrix4f transformationMatrix = new Matrix4f();

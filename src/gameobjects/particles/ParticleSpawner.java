@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class ParticleSpawner {
 
-	private static final int MAX_PARTICLES = 10;
+	private static final int MAX_PARTICLES = 100;
 	private static final Map<ParticleType, ParticleSpawner> spawner = new HashMap<>();
 
 	public static final ParticleType DEFAULT = new ParticleType();
@@ -68,21 +68,16 @@ public class ParticleSpawner {
 	}
 
 	private void render(Matrix4f proj, Matrix4f view) {
-		int particleCount = Math.min(MAX_PARTICLES, particles.size());
-		Vector3f[] colorsAndPositions = new Vector3f[2 * MAX_PARTICLES];
-		float[] sizes = new float[particleCount];
 
-		for(int i = 0; i < particleCount; i++) {
-			sizes[i] = particles.get(i).getSize();
-			colorsAndPositions[i] = particles.get(i).getColor();
-			colorsAndPositions[i + MAX_PARTICLES] = particles.get(i).getPosition();
+
+		for(int i = 0; i < particles.size(); i++) {
+			uniform.setMatrices(proj, view);
+			uniform.setFloats(particles.get(i).getSize());
+			uniform.setVector3fs(particles.get(i).getColor(), particles.get(i).getPosition());
+			Renderer.render(ShaderHandler.ShaderType.PARTICLE, ObjHandler.getModel("cube"), uniform);
 		}
 
-		uniform.setMatrices(proj, view);
-		uniform.setVector3fs(colorsAndPositions);
-		uniform.setFloats(sizes);
-
-		Renderer.renderInstanced(ShaderHandler.ShaderType.PARTICLE, ObjHandler.getModel("cube"), uniform, particleCount);
+		//Renderer.renderInstanced(ShaderHandler.ShaderType.PARTICLE, ObjHandler.getModel("cube"), uniform, particleCount);
 	}
 
 	private void burst(Vector3f position, int amount) {
@@ -105,18 +100,18 @@ public class ParticleSpawner {
 		//TODO: make changes a function
 		//TODO: color
 
-		private float minSize = 2.1f, maxSize = 10f;
-		private float sizeChange = 1;
+		private float minSize = 0.1f, maxSize = 0.4f;
+		private float sizeChange = -0.003f;
 
-		private float minSpeed = 0, maxSpeed = 0;
-		private float speedChange = 0;
+		private float minSpeed = 0.05f, maxSpeed = 0.1f;
+		private float speedChange = 0.001f;
 
 		private Vector3f movementDirection = new Vector3f(0, 1, 0);
-		private float angleOffset = (float) (Math.PI / 4f);
+		private float angleOffset = 45f * (float) (Math.PI * 2) / 360f;
 		private Vector3f directionChange = new Vector3f();
 
-		private Vector3f positionOffset = new Vector3f(0);
-		private float minLifetime = 300, maxLifetime = 300;
+		private Vector3f positionOffset = new Vector3f(0.3f);
+		private float minLifetime = 200, maxLifetime = 500;
 
 		Particle generate(Vector3f position) {
 			float size = MathUtils.random(minSize, maxSize);
