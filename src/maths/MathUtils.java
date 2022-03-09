@@ -1,5 +1,7 @@
 package maths;
 
+import org.joml.Vector3f;
+
 public class MathUtils {
 
 	public static double map(double a, double f1, double t1, double f2, double t2) {
@@ -22,6 +24,22 @@ public class MathUtils {
 	public static float random(float lower, float upper) {
 		float range = Math.abs(upper - lower);
 		return lower + range * upper;
+	}
+
+	public static Vector3f randomVectorAround(Vector3f direction, float angle) {
+		direction.normalize();
+
+		float z = random(-1, 1);
+		float phi = random(0, (float) (2 * Math.PI));
+
+		Vector3f firstVector = new Vector3f((float) (Math.sqrt(1 - z * z) * Math.cos(phi)), (float) (Math.sqrt(1 - z * z) * Math.sin(phi)), z);
+		if(direction.equals(new Vector3f(0, 0, 1))) return firstVector;
+		if(direction.equals(new Vector3f(new Vector3f(0, 0, 1)))) return firstVector.mul(-1);
+
+		Vector3f ax1 = new Vector3f(0, 0, 1).cross(direction);
+		Vector3f ax2 = new Vector3f(ax1).cross(direction);
+
+		return ax1.mul(firstVector.x).add(ax2.mul(firstVector.y)).mul(new Vector3f(direction).mul(firstVector.z));
 	}
 
 }

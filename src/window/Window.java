@@ -1,5 +1,6 @@
 package window;
 
+import gameobjects.particles.ParticleSpawner;
 import meshes.AssetLoader;
 import meshes.ObjHandler;
 import meshes.ScreenRect;
@@ -98,6 +99,8 @@ public class Window extends BasicColorGuiElement {
 		AssetLoader.loadAll();
 		loadGui();
 
+		ParticleSpawner.getSpawner(new Vector3f(), ParticleSpawner.DEFAULT);
+
 		glfwShowWindow(window);
 		glClearColor(0, 0, 1.0f, 0.0f);
 	}
@@ -187,6 +190,7 @@ public class Window extends BasicColorGuiElement {
 
 	private void update(long dt) {
 		updateGui(dt);
+		ParticleSpawner.updateAll(dt);
 	}
 
 	private void render() {
@@ -205,8 +209,9 @@ public class Window extends BasicColorGuiElement {
 		uniform.setMatrices(projection_matrix, view_matrix, transformationMatrix);
 		uniform.setVector3fs(new Vector3f(1, 0, 1));
 
-		Renderer.render(ShaderHandler.ShaderType.DEFAULT, ObjHandler.loadOBJ("pawn"), uniform);
+		//Renderer.render(ShaderHandler.ShaderType.DEFAULT, ObjHandler.loadOBJ("pawn"), uniform);
 		super.renderGui();
+		ParticleSpawner.renderAll(projection_matrix, view_matrix);
 
 		glfwSwapBuffers(window);
 	}

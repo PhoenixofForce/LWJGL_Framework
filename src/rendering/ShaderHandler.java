@@ -17,6 +17,7 @@ public class ShaderHandler {
 	private static Map<ShaderType, Integer> shaderMap;
 	public enum ShaderType {
 		DEFAULT("default_vertexShader", "default_fragmentShader"),
+		PARTICLE("particle_vertexShader", "particle_fragmentShader"),
 		;
 
 		private final String vertexFileName, fragmentFileName;

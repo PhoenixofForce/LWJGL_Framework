@@ -1,8 +1,8 @@
 #version 430
 
-layout(location = 400) uniform vec3 color;
 
 in vec2 fragTexCoord;
+in vec3 color;
 
 out vec4 finalColor;
 
