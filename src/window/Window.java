@@ -104,14 +104,13 @@ public class Window extends BasicColorGuiElement {
 
 	private void initCallbacks() {
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
+			if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
 				glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
 		});
 
 		glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
-			if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-				System.out.println("Left mouse button pressed");
-			}
+			float[] mousePosition = InputHandler.getMousePosition();
+			handleMouseButton(action, button, mousePosition[0], mousePosition[1]);
 		});
 
 		glfwSetWindowSizeCallback(window, (window, width, height) -> {
@@ -133,19 +132,22 @@ public class Window extends BasicColorGuiElement {
 
 		long lastUpdate = TimeUtils.getTime();
 		while ( !glfwWindowShouldClose(window) ) {
-			double dt = (TimeUtils.getTime() - lastUpdate) / 1000.0;
+			long dt = TimeUtils.getTime() - lastUpdate;
 			lastUpdate = TimeUtils.getTime();
 
 			testOpenGLError();
 			glfwPollEvents();
 
 			input();
-			//update
+			update(dt);
 			render();
 		}
 	}
 
+	private Vector3f position, rotation, lookingDirection, upNormal;
 	private void input() {
+		InputHandler.getInputs();
+
 		float dx = 0, dy = 0, dz = 0;
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) dz += 0.1f;
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) dz -= 0.1f;
@@ -183,7 +185,10 @@ public class Window extends BasicColorGuiElement {
 		glClearColor(lookingDirection.x / 2f + 0.5f, lookingDirection.y / 2f + 0.5f, lookingDirection.z / 2f + 0.5f, 0.0f);
 	}
 
-	private Vector3f position, rotation, lookingDirection, upNormal;
+	private void update(long dt) {
+		updateGui(dt);
+	}
+
 	private void render() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

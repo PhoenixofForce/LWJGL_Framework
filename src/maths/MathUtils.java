@@ -16,4 +16,12 @@ public class MathUtils {
 		return val;
 	}
 
+	/*
+		Random value in [lower, upper)
+	 */
+	public static float random(float lower, float upper) {
+		float range = Math.abs(upper - lower);
+		return lower + range * upper;
+	}
+
 }

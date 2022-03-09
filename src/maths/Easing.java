@@ -18,6 +18,14 @@ public interface Easing {
 		return arg1 * x + arg2 * x * x + arg3 * x * x * x;
 	}
 
+	static double constant(double x) {
+		return 0;
+	}
+
+	static double invConstant(double x) {
+		return 1;
+	}
+
 	/*      /
 	 *     /
 	 *    /

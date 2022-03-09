@@ -1,9 +1,12 @@
 package window.gui;
 
+import window.InputHandler;
 import window.Window;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 /*
  * Offsets
@@ -84,20 +87,30 @@ public abstract class GuiElement {
 		}
 	}
 
+	public void updateGui(long dt) {
+		updateComponent(dt);
+		for(GuiElement child: children) {
+			child.updateGui(dt);
+		}
+	}
+
 	public abstract void renderComponent();
+	public void updateComponent(long dt) { }
 
 	public float getCenterX() {
 		float out = 0;
 
 		if(parent != null) {
-			out = parent.getCenterX();
-			if(!(parent instanceof Window)) out -= parent.getWidth() / 2;
+			float parentWidth = parent.getWidth();
 
-			if(Math.abs(xOffset) < 1) out += xOffset * parent.getWidth();
+			out = parent.getCenterX();
+			if(!(parent instanceof Window)) out -= parentWidth / 2;
+
+			if(Math.abs(xOffset) < 1) out += xOffset * parentWidth;
 			else out += xOffset;
 
 			if(Math.signum(xOffset) == -1) {
-				out += parent.getWidth();
+				out += parentWidth;
 			}
 		}
 
@@ -108,14 +121,16 @@ public abstract class GuiElement {
 		float out = 0;
 
 		if(parent != null) {
-			out = parent.getCenterY();
-			if(!(parent instanceof Window)) out -= parent.getHeight() / 2;
+			float parentHeight = parent.getHeight();
 
-			if(Math.abs(yOffset) < 1) out += yOffset * parent.getHeight();
+			out = parent.getCenterY();
+			if(!(parent instanceof Window)) out -= parentHeight / 2;
+
+			if(Math.abs(yOffset) < 1) out += yOffset * parentHeight;
 			else out += yOffset;
 
 			if(Math.signum(yOffset) == -1) {
-				out += parent.getHeight();
+				out += parentHeight;
 			}
 		}
 
@@ -153,5 +168,57 @@ public abstract class GuiElement {
 
 	private void addChild(GuiElement element) {
 		children.add(element);
+	}
+
+	protected void handleMouseButton(int event, int button, float x, float y) {
+		boolean isClickOnChild = false;
+
+		for(GuiElement child: children) {
+			if(child.containsPoint(x, y)) {
+				isClickOnChild = true;
+				child.handleMouseButton(event, button, x, y);
+				break;
+			}
+		}
+
+		if(!isClickOnChild) {
+			if(event == GLFW_RELEASE) onClick(button);
+		}
+	}
+
+	public void onClick(int button) { }
+
+	protected boolean isMouseEntered() {
+		float x = InputHandler.mouseX;
+		float y = InputHandler.mouseY;
+
+		if(containsPoint(x, y)) {
+			for(GuiElement child: children) {
+				if(child.containsPoint(x, y)) return false;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	protected boolean containsPoint(float x, float y) {
+		float width = getWidth();
+		float height = getHeight();
+
+		float lowerX = getCenterX() - width / 2f;
+		float lowerY = getCenterY() - height / 2f;
+
+		boolean out = x >= lowerX && x < lowerX + width &&
+				y >= lowerY && y < lowerY + height;
+
+		/*
+		System.out.println(lowerX + " " + x + " " + (lowerX + width));
+		System.out.println(lowerY + " " + y + " " + (lowerY + height));
+		System.out.println(out);
+		 */
+
+		return out;
 	}
 }

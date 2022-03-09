@@ -14,11 +14,14 @@ import java.util.Random;
 public class BasicColorGuiElement extends GuiElement {
 
 	private Vector3f color;
+	private Vector3f color2;
 	public BasicColorGuiElement(GuiElement parent, Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height) {
 		super(parent, xAnchor, yAnchor, xOffset, yOffset, width, height);
 
 		Color c = new Color(new Random().nextInt());
 		color = new Vector3f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f);
+		c = new Color(new Random().nextInt());
+		color2 = new Vector3f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f);
 	}
 
 	public BasicColorGuiElement(GuiElement parent, Anchor[] anchors, float xOffset, float yOffset, float width, float height) {
@@ -26,6 +29,8 @@ public class BasicColorGuiElement extends GuiElement {
 
 		Color c = new Color(new Random().nextInt());
 		color = new Vector3f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f);
+		c = new Color(new Random().nextInt());
+		color2 = new Vector3f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f);
 	}
 
 	public BasicColorGuiElement(GuiElement parent, float xOffset, float yOffset, float width, float height) {
@@ -33,6 +38,8 @@ public class BasicColorGuiElement extends GuiElement {
 
 		Color c = new Color(new Random().nextInt());
 		color = new Vector3f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f);
+		c = new Color(new Random().nextInt());
+		color2 = new Vector3f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f);
 	}
 
 	public BasicColorGuiElement(float xOffset, float yOffset, float width, float height) {
@@ -40,6 +47,8 @@ public class BasicColorGuiElement extends GuiElement {
 
 		Color c = new Color(new Random().nextInt());
 		color = new Vector3f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f);
+		c = new Color(new Random().nextInt());
+		color2 = new Vector3f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f);
 	}
 
 	@Override
@@ -50,13 +59,22 @@ public class BasicColorGuiElement extends GuiElement {
 		float glWidth = getWidth() / Window.INSTANCE.getWidth();
 		float glHeight = getHeight() / Window.INSTANCE.getHeight();
 
+		Vector3f renderColor = color;
+		if(isMouseEntered()) {
+			renderColor = color2;
+
+			float ratio = glWidth / glHeight;
+			glHeight *= 1.2;
+			glWidth = ratio * glHeight;
+		}
+
 		Matrix4f transformationMatrix = new Matrix4f();
 		transformationMatrix.translate(translationX, translationY, 0);
 		transformationMatrix.scale(glWidth, glHeight, 1);
 
 		Uniform uniform = new Uniform();
 		uniform.setMatrices(new Matrix4f(), new Matrix4f(), transformationMatrix);
-		uniform.setVector3fs(color);
+		uniform.setVector3fs(renderColor);
 		Renderer.renderArrays(ShaderHandler.ShaderType.DEFAULT, ScreenRect.getInstance(), uniform);
 	}
 }
