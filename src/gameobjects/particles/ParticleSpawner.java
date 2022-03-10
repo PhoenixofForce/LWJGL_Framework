@@ -49,7 +49,7 @@ public class ParticleSpawner {
 	private ParticleType type;
 
 	private boolean isSpawning = true;
-	private int particlesPerUpdate = 5;
+	private int particlesPerUpdate = 10;
 
 	private List<Particle> particles;
 	private Vector3f position;
@@ -73,12 +73,15 @@ public class ParticleSpawner {
 
 	private void render(Matrix4f proj, Matrix4f view) {
 		GL46.glDepthMask(false);
+		GL46.glEnable(GL11.GL_BLEND);
+		GL46.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
 
 		model.updateVBO(particles);
 		uniform.setMatrices(proj, view);
 		Renderer.renderInstanced(ShaderHandler.ShaderType.PARTICLE, model, uniform, Math.min(particles.size(), MAX_PARTICLES));
 
 		GL46.glDepthMask(true);
+		GL46.glDisable(GL11.GL_BLEND);
 	}
 
 	private void burst(Vector3f position, int amount) {
@@ -108,10 +111,10 @@ public class ParticleSpawner {
 		private float speedChange = 0.001f;
 
 		private Vector3f movementDirection = new Vector3f(0, 1, 0);
-		private float angleOffset = 45f * (float) (Math.PI * 2) / 360f;
-		private Vector3f directionChange = new Vector3f();
+		private float angleOffset = 20f * (float) (Math.PI * 2) / 360f;
+		private Vector3f directionChange = new Vector3f(0, 0, 0f);
 
-		private Vector3f positionOffset = new Vector3f(0.3f);
+		private Vector3f positionOffset = new Vector3f(1, 0.3f, 1);
 		private float minLifetime = 200, maxLifetime = 500;
 
 		Particle generate(Vector3f position) {

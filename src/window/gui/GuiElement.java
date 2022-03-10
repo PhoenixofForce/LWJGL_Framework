@@ -1,6 +1,6 @@
 package window.gui;
 
-import window.InputHandler;
+import window.inputs.InputHandler;
 import window.Window;
 
 import java.util.ArrayList;

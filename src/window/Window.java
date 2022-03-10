@@ -17,6 +17,7 @@ import utils.TimeUtils;
 import window.gui.Anchor;
 import window.gui.BasicColorGuiElement;
 import window.gui.GuiElement;
+import window.inputs.InputHandler;
 
 import java.nio.*;
 
@@ -99,17 +100,14 @@ public class Window extends BasicColorGuiElement {
 		AssetLoader.loadAll();
 		loadGui();
 
-		ParticleSpawner.getSpawner(new Vector3f(), ParticleSpawner.DEFAULT);
+		ParticleSpawner.getSpawner(new Vector3f(0, 5, 0), ParticleSpawner.DEFAULT);
 
 		glfwShowWindow(window);
-		glClearColor(0, 0, 1.0f, 0.0f);
+		glClearColor(0, 0, 0, 0.0f);
 	}
 
 	private void initCallbacks() {
-		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-			if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-				glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
-		});
+		InputHandler.callbacks();
 
 		glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
 			float[] mousePosition = InputHandler.getMousePosition();
@@ -152,28 +150,28 @@ public class Window extends BasicColorGuiElement {
 		InputHandler.getInputs();
 
 		float dx = 0, dy = 0, dz = 0;
-		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) dz += 0.1f;
-		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) dz -= 0.1f;
+		if (InputHandler.isKeyPressed(GLFW_KEY_S)) dz += 0.1f;
+		if (InputHandler.isKeyPressed(GLFW_KEY_W)) dz -= 0.1f;
 
-		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) dx += 0.1f;
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) dx -= 0.1f;
+		if (InputHandler.isKeyPressed(GLFW_KEY_D)) dx += 0.1f;
+		if (InputHandler.isKeyPressed(GLFW_KEY_A)) dx -= 0.1f;
 
-		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) dy += 0.1f;
-		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) dy -= 0.1f;
+		if (InputHandler.isKeyPressed(GLFW_KEY_SPACE)) dy += 0.1f;
+		if (InputHandler.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) dy -= 0.1f;
 
 		float rotateY = 0, rotateX = 0;
-		if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) rotateY += 0.04f;
-		if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) rotateY -= 0.04f;
+		if(InputHandler.isKeyPressed(GLFW_KEY_LEFT)) rotateY += 0.04f;
+		if(InputHandler.isKeyPressed(GLFW_KEY_RIGHT)) rotateY -= 0.04f;
 
-		if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) rotateX += 0.04f;
-		if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) rotateX -= 0.04f;
+		if(InputHandler.isKeyPressed(GLFW_KEY_UP)) rotateX += 0.04f;
+		if(InputHandler.isKeyPressed(GLFW_KEY_DOWN)) rotateX -= 0.04f;
 
-		float tilt = 0;
-		if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) tilt -= 0.5f;
-		if(glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) tilt += 0.5f;
+		if(InputHandler.isLongClick(GLFW_KEY_E, 2000)) {
+			dy += 10;
+			InputHandler.consumeClick(GLFW_KEY_E);
+		}
 
 		rotation.add(rotateX, rotateY, 0);
-		rotation.z = tilt;
 		rotation.x = Math.min((float) Math.PI/2-0.05f, Math.max((float) -Math.PI/2 + 0.05f, rotation.x));
 
 		lookingDirection.set(0, 0, 1);
@@ -184,8 +182,6 @@ public class Window extends BasicColorGuiElement {
 		position.sub(new Vector3f(lookingDirection.x, 0, lookingDirection.z).normalize().mul(dz));
 		position.add(new Vector3f(-lookingDirection.z, 0, lookingDirection.x).normalize().mul(dx));
 		position.add(0, dy, 0);
-
-		glClearColor(lookingDirection.x / 2f + 0.5f, lookingDirection.y / 2f + 0.5f, lookingDirection.z / 2f + 0.5f, 0.0f);
 	}
 
 	private void update(long dt) {
@@ -209,7 +205,7 @@ public class Window extends BasicColorGuiElement {
 		uniform.setMatrices(projection_matrix, view_matrix, transformationMatrix);
 		uniform.setVector3fs(new Vector3f(1, 0, 1));
 
-		//Renderer.render(ShaderHandler.ShaderType.DEFAULT, ObjHandler.loadOBJ("pawn"), uniform);
+		Renderer.render(ShaderHandler.ShaderType.DEFAULT, ObjHandler.loadOBJ("pawn"), uniform);
 		ParticleSpawner.renderAll(projection_matrix, view_matrix);
 		super.renderGui();
 
