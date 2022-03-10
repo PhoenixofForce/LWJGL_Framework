@@ -5,7 +5,7 @@ import org.joml.Vector3f;
 import java.awt.*;
 import java.util.Random;
 
-class Particle {
+public class Particle {
 
 	private float size;
 	private final float sizeChange;
@@ -31,7 +31,7 @@ class Particle {
 		this.lifetime = lifetime;
 
 		Color c = new Color(new Random().nextInt());
-		color = new Vector3f(c.getRed() / 255f, Math.min(c.getGreen(), c.getRed()) / 255f / 4, c.getBlue() / 255f / 8);
+		color = new Vector3f(c.getRed() / 255f, Math.min(c.getGreen() - 20, c.getRed()) / 255f / 2, c.getBlue() / 255f / 4);
 	}
 
 	public void update(long dt) {

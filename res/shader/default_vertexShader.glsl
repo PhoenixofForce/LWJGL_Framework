@@ -1,7 +1,7 @@
 #version 430
 
-layout(location = 0) uniform mat4 cProjectionMatrix;
-layout(location = 1) uniform mat4 cModelViewMatrix;
+layout(location = 0) uniform mat4 projection;
+layout(location = 1) uniform mat4 view;
 layout(location = 2) uniform mat4 transformation;
 
 layout(location = 0) in vec4 cPosition;
@@ -13,6 +13,6 @@ out vec2 fragTexCoord;
 
 void main()
 {
-    gl_Position = cProjectionMatrix * cModelViewMatrix * transformation * cPosition;
+    gl_Position = projection * view * transformation * cPosition;
     fragTexCoord = cTexCoord;
 }

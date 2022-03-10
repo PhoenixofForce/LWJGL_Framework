@@ -35,6 +35,7 @@ public class ScreenRect extends Renderable {
 	};
 
 	private ScreenRect() {
+		super();
 		INSTANCE = this;
 
 		rectVAO = glGenVertexArrays();
@@ -53,6 +54,9 @@ public class ScreenRect extends Renderable {
 
 		glEnableVertexArrayAttrib(rectVAO, 1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
+
+		buffers.add(rectVBO);
+		buffers.add(rectUVVBO);
 	}
 
 	@Override

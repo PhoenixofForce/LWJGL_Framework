@@ -19,7 +19,7 @@ public abstract class Renderable {
 
 	private int faceCount;
 	private int vao;
-	private List<Integer> buffers;
+	protected List<Integer> buffers;
 
 	public Renderable() {
 		this.buffers = new ArrayList<>();
@@ -90,7 +90,7 @@ public abstract class Renderable {
 		glBindVertexArray(0);
 	}
 
-	private void createVBO(int vao, String name, float[] data, int size) {
+	protected void createVBO(int vao, String name, float[] data, int size) {
 		int location = buffers.size();
 		int vbo = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);

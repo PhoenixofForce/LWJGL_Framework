@@ -1,9 +1,11 @@
 package gameobjects.particles;
 
 import maths.MathUtils;
-import meshes.ObjHandler;
+import meshes.ParticleModel;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL46;
 import rendering.Renderer;
 import rendering.ShaderHandler;
 import rendering.Uniform;
@@ -15,7 +17,7 @@ import java.util.Map;
 
 public class ParticleSpawner {
 
-	private static final int MAX_PARTICLES = 10000;
+	public static final int MAX_PARTICLES = 1000;
 	private static final Map<ParticleType, ParticleSpawner> spawner = new HashMap<>();
 
 	public static final ParticleType DEFAULT = new ParticleType();
@@ -41,11 +43,13 @@ public class ParticleSpawner {
 
 	//---------------------------------------
 
+	private static final ParticleModel model = new ParticleModel();
+
 	private Uniform uniform;
 	private ParticleType type;
 
 	private boolean isSpawning = true;
-	private int particlesPerUpdate = 100;
+	private int particlesPerUpdate = 5;
 
 	private List<Particle> particles;
 	private Vector3f position;
@@ -68,16 +72,13 @@ public class ParticleSpawner {
 	}
 
 	private void render(Matrix4f proj, Matrix4f view) {
+		GL46.glDepthMask(false);
 
+		model.updateVBO(particles);
+		uniform.setMatrices(proj, view);
+		Renderer.renderInstanced(ShaderHandler.ShaderType.PARTICLE, model, uniform, Math.min(particles.size(), MAX_PARTICLES));
 
-		for(int i = 0; i < particles.size(); i++) {
-			uniform.setMatrices(proj, view);
-			uniform.setFloats(particles.get(i).getSize());
-			uniform.setVector3fs(particles.get(i).getColor(), particles.get(i).getPosition());
-			Renderer.render(ShaderHandler.ShaderType.PARTICLE, ObjHandler.getModel("cube"), uniform);
-		}
-
-		//Renderer.renderInstanced(ShaderHandler.ShaderType.PARTICLE, ObjHandler.getModel("cube"), uniform, particleCount);
+		GL46.glDepthMask(true);
 	}
 
 	private void burst(Vector3f position, int amount) {

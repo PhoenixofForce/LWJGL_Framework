@@ -28,12 +28,12 @@ public class Renderer {
 		glBindVertexArray(renderable.getVAO());
 		glUseProgram(shaderType.get());
 
-		//uniform.load();
+		uniform.load();
 
-		//glDrawElementsInstanced(GL_TRIANGLES, 3 * renderable.getFaceCount(), GL_UNSIGNED_INT, 0, count);
+		glDrawElementsInstanced(GL_TRIANGLES, 3 * renderable.getFaceCount(), GL_UNSIGNED_INT, 0, count);
 
-		//glBindVertexArray(0);
-		//glUseProgram(0);
+		glBindVertexArray(0);
+		glUseProgram(0);
 	}
 
 	public static void renderArrays(ShaderHandler.ShaderType shaderType, Renderable renderable, Uniform uniform) {
