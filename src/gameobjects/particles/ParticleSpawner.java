@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class ParticleSpawner {
 
-	private static final int MAX_PARTICLES = 100;
+	private static final int MAX_PARTICLES = 10000;
 	private static final Map<ParticleType, ParticleSpawner> spawner = new HashMap<>();
 
 	public static final ParticleType DEFAULT = new ParticleType();
@@ -45,7 +45,7 @@ public class ParticleSpawner {
 	private ParticleType type;
 
 	private boolean isSpawning = true;
-	private int particlesPerUpdate = 1;
+	private int particlesPerUpdate = 100;
 
 	private List<Particle> particles;
 	private Vector3f position;

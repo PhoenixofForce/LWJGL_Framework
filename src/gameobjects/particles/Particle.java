@@ -31,7 +31,7 @@ class Particle {
 		this.lifetime = lifetime;
 
 		Color c = new Color(new Random().nextInt());
-		color = new Vector3f(c.getRed() / 255f, c.getGreen() / 255f / 4, c.getBlue() / 255f / 8);
+		color = new Vector3f(c.getRed() / 255f, Math.min(c.getGreen(), c.getRed()) / 255f / 4, c.getBlue() / 255f / 8);
 	}
 
 	public void update(long dt) {
