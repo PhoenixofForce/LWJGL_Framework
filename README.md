@@ -31,8 +31,11 @@ This project serves as a codebase for my games
 * System to have multiple Views (Main Menu, Options Menu, Game)
 * State Machine (for Animations, ...)  
 
+### Required Libraries
+* [LWJGL 3.3.0 (LWJGL, GLFW, OpenGL)](https://www.lwjgl.org/download)
+* [JOML 1.10.3](https://github.com/JOML-CI/JOML)
 
-#### Sources
+### Sources
 * [Pawn](https://opengameart.org/content/chess-pawn)
 * [Skybox from Zachery “skiingpenguins” Slocum, raw and edited](https://opengameart.org/content/skiingpenguins-skybox-pack)
 * [Grass Texture](https://kenney.nl/assets/voxel-pack)
