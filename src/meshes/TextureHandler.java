@@ -1,5 +1,6 @@
 package meshes;
 
+import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL46;
 import utils.Constants;
@@ -15,6 +16,7 @@ import java.util.*;
 public class TextureHandler {
 
 	private static final Map<String, Integer> textureMap = new HashMap<>();
+	private static final Map<String, TextureAtlas> textureAtlases = new HashMap<>();
 
 	public static int loadImagePng(String textureName, String fileName, Optional<String> path) {
 		try {
@@ -43,25 +45,11 @@ public class TextureHandler {
 	public static void loadSpriteSheetPNG(String spriteSheetName, String fileName, Optional<String> path) {
 		try {
 			BufferedImage img = ImageIO.read(new File(path.orElse(Constants.TEXTURE_PATH) + fileName + ".png"));
-			Scanner s = new Scanner(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream(path.orElse(Constants.TEXTURE_PATH) + fileName + ".text")), StandardCharsets.UTF_8);
 
-			int amount = Integer.parseInt(s.nextLine());
-			for (int i = 0; i < amount; i++) {
-				try {
-					String[] line = s.nextLine().split(" ");
-
-					String texture = line[0];
-					int x = Integer.parseInt(line[1]);
-					int y = Integer.parseInt(line[2]);
-					int width = Integer.parseInt(line[3]);
-					int height = Integer.parseInt(line[4]);
-
-					BufferedImage sprite = img.getSubimage(x, y, width, height);
-					textureMap.put(spriteSheetName + "_" + texture, loadTexture(sprite));
-				} catch (Exception e) {
-					throw new RuntimeException(String.format("Loading spriteSheet: %s in line %d (%s)", spriteSheetName, i + 2, e.toString()));
-				}
-			}
+			readTextFile(spriteSheetName, path).forEach(s -> {
+				BufferedImage sprite = img.getSubimage((int) s.coords.x, (int) s.coords.y, (int) s.coords.z, (int) s.coords.z);
+				textureMap.put(spriteSheetName + "_" + s.name, loadTexture(sprite));
+			});
 		} catch (Exception e) {
 			throw new RuntimeException("Error parsing spritesheet " + fileName);
 		}
@@ -70,28 +58,36 @@ public class TextureHandler {
 	public static void loadPixelSpriteSheetPNG(String spriteSheetName, String fileName, Optional<String> path) {
 		try {
 			BufferedImage img = ImageIO.read(new File(path.orElse(Constants.TEXTURE_PATH) + fileName + ".png"));
-			Scanner s = new Scanner(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream(path.orElse(Constants.TEXTURE_PATH) + fileName + ".text")), StandardCharsets.UTF_8);
 
-			int amount = Integer.parseInt(s.nextLine());
-			for (int i = 0; i < amount; i++) {
-				try {
-					String[] line = s.nextLine().split(" ");
-
-					String texture = line[0];
-					int x = Integer.parseInt(line[1]);
-					int y = Integer.parseInt(line[2]);
-					int width = Integer.parseInt(line[3]);
-					int height = Integer.parseInt(line[4]);
-
-					BufferedImage sprite = img.getSubimage(x, y, width, height);
-					textureMap.put(spriteSheetName + "_" + texture, loadPixelTexture(sprite));
-				} catch (Exception e) {
-					throw new RuntimeException(String.format("Loading spriteSheet: %s in line %d (%s)", spriteSheetName, i + 2, e.toString()));
-				}
-			}
+			readTextFile(spriteSheetName, path).forEach(s -> {
+				BufferedImage sprite = img.getSubimage((int) s.coords.x, (int) s.coords.y, (int) s.coords.z, (int) s.coords.z);
+				textureMap.put(spriteSheetName + "_" + s.name, loadPixelTexture(sprite));
+			});
 		} catch (Exception e) {
 			throw new RuntimeException("Error parsing spritesheet " + fileName);
 		}
+	}
+
+	public static TextureAtlas loadTextureAtlasPNG(String spriteSheetName, String fileName, Optional<String> path) {
+		loadImagePng(spriteSheetName, fileName, path);
+
+		TextureAtlas atlas = new TextureAtlas(spriteSheetName);
+		readTextFile(fileName, path).forEach(s -> atlas.addTexture(s.name, s.coords));
+
+		textureAtlases.put(spriteSheetName, atlas);
+
+		return atlas;
+	}
+
+	public static TextureAtlas loadPixelTextureAtlasPNG(String spriteSheetName, String fileName, Optional<String> path) {
+		loadPixelImagePng(spriteSheetName, fileName, path);
+
+		TextureAtlas atlas = new TextureAtlas(spriteSheetName);
+		readTextFile(fileName, path).forEach(s -> atlas.addTexture(s.name, s.coords));
+
+		textureAtlases.put(spriteSheetName, atlas);
+
+		return atlas;
 	}
 
 	public static int getTexture(String texture) {
@@ -99,6 +95,39 @@ public class TextureHandler {
 			System.err.println("Tried to access unloaded texture " + texture);
 		}
 		return textureMap.getOrDefault(texture, 0);
+	}
+
+	public static TextureAtlas getAtlas(String atlasName) {
+		if(!textureAtlases.containsKey(atlasName)) {
+			System.err.println("Tried to access unloaded atlas " + atlasName);
+			return null;
+		}
+		return textureAtlases.get(atlasName);
+	}
+
+	private record SingleTexture(String name, Vector4f coords) { }
+	private static List<SingleTexture> readTextFile(String fileName, Optional<String> path) {
+		List<SingleTexture> out = new ArrayList<>();
+
+		Scanner s = new Scanner(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream(path.orElse(Constants.TEXTURE_PATH) + fileName + ".text")), StandardCharsets.UTF_8);
+		int amount = Integer.parseInt(s.nextLine());
+		for (int i = 0; i < amount; i++) {
+			try {
+				String[] line = s.nextLine().split(" ");
+
+				String texture = line[0];
+				int x = Integer.parseInt(line[1]);
+				int y = Integer.parseInt(line[2]);
+				int width = Integer.parseInt(line[3]);
+				int height = Integer.parseInt(line[4]);
+
+				out.add(new SingleTexture(texture, new Vector4f(x, y, width, height)));
+			} catch (Exception e) {
+				throw new RuntimeException(String.format("Loading spriteSheet: %s in line %d (%s)", fileName, i + 2, e.toString()));
+			}
+		}
+
+		return out;
 	}
 
 	private static int loadTexture(BufferedImage img) {

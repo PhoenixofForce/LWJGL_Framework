@@ -16,6 +16,8 @@ This project serves as a codebase for my games
 * Particles
   * Animated Particles
   * Intruduce functions to change the values
+  * Death Emitter
+  * Find faster way to create float[] for instanced vbo => more particles 
   * Fix DirectionChange (it is not supposed to be an addiion, more like an rotation in the given direction) 
 
 #### Will probably do
@@ -30,6 +32,11 @@ This project serves as a codebase for my games
 * 3d-Animation
 * System to have multiple Views (Main Menu, Options Menu, Game)
 * State Machine (for Animations, ...)  
+* i18n
+* Dialogue System
+
+### Notes
+* Games wont work on macOS (because of OpenGL version)
 
 ### Required Libraries
 * [LWJGL 3.3.0 (LWJGL, GLFW, OpenGL)](https://www.lwjgl.org/download)
