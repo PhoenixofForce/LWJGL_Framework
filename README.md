@@ -30,3 +30,9 @@ This project serves as a codebase for my games
 * 3d-Animation
 * System to have multiple Views (Main Menu, Options Menu, Game)
 * State Machine (for Animations, ...)  
+
+
+#### Sources
+* [Pawn](https://opengameart.org/content/chess-pawn)
+* [Skybox from Zachery “skiingpenguins” Slocum, raw and edited](https://opengameart.org/content/skiingpenguins-skybox-pack)
+* [Grass Texture](https://kenney.nl/assets/voxel-pack)
