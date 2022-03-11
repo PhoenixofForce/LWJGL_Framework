@@ -39,3 +39,5 @@ This project serves as a codebase for my games
 * [Pawn](https://opengameart.org/content/chess-pawn)
 * [Skybox from Zachery “skiingpenguins” Slocum, raw and edited](https://opengameart.org/content/skiingpenguins-skybox-pack)
 * [Grass Texture](https://kenney.nl/assets/voxel-pack)
+* [glsl-conditionals](https://github.com/dmnsgn/glsl-conditionals)
+* [glsl-blend](https://github.com/jamieowen/glsl-blend)
