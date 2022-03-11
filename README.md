@@ -29,4 +29,4 @@ This project serves as a codebase for my games
 * Load obj with mtl
 * 3d-Animation
 * System to have multiple Views (Main Menu, Options Menu, Game)
-* State Machine (for Animations, ...) 
+* State Machine (for Animations, ...)  
