@@ -23,8 +23,12 @@ public class ParticleSpawner {
 	public static final ParticleType DEFAULT = new ParticleType();
 
 	public static ParticleSpawner getSpawner(Vector3f pos, ParticleType type) {
-		if(spawner.containsKey(type)) return spawner.get(type);
-		else {
+		if(spawner.containsKey(type)) {
+			ParticleSpawner pSpawner =  spawner.get(type);
+			pSpawner.position = pos;
+
+			return pSpawner;
+		} else {
 			ParticleSpawner out = new ParticleSpawner(type, pos);
 			spawner.put(type, out);
 
@@ -93,16 +97,26 @@ public class ParticleSpawner {
 	}
 
 	public void startSpawning() {
+		this.isSpawning = true;
+	}
+
+	public void startSpawning(Vector3f pos) {
 		isSpawning = true;
+		this.position = pos;
 	}
 
 	public void stopSpawning() {
 		isSpawning = false;
 	}
 
+
+
+
+
 	public static class ParticleType {
 		//TODO: make changes a function
 		//TODO: color
+		//TODO: death emitter
 
 		private float minSize = 0.1f, maxSize = 0.4f;
 		private float sizeChange = -0.003f;

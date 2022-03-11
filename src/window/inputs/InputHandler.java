@@ -17,30 +17,6 @@ public class InputHandler {
 		mouseY = mousePosition[1];
 	}
 
-	//>--| KEYS |--<\\
-
-	private static Map<Integer, KeyHit> lastPresses = new HashMap<>();
-
-	public static boolean isKeyPressed(int keyCode) {
-		int action = glfwGetKey(Window.INSTANCE.window, keyCode);
-		return action == GLFW_PRESS;
-	}
-
-	public static boolean isKeyPressed(int keyCode, long timeBuffer) {
-		return isKeyPressed(keyCode) || (lastPresses.containsKey(keyCode) && lastPresses.get(keyCode).timeSinceEnd() <= timeBuffer);
-	}
-
-	public static boolean isLongClick(int keyCode, long minimumForLong) {
-		if(lastPresses.containsKey(keyCode)) {
-			KeyHit hit = lastPresses.get(keyCode);
-			if(hit == null) return false;
-
-			return hit.getClickDuration() >= minimumForLong;
-		}
-
-		return false;
-	}
-
 	public static void callbacks() {
 		glfwSetKeyCallback(Window.INSTANCE.window, (window, key, scancode, action, mods) -> {
 			KeyHit click = lastPresses.get(key);
@@ -61,6 +37,41 @@ public class InputHandler {
 				System.err.println("Unknown action " + action);
 			}
 		});
+	}
+
+	//>--| KEYS |--<\\
+
+	private static final Map<Integer, KeyHit> lastPresses = new HashMap<>();
+
+	public static boolean isKeyPressed(int keyCode) {
+		int action = glfwGetKey(Window.INSTANCE.window, keyCode);
+		return action == GLFW_PRESS;
+	}
+
+	public static boolean isKeyPressed(int keyCode, long timeBuffer) {
+		return isKeyPressed(keyCode) || (lastPresses.containsKey(keyCode) && lastPresses.get(keyCode).timeSinceEnd() <= timeBuffer);
+	}
+
+	public static boolean isKeyPressedConsume(int keyCode, long timeBuffer) {
+		boolean out = isKeyPressed(keyCode, timeBuffer);
+		if(out) consumeClick(keyCode);
+		return out;	}
+
+	public static boolean isLongClick(int keyCode, long minimumForLong) {
+		if(lastPresses.containsKey(keyCode)) {
+			KeyHit hit = lastPresses.get(keyCode);
+			if(hit == null) return false;
+
+			return hit.getClickDuration() >= minimumForLong;
+		}
+
+		return false;
+	}
+
+	public static boolean isLongClickConsume(int keyCode, long minimumForLong) {
+		boolean out = isLongClick(keyCode, minimumForLong);
+		if(out) consumeClick(keyCode);
+		return out;
 	}
 
 	public static void consumeClick(int keycode) {

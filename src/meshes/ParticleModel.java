@@ -12,7 +12,7 @@ public class ParticleModel extends Renderable {
 
 	private static final float[] vertices = {-0.5f, 0.5f, 0, -0.5f, -0.5f, 0, 0.5f, 0.5f, 0, 0.5f, -0.5f, 0};
 	private static final float[] rectangleUV = new float[] {
-			0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,1.0f, 1.0f,0.0f, 1.0f, 0.0f, 0.0f
+			0.0f, 1.0f, 1.0f, 1.0f, 0f, 0f, 1.0f, 0.0f
 	};
 
 	private static int maxFloats;

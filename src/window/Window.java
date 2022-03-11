@@ -166,10 +166,8 @@ public class Window extends BasicColorGuiElement {
 		if(InputHandler.isKeyPressed(GLFW_KEY_UP)) rotateX += 0.04f;
 		if(InputHandler.isKeyPressed(GLFW_KEY_DOWN)) rotateX -= 0.04f;
 
-		if(InputHandler.isLongClick(GLFW_KEY_E, 2000)) {
-			dy += 10;
-			InputHandler.consumeClick(GLFW_KEY_E);
-		}
+		if(InputHandler.isLongClickConsume(GLFW_KEY_E, 2000)) dy += 10;
+
 
 		rotation.add(rotateX, rotateY, 0);
 		rotation.x = Math.min((float) Math.PI/2-0.05f, Math.max((float) -Math.PI/2 + 0.05f, rotation.x));
@@ -205,7 +203,7 @@ public class Window extends BasicColorGuiElement {
 		uniform.setMatrices(projection_matrix, view_matrix, transformationMatrix);
 		uniform.setVector3fs(new Vector3f(1, 0, 1));
 
-		Renderer.render(ShaderHandler.ShaderType.DEFAULT, ObjHandler.loadOBJ("pawn"), uniform);
+		//Renderer.render(ShaderHandler.ShaderType.DEFAULT, ObjHandler.loadOBJ("pawn"), uniform);
 		ParticleSpawner.renderAll(projection_matrix, view_matrix);
 		super.renderGui();
 
