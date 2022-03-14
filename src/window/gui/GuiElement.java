@@ -16,10 +16,10 @@ import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
  *  - position are always from the bottom left of the parent
  *
  *	     +---------+
- *		 | v       |
- *		 |>*       |
- *		 |         |
- *		 +---------+
+ *           | v       |
+ *           |>*       |
+ *           |         |
+ *           +---------+
  *
  * For the given example let * denote a point, > the xOffset and v the yOffset
  * When x and y are absolutes offsets (20, 30) then > is equal to 20 pixels and v to 30 pixels
