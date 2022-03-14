@@ -4,10 +4,10 @@ public enum Anchor {
 
 	/*
 	    E +---------+
-		  |         |
-		C |         |
-		  |         |
-		B +---------+
+	      |         |
+	    C |         |
+	      |         |
+	    B +---------+
 	      B    C    E
 	 */
 	BEGIN(1), CENTER(0), END(-1);
