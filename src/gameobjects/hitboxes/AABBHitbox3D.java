@@ -45,10 +45,10 @@ public class AABBHitbox3D {
 	}
 
 	/*
-	 * 	Return the direction of a gives hitbox in relation to this box
-	 *	LUR
-	 *  L#R    - # this box
-	 *  LDR
+	 * Return the direction of a gives hitbox in relation to this box
+	 * LUR
+	 * L#R    - # this box
+	 * LDR
 	 */
 	public HitboxDirection direction(AABBHitbox3D box) {
 		if (collides(box)) return HitboxDirection.COLLIDE;
@@ -64,7 +64,7 @@ public class AABBHitbox3D {
 
 	/*
 	 * 	the amount of the given direction the second object has to be moved to avoid collision
-	 *    +--------+		         +--------+
+	 *    +--------+                 +--------+
 	 *    |        |                 |        |
 	 *    |     +--------+           |        |+--------+
 	 *    |     |  |     |           |        ||        |
