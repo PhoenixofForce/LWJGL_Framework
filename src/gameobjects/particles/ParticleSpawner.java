@@ -18,22 +18,20 @@ import java.util.Map;
 public class ParticleSpawner {
 
 	public static final int MAX_PARTICLES = 1000;
-	private static final Map<ParticleType, ParticleSpawner> spawner = new HashMap<>();
+	private static final Map<Integer, ParticleSpawner> spawner = new HashMap<>();
 
 	public static final ParticleType DEFAULT = new ParticleType();
 
-	public static ParticleSpawner getSpawner(Vector3f pos, ParticleType type) {
-		if(spawner.containsKey(type)) {
-			ParticleSpawner pSpawner =  spawner.get(type);
-			pSpawner.position = pos;
-
-			return pSpawner;
-		} else {
-			ParticleSpawner out = new ParticleSpawner(type, pos);
-			spawner.put(type, out);
-
-			return out;
-		}
+	private static int nextID = 0;
+	
+	public static int getNewSpawner(Vector3f pos, ParticleType type) {
+		int id = nextID;
+		nextID++;
+		
+		ParticleSpawner out = new ParticleSpawner(type, pos);
+		spawner.put(id, out);
+		
+		return id;
 	}
 
 	public static void updateAll(long dt) {
@@ -44,7 +42,38 @@ public class ParticleSpawner {
 		spawner.values().forEach(p -> p.render(proj, view));
 	}
 
-
+	public static void startSpawning(int id) {
+		ParticleSpawner ps = spawner.get(id);
+		
+		if(ps != null) {
+			ps.startSpawning();
+		}
+	}
+	
+	public static void stopSpawning(int id) {
+		ParticleSpawner ps = spawner.get(id);
+		
+		if(ps != null) {
+			ps.stopSpawning();
+		}
+	}
+	
+	public static void burst(int id, Vector3f pos, int amount) {
+		ParticleSpawner ps = spawner.get(id);
+		
+		if(ps != null) {
+			ps.burst(pos, amount);
+		}
+	}
+	
+	public static void cleanUp(int id) {
+		spawner.put(id, null);
+	}
+	
+	public static void cleanUpAll() {
+		spawner.clear();
+	}
+	
 	//---------------------------------------
 
 	private static final ParticleModel model = new ParticleModel();
@@ -108,8 +137,6 @@ public class ParticleSpawner {
 	public void stopSpawning() {
 		isSpawning = false;
 	}
-
-
 
 
 

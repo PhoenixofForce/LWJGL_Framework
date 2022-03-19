@@ -98,7 +98,7 @@ public class Window extends BasicColorGuiElement {
 		AssetLoader.loadAll();
 		loadGui();
 
-		ParticleSpawner.getSpawner(new Vector3f(0, 5, 0), ParticleSpawner.DEFAULT);
+		ParticleSpawner.getNewSpawner(new Vector3f(0, 5, 0), ParticleSpawner.DEFAULT);
 
 		glfwShowWindow(window);
 		glClearColor(0, 0, 0, 0.0f);
