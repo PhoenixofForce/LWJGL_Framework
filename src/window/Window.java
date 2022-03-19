@@ -2,7 +2,6 @@ package window;
 
 import gameobjects.particles.ParticleSpawner;
 import meshes.AssetLoader;
-import meshes.ObjHandler;
 import meshes.ScreenRect;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -10,7 +9,6 @@ import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
-import rendering.Renderer;
 import rendering.ShaderHandler;
 import rendering.Uniform;
 import utils.TimeUtils;
@@ -192,18 +190,7 @@ public class Window extends BasicColorGuiElement {
 
 		Matrix4f projection_matrix = new Matrix4f().perspective((float)Math.PI/3, ((float) width)/height,0.001f, 1250f);
 		Matrix4f view_matrix = new Matrix4f().lookAt(position, new Vector3f(lookingDirection).add(position), upNormal);
-		Matrix4f transformationMatrix = new Matrix4f(
-				1, 0, 0, 0,
-				0, 1, 0, 0,
-				0, 0, 1, 0,
-				0, 0, 0, 1);
 
-
-		Uniform uniform = new Uniform();
-		uniform.setMatrices(projection_matrix, view_matrix, transformationMatrix);
-		uniform.setVector3fs(new Vector3f(1, 0, 1));
-
-		//Renderer.render(ShaderHandler.ShaderType.DEFAULT, ObjHandler.loadOBJ("pawn"), uniform);
 		ParticleSpawner.renderAll(projection_matrix, view_matrix);
 		super.renderGui();
 
