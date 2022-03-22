@@ -5,6 +5,8 @@ in vec2 fragTexCoord;
 
 out vec4 finalColor;
 
+//import util_pixelation
+
 //todo: remove ifs
 
 float rect(vec2 texCoord, float border) {
@@ -41,7 +43,7 @@ float circle(vec2 texCoords, float innerRadius, float outerRadius) {
 }
 
 void main() {
-    float keep = roundRect(fragTexCoord, 0.2f, 0);
+    float keep = roundRect(pixelate(fragTexCoord, 16), 0.2f, 0);
     if(keep == 0) discard;
 
     finalColor = vec4(color, 1);
