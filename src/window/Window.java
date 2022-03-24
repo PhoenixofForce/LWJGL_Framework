@@ -134,6 +134,8 @@ public class Window extends BasicColorGuiElement {
 			long dt = TimeUtils.getTime() - lastUpdate;
 			lastUpdate = TimeUtils.getTime();
 
+			if(dt > 0) glfwSetWindowTitle(window, title + " (" + (int)(Math.ceil(1000.0 / dt)) + ")");
+			
 			testOpenGLError();
 			glfwPollEvents();
 
