@@ -3,7 +3,7 @@ This project serves as a codebase for my games
 ### Todo
 #### Must Haves
 * Entity Component System
-  * Want to look into an InputProvider System for controls
+  * ~~Want to look into an InputProvider System for controls~~
   * Collisions
 * Gui
   * Make Basic Elements (Buttons, slider, checkboxes)
@@ -18,7 +18,8 @@ This project serves as a codebase for my games
   * Intruduce functions to change the values
   * Death Emitter
   * Find faster way to create float[] for instanced vbo => more particles 
-  * Fix DirectionChange (it is not supposed to be an addiion, more like an rotation in the given direction) 
+  * Fix DirectionChange (it is not supposed to be an addiion, more like an rotation in the given direction)
+* Gamepad support
 
 #### Will probably do
 * MapLoader for maps from the [Level Editor](https://github.com/PhoenixofForce/Level_Editor)
@@ -34,6 +35,9 @@ This project serves as a codebase for my games
 * State Machine (for Animations, ...)  
 * i18n
 * Dialogue System
+* Rewrite the current uniform system into
+  * `uniform.set(int location, Vec3 vec) { uniforms.add(new Vec3Location(location, vec3)) }`
+  * `uniform.load() { uniforms.forEach(u -> UL.load(u.getLocation(), u.getValue()) }`
 
 ### Notes
 * Games wont work on macOS (because of OpenGL version)

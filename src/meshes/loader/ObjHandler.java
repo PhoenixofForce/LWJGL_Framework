@@ -1,5 +1,6 @@
-package meshes;
+package meshes.loader;
 
+import meshes.dim3.Model;
 import utils.Constants;
 
 import java.io.*;

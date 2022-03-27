@@ -48,7 +48,7 @@ public class PositionComponent extends Component {
 	}
 
 	@Override
-	public void update() { }
+	public void update(long dt) { }
 
 	public Vector3f getPosition() {
 		return new Vector3f(position);

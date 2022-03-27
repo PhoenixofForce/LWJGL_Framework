@@ -24,8 +24,8 @@ public abstract class Entity {
 		initComponents();
 	}
 
-	public void update() {
-		updateComponents();
+	public void update(long dt) {
+		updateComponents(dt);
 	}
 	
 	//public void render(Matrix4f projection_matrix, Camera cam) {
@@ -58,9 +58,9 @@ public abstract class Entity {
 		});
 	}
 
-	private void updateComponents() {
+	private void updateComponents(long dt) {
 		components.forEach((k, v) -> {
-			v.forEach(Component::update);
+			v.forEach(c -> c.update(dt));
 		});
 	}
 
@@ -80,18 +80,18 @@ public abstract class Entity {
 	}
 
 	public boolean hasComponent(Class<? extends Component> t) {
-		return components.containsKey(t.toString()) && components.get(t.toString()).size() > 0;
+		return components.containsKey(t.getSimpleName()) && components.get(t.getSimpleName()).size() > 0;
 	}
 
 	public <T extends Component> Optional<T> getComponent(Class<T> t) {
 		if(hasComponent(t)) {
-			return (Optional<T>) Optional.of(components.get(t).get(0));
+			return (Optional<T>) Optional.of(components.get(t.getSimpleName()).get(0));
 		}
 		return Optional.empty();
 	}
 
 	private <T extends Component> List<T> getComponents(Class<T> t) {
-		return (List<T>) components.getOrDefault(t, new LinkedList<>());
+		return (List<T>) components.getOrDefault(t.getSimpleName(), new LinkedList<>());
 	}
 
 	@Override

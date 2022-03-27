@@ -43,7 +43,7 @@ float circle(vec2 texCoords, float innerRadius, float outerRadius) {
 }
 
 void main() {
-    float keep = roundRect(pixelate(fragTexCoord, 16), 0.2f, 0);
+    float keep = circle(pixelate(fragTexCoord, 16), 0f, 0.5f);
     if(keep == 0) discard;
 
     finalColor = vec4(color, 1);

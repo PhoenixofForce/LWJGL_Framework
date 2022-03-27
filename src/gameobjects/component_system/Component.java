@@ -17,7 +17,7 @@ public abstract class Component {
 	}
 
 	public abstract boolean init();
-	public abstract void update();
+	public abstract void update(long dt);
 	public void cleanup() { }
 
 	public float getPriority() {

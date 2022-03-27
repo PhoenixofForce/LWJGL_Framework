@@ -35,10 +35,11 @@ public class Particle {
 	}
 
 	public void update(long dt) {
-		size += sizeChange;
+		float dts = dt / 1000.0f;
+		size += sizeChange * dts;
 		lifetime -= dt;
-		if(speed > 0 && movementDirection.length() > 0) position.add(new Vector3f(movementDirection).normalize(speed));
-		speed += speedChange;
+		if(speed > 0 && movementDirection.length() > 0) position.add(new Vector3f(movementDirection).normalize().mul(speed * dts));
+		speed += speedChange * dts;
 		if(directionChange.length() > 0) movementDirection.add(directionChange);
 	}
 

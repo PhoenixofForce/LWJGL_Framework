@@ -9,6 +9,8 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class InputHandler {
 
+	//TODO: Gamepad Support
+
 	public static float mouseX = 0, mouseY = 0;
 
 	public static void getInputs() {

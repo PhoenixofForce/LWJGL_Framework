@@ -1,5 +1,7 @@
-package meshes;
+package meshes.loader;
 
+import meshes.dim3.Model;
+import meshes.dim3.TexturedModel;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import utils.VecUtils;

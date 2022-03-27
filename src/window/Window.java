@@ -1,14 +1,17 @@
 package window;
 
+import gameobjects.entities.Camera;
 import gameobjects.particles.ParticleSpawner;
-import meshes.AssetLoader;
+import meshes.loader.AssetLoader;
 import meshes.ScreenRect;
+import meshes.loader.ObjHandler;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
+import rendering.Renderer;
 import rendering.ShaderHandler;
 import rendering.Uniform;
 import utils.TimeUtils;
@@ -34,7 +37,9 @@ public class Window extends BasicColorGuiElement {
 	private int width = 960;
 	private int height = 600;
 
-	private String title = "This is an engine!";
+	private final String title = "This is an engine!";
+
+	private Camera cam;
 
 	public Window() {
 		super(null, 0, 0, 0, 0);
@@ -102,6 +107,8 @@ public class Window extends BasicColorGuiElement {
 
 		glfwShowWindow(window);
 		glClearColor(0, 0, 0, 0.0f);
+
+		cam = new Camera();
 	}
 
 	private void initCallbacks() {
@@ -124,74 +131,48 @@ public class Window extends BasicColorGuiElement {
 	}
 
 	private void loop() {
-		position = new Vector3f(0, 0, -3);
-		lookingDirection = new Vector3f(0, 0, 1);
-		rotation = new Vector3f(0, 0, 0);
-		upNormal = new Vector3f(0.0f, 1.0f, 0.0f);
-
 		long lastUpdate = TimeUtils.getTime();
+		long lastUpdateNano = TimeUtils.getNanoTime();
 		while ( !glfwWindowShouldClose(window) ) {
 			long dt = TimeUtils.getTime() - lastUpdate;
+			long dtNano = TimeUtils.getNanoTime() - lastUpdateNano;
 			lastUpdate = TimeUtils.getTime();
+			lastUpdateNano = TimeUtils.getNanoTime();
 
-			if(dt > 0) glfwSetWindowTitle(window, title + " (" + (int)(Math.ceil(1000.0 / dt)) + ")");
+			if(dt > 0) glfwSetWindowTitle(window, title + " (" + (int)(Math.ceil(1000000000.0 / dtNano)) + ")");
 			
 			testOpenGLError();
 			glfwPollEvents();
 
-			input();
 			update(dt);
 			render();
 		}
 	}
 
-	private Vector3f position, rotation, lookingDirection, upNormal;
-	private void input() {
-		InputHandler.getInputs();
-
-		float dx = 0, dy = 0, dz = 0;
-		if (InputHandler.isKeyPressed(GLFW_KEY_S)) dz += 0.1f;
-		if (InputHandler.isKeyPressed(GLFW_KEY_W)) dz -= 0.1f;
-
-		if (InputHandler.isKeyPressed(GLFW_KEY_D)) dx += 0.1f;
-		if (InputHandler.isKeyPressed(GLFW_KEY_A)) dx -= 0.1f;
-
-		if (InputHandler.isKeyPressed(GLFW_KEY_SPACE)) dy += 0.1f;
-		if (InputHandler.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) dy -= 0.1f;
-
-		float rotateY = 0, rotateX = 0;
-		if(InputHandler.isKeyPressed(GLFW_KEY_LEFT)) rotateY += 0.04f;
-		if(InputHandler.isKeyPressed(GLFW_KEY_RIGHT)) rotateY -= 0.04f;
-
-		if(InputHandler.isKeyPressed(GLFW_KEY_UP)) rotateX += 0.04f;
-		if(InputHandler.isKeyPressed(GLFW_KEY_DOWN)) rotateX -= 0.04f;
-
-		if(InputHandler.isLongClickConsume(GLFW_KEY_E, 2000)) dy += 10;
-
-
-		rotation.add(rotateX, rotateY, 0);
-		rotation.x = Math.min((float) Math.PI/2-0.05f, Math.max((float) -Math.PI/2 + 0.05f, rotation.x));
-
-		lookingDirection.set(0, 0, 1);
-		lookingDirection.rotateY(rotation.y);
-		lookingDirection.rotateAxis(rotation.x, -lookingDirection.z, 0, lookingDirection.x);
-		lookingDirection.normalize();
-
-		position.sub(new Vector3f(lookingDirection.x, 0, lookingDirection.z).normalize().mul(dz));
-		position.add(new Vector3f(-lookingDirection.z, 0, lookingDirection.x).normalize().mul(dx));
-		position.add(0, dy, 0);
-	}
-
 	private void update(long dt) {
 		updateGui(dt);
 		ParticleSpawner.updateAll(dt);
+		cam.update(dt);
 	}
 
 	private void render() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		Matrix4f projection_matrix = new Matrix4f().perspective((float)Math.PI/3, ((float) width)/height,0.001f, 1250f);
-		Matrix4f view_matrix = new Matrix4f().lookAt(position, new Vector3f(lookingDirection).add(position), upNormal);
+		Matrix4f view_matrix = new Matrix4f().lookAt(cam.getPosition(), new Vector3f(cam.getLookingDirection()).add(cam.getPosition()), cam.getUp());
+
+		/*
+		Matrix4f transformationMatrix = new Matrix4f(
+				1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, 1, 0,
+				0, 0, 0, 1);
+
+		Uniform uniform = new Uniform();
+		uniform.setMatrices(projection_matrix, view_matrix, transformationMatrix);
+		uniform.setVector3fs(new Vector3f(1, 0, 1));
+		Renderer.render(ShaderHandler.ShaderType.DEFAULT, ObjHandler.loadOBJ("pawn"), uniform);
+		 */
 
 		ParticleSpawner.renderAll(projection_matrix, view_matrix);
 		super.renderGui();

@@ -1,4 +1,4 @@
-package meshes;
+package meshes.loader;
 
 import java.util.Optional;
 

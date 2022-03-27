@@ -138,18 +138,16 @@ public class ParticleSpawner {
 		isSpawning = false;
 	}
 
-
-
 	public static class ParticleType {
 		//TODO: make changes a function
 		//TODO: color
 		//TODO: death emitter
 
 		private float minSize = 0.1f, maxSize = 0.4f;
-		private float sizeChange = -0.003f;
+		private float sizeChange = -0.03f;
 
-		private float minSpeed = 0.05f, maxSpeed = 0.1f;
-		private float speedChange = 0.001f;
+		private float minSpeed = 3f, maxSpeed = 8f;
+		private float speedChange = 0.01f;
 
 		private Vector3f movementDirection = new Vector3f(0, 1, 0);
 		private float angleOffset = 20f * (float) (Math.PI * 2) / 360f;

@@ -1,5 +1,6 @@
-package meshes;
+package meshes.loader;
 
+import meshes.dim2.TextureAtlas;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL46;

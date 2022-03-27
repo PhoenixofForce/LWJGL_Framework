@@ -23,7 +23,7 @@ public abstract class RenderingComponent extends Component {
 	}
 
 	@Override
-	public void update() { }
+	public void update(long dt) { }
 
 	//public abstract void render(Matrix4f projectionMatrix, Camera cam);
 	public abstract void render(Matrix4f projectionMatrix, Matrix4f viewMatrix);
