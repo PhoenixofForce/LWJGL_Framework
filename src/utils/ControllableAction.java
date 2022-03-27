@@ -11,8 +11,16 @@ public enum ControllableAction {
 	TURN_UP, TURN_DOWN,
 	;
 
-	public boolean isTaken() {
+	public boolean anyPressed() {
+		return isKeyPressed() || isGamepadPressed();
+	}
+
+	public boolean isKeyPressed() {
 		return InputHandler.isKeyPressed(Options.getKeyboardKey(this));
+	}
+
+	public boolean isGamepadPressed() {
+		return InputHandler.isKeyPressed(Options.getGamepadAction(this));
 	}
 
 }

@@ -11,10 +11,18 @@ public class KeyHit {
 
 	private boolean finishedClick;
 
+	public float value;	//for trigger and joystick
+
 	public KeyHit(int keyCode) {
+		this(keyCode, 1);
+	}
+
+	public KeyHit(int keyCode, float val) {
 		this.keyCode = keyCode;
 		this.clickStart = TimeUtils.getTime();
-		setEnd(false);
+		this.clickEnd = clickStart;
+		this.finishedClick = false;
+		this.value = val;
 	}
 
 	public void reset() {
@@ -22,13 +30,14 @@ public class KeyHit {
 		this.clickEnd = finishedClick? -1: TimeUtils.getTime();
 	}
 
-	public void setEnd(boolean finished) {
+	public void setEnd() {
 		this.clickEnd = TimeUtils.getTime();
-		this.finishedClick = finished;
+		this.finishedClick = true;
+		this.value = 0;
 	}
 
 	public long getClickDuration() {
-		return (finishedClick? clickEnd: TimeUtils.getTime()) - clickStart;
+		return getEnd() - clickStart;
 	}
 
 	public boolean isClickInProgress() {
@@ -36,7 +45,19 @@ public class KeyHit {
 	}
 
 	public long timeSinceEnd() {
-		return TimeUtils.getTime() - clickEnd;
+		return TimeUtils.getTime() - getEnd();
+	}
+
+	private long getEnd() {
+		return (finishedClick? clickEnd: TimeUtils.getTime());
+	}
+
+	public float getValue() {
+		return value;
+	}
+
+	public void setValue(float value) {
+		this.value = value;
 	}
 
 	@Override

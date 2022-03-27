@@ -14,6 +14,7 @@ import org.lwjgl.system.*;
 import rendering.Renderer;
 import rendering.ShaderHandler;
 import rendering.Uniform;
+import utils.Options;
 import utils.TimeUtils;
 import window.gui.Anchor;
 import window.gui.BasicColorGuiElement;
@@ -92,7 +93,7 @@ public class Window extends BasicColorGuiElement {
 		} // the stack frame is popped automatically
 
 		glfwMakeContextCurrent(window);
-		glfwSwapInterval(1);			//vsync on
+		glfwSwapInterval(Options.useVsync? 1: 0);			//vsync on
 
 		GL.createCapabilities();
 		glEnable(GL_DEPTH_TEST);
@@ -144,9 +145,14 @@ public class Window extends BasicColorGuiElement {
 			testOpenGLError();
 			glfwPollEvents();
 
+			input();
 			update(dt);
 			render();
 		}
+	}
+
+	private void input() {
+		InputHandler.update();
 	}
 
 	private void update(long dt) {

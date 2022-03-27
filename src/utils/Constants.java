@@ -9,4 +9,6 @@ public class Constants {
 
 	public static final int TPS = 60;
 
+	public static final float STICK_DEAD_ZONE = 0.2f;
+
 }

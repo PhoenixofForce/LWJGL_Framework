@@ -19,7 +19,6 @@ This project serves as a codebase for my games
   * Death Emitter
   * Find faster way to create float[] for instanced vbo => more particles 
   * Fix DirectionChange (it is not supposed to be an addiion, more like an rotation in the given direction)
-* Gamepad support
 
 #### Will probably do
 * MapLoader for maps from the [Level Editor](https://github.com/PhoenixofForce/Level_Editor)
