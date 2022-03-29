@@ -15,7 +15,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
  *  - a negative offset means that point is specified from the oposite border of the parent
  *  - position are always from the bottom left of the parent
  *
- *	     +---------+
+ *	         +---------+
  *           | v       |
  *           |>*       |
  *           |         |
@@ -56,17 +56,7 @@ public abstract class GuiElement {
 	}
 
 	public GuiElement(GuiElement parent, Anchor[] anchors, float xOffset, float yOffset, float width, float height) {
-		this.parent = parent;
-		this.xAnchor = anchors[0];
-		this.yAnchor = anchors[1];
-
-		this.xOffset = xOffset;
-		this.yOffset = yOffset;
-		this.width = width;
-		this.height = height;
-
-		children = new ArrayList<>();
-		if(parent != null) parent.addChild(this);
+		this(parent, anchors[0], anchors[1], xOffset, yOffset, width, height);
 	}
 
 	public GuiElement(GuiElement parent, float xOffset, float yOffset, float width, float height) {
@@ -106,7 +96,7 @@ public abstract class GuiElement {
 			out = parent.getCenterX();
 			if(!(parent instanceof Window)) out -= parentWidth / 2;
 
-			if(Math.abs(xOffset) < 1) out += xOffset * parentWidth;
+			if(Math.abs(xOffset) <= 1) out += xOffset * parentWidth;
 			else out += xOffset;
 
 			if(Math.signum(xOffset) == -1) {
@@ -126,7 +116,7 @@ public abstract class GuiElement {
 			out = parent.getCenterY();
 			if(!(parent instanceof Window)) out -= parentHeight / 2;
 
-			if(Math.abs(yOffset) < 1) out += yOffset * parentHeight;
+			if(Math.abs(yOffset) <= 1) out += yOffset * parentHeight;
 			else out += yOffset;
 
 			if(Math.signum(yOffset) == -1) {
@@ -137,10 +127,18 @@ public abstract class GuiElement {
 		return out + yAnchor.calculateOffset(getHeight());
 	}
 
+	public float getRawWidth() {
+		return width;
+	}
+
+	public void setRawWidth(float width) {
+		this.width = width;
+	}
+
 	public float getWidth() {
 		float out = 0;
 
-		if(parent != null && Math.abs(width) < 1) {
+		if(parent != null && Math.abs(width) <= 1) {
 			out += width * parent.getWidth();
 		} else {
 			out = width;
@@ -149,10 +147,18 @@ public abstract class GuiElement {
 		return out;
 	}
 
+	public float getRawHeight() {
+		return height;
+	}
+
+	public void setRawHeight(float height) {
+		this.height = height;
+	}
+
 	public float getHeight() {
 		float out = 0;
 
-		if(parent != null && Math.abs(height) < 1) {
+		if(parent != null && Math.abs(height) <= 1) {
 			out += height * parent.getHeight();
 		} else {
 			out = height;
@@ -196,7 +202,6 @@ public abstract class GuiElement {
 			for(GuiElement child: children) {
 				if(child.containsPoint(x, y)) return false;
 			}
-
 			return true;
 		}
 

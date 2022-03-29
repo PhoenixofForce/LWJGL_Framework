@@ -50,5 +50,19 @@ public class Renderer {
 		glUseProgram(0);
 	}
 
+	public static void renderArraysInstanced(ShaderHandler.ShaderType shaderType, Renderable renderable, Uniform uniform, int count) {
+		if(renderable == null) return;
+
+		glBindVertexArray(renderable.getVAO());
+		glUseProgram(shaderType.get());
+
+		uniform.load();
+
+		glDrawArraysInstanced(GL_TRIANGLES, 0, 3 * renderable.getFaceCount(), count);
+
+		glBindVertexArray(0);
+		glUseProgram(0);
+	}
+
 
 }

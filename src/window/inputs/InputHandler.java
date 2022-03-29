@@ -44,6 +44,8 @@ public class InputHandler {
 	}
 
 	public static void update() {
+		getInputs();
+
 		for (int c = 0; c < 16; c++) {
 			if (glfwJoystickPresent(GLFW_JOYSTICK_1 + c) && glfwJoystickIsGamepad(GLFW_JOYSTICK_1 + c)) {
 				ByteBuffer values = glfwGetJoystickButtons(GLFW_JOYSTICK_1 + c);

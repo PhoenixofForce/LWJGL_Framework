@@ -9,7 +9,10 @@ import utils.Constants;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -110,7 +113,15 @@ public class TextureHandler {
 	private static List<SingleTexture> readTextFile(String fileName, Optional<String> path) {
 		List<SingleTexture> out = new ArrayList<>();
 
-		Scanner s = new Scanner(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream(path.orElse(Constants.TEXTURE_PATH) + fileName + ".text")), StandardCharsets.UTF_8);
+		String file = path.orElse(Constants.TEXTURE_PATH) + fileName + ".text";
+		Scanner s = null;
+		try {
+			s = new Scanner(new FileInputStream(file), StandardCharsets.UTF_8);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return new LinkedList<>();
+		}
+
 		int amount = Integer.parseInt(s.nextLine());
 		for (int i = 0; i < amount; i++) {
 			try {

@@ -18,10 +18,6 @@ public class TimeUtils {
 		} catch (Exception ignored) {
 		}
 	}
-
-	public static double sToTick(double seconds) {
-		return seconds * Constants.TPS;
-	}
 }
 
 

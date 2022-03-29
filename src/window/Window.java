@@ -4,21 +4,21 @@ import gameobjects.entities.Camera;
 import gameobjects.particles.ParticleSpawner;
 import meshes.loader.AssetLoader;
 import meshes.ScreenRect;
-import meshes.loader.ObjHandler;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
-import rendering.Renderer;
 import rendering.ShaderHandler;
-import rendering.Uniform;
+import utils.Constants;
 import utils.Options;
 import utils.TimeUtils;
+import window.font.TextureAtlasFont;
 import window.gui.Anchor;
 import window.gui.BasicColorGuiElement;
 import window.gui.GuiElement;
+import window.gui.GuiText;
 import window.inputs.InputHandler;
 
 import java.nio.*;
@@ -159,6 +159,8 @@ public class Window extends BasicColorGuiElement {
 		updateGui(dt);
 		ParticleSpawner.updateAll(dt);
 		cam.update(dt);
+
+		Constants.RUNTIME++;
 	}
 
 	private void render() {
@@ -228,8 +230,14 @@ public class Window extends BasicColorGuiElement {
 		GuiElement healtBar = new BasicColorGuiElement(this, Anchor.BEGIN, Anchor.BEGIN, 20, 20, 200, 20);
 		GuiElement staminaBar = new BasicColorGuiElement(this, Anchor.BOTTOM_RIGHT, -20, 20, 200, 20);
 		GuiElement manaBar = new BasicColorGuiElement(this, Anchor.BOTTOM_CENTER, 0.5f, 20, 200, 20);
-		GuiElement currentMana = new BasicColorGuiElement(manaBar, Anchor.BOTTOM_LEFT, 0, 0, 0.3f, 20);
+		GuiElement currentMana = new BasicColorGuiElement(manaBar, Anchor.TOP_LEFT, 0, 1, 0.3f, 20);
 
 		GuiElement crosshair = new BasicColorGuiElement(this, 0.5f, 0.5f, 10, 10);
+
+		GuiElement text = new GuiText(this, 0.5f, 0.5f, new TextureAtlasFont("Font"), 16f)
+				.addText("Phoenix", new Vector3f(1, 0, 0))
+				.addText("of", new Vector3f(0, 1, 0))
+				.addText("Force", new Vector3f(0, 0, 1))
+				.build();
 	}
 }

@@ -1,5 +1,5 @@
 ## LWJGL Engine
-This project serves as a codebase for my games
+This project serves as a codebase for my games. Feel free to use, improve, adapt it or copy some code.
 ### Todo
 #### Must Haves
 * Entity Component System
