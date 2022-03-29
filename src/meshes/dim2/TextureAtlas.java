@@ -27,4 +27,8 @@ public class TextureAtlas {
 	public Vector4f getTextureBounds(String textureName) {
 		return textureBounds.getOrDefault(textureName, new Vector4f());
 	}
+
+	public boolean hasTexture(String textureName) {
+		return textureBounds.containsKey(textureName);
+	}
 }

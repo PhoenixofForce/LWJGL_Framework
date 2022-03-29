@@ -42,4 +42,9 @@ public class TextureAtlasFont extends Font {
 	public int getAdvance(char c) {
 		return advance;
 	}
+
+	@Override
+	public boolean hasCharacter(char c) {
+		return atlas.hasTexture(c + "");
+	}
 }

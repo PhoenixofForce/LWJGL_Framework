@@ -19,6 +19,7 @@ public class GuiText extends BasicColorGuiElement {
 
 	private List<String> text;
 	private List<Vector3f> colors;
+	private List<Float> wobbleStrengths;
 
 	private float fontSize;
 
@@ -35,7 +36,7 @@ public class GuiText extends BasicColorGuiElement {
 		Lorem Ipsum
 		Dolor sit
 
-		And the width and height get set automatically (TODO: currently the sizes match the first character thus anchors are not working as intedet here)
+		And the width and height get set automatically
 
 		+-----------+
         |Lorem Ipsum|
@@ -56,17 +57,18 @@ public class GuiText extends BasicColorGuiElement {
 	 */
 
 	public GuiText(GuiElement parent, float xOff, float yOff, Font font, float fontSize) {
-		this(parent, Anchor.TOP_CENTER, xOff, yOff, font, fontSize);
+		this(parent, Anchor.TOP_LEFT, xOff, yOff, font, fontSize);
 	}
 
 	public GuiText(GuiElement parent, Anchor[] anchors, float xOff, float yOff, Font font, float fontSize) {
-		super(parent, anchors, xOff, yOff, fontSize, fontSize * Constants.FONT_ASPECT);
+		super(parent, anchors, xOff, yOff, 0, 0);
 		this.font = font;
 		this.fontSize = fontSize;
 		this.wasBuild = false;
 
 		text = new ArrayList<>();
 		colors = new ArrayList<>();
+		wobbleStrengths = new ArrayList<>();
 	}
 
 	@Override
@@ -79,8 +81,12 @@ public class GuiText extends BasicColorGuiElement {
 	public void renderComponent() {
 		if(wasBuild) {
 			super.renderComponent();
-			float translationX = toScreenSpace(getCenterX(), Window.INSTANCE.getWidth());
-			float translationY = toScreenSpace(getCenterY(), Window.INSTANCE.getHeight());
+			//(translationX, translationY) needs to be the center of the first char
+			//getCenterX points to center of the whole text
+			//-getWidth/2 to the left side of the first letter
+			//+fontSize (aka width)/2 to the middle of the first letter
+			float translationX = toScreenSpace(getCenterX() - getWidth() / 2 + fontSize / 2, Window.INSTANCE.getWidth());
+			float translationY = toScreenSpace(getCenterY() + getHeight() / 2 - (fontSize * Constants.FONT_ASPECT / 2), Window.INSTANCE.getHeight());
 
 			ShaderHandler.ShaderType type = ShaderHandler.ShaderType.TEXT;
 			Uniform u = new Uniform();
@@ -91,22 +97,36 @@ public class GuiText extends BasicColorGuiElement {
 		}
 	}
 
-	public GuiText addText(String string, Vector3f color) {
-		for(String s: string.split(" ")) {
-			text.add(s);
-			colors.add(color);
-		}
+	//>--| BUILDER |--<\\
+
+	public GuiText addText(String string, Vector3f color, float wobbleStrength) {
+		text.add(string.replaceAll("(\r\n|\r)", "\n"));	//we want \n be the only newline character
+		colors.add(color);
+		wobbleStrengths.add(wobbleStrength);
 
 		return this;
+	}
+
+	public GuiText addText(String string, Vector3f color) {
+		return this.addText(string, color, 0);
 	}
 
 	public GuiText addText(String string) {
 		return this.addText(string, new Vector3f(1));
 	}
 
+	public GuiText newLine() {
+		return this.addText("\n");
+	}
+
 	public GuiText build() {
 		wasBuild = true;
-		model = new TextModel(font, fontSize, width, text, colors);
+		model = new TextModel(font, fontSize, width, text, colors, wobbleStrengths);
+		displayTime = -writerDuration / model.charCount() * 8;
+
+		if(width == 0) this.setRawWidth(model.getWidth());
+		if(height == 0) this.setRawHeight(model.getHeight());
+
 		return this;
 	}
 }

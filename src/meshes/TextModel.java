@@ -25,11 +25,13 @@ public class TextModel extends Renderable {
 	private int instanceVBO;
 
 	private int chars = 0;
+	private float width;
+	private float height;
 
-	public TextModel(Font font, float fontSize, float width, List<String> text, List<Vector3f> colors) {
+	public TextModel(Font font, float fontSize, float width, List<String> text, List<Vector3f> colors, List<Float> wobbleStrengths) {
 		super();
 		initVao();
-		setupInstance(font, fontSize, width, text, colors);
+		setupInstance(font, fontSize, width, text, colors, wobbleStrengths);
 	}
 
 	private void initVao() {
@@ -54,7 +56,7 @@ public class TextModel extends Renderable {
 		buffers.add(rectUVVBO);
 	}
 
-	private void setupInstance(Font font, float fontSize, float width, List<String> text, List<Vector3f> colors) {
+	private void setupInstance(Font font, float fontSize, float width, List<String> text, List<Vector3f> colors, List<Float> wobbleStrengths) {
 		List<Float> floatsData = new ArrayList<>();
 
 		float fontWidth = fontSize;
@@ -64,35 +66,50 @@ public class TextModel extends Renderable {
 		float y = 0;
 
 		chars = 0;
+		int indexes = 0;
 		for(int i = 0; i < text.size(); i++) {
 			String s = text.get(i);
 			Vector3f color = colors.get(i);
+			float wobbleStrength = wobbleStrengths.get(i);
 
 			for(char c: s.toUpperCase().toCharArray()) {
-				x += fontWidth * font.getXoffset(c) / 2;
+				//TODO: use offsets
 
-				floatsData.add(x);
-				floatsData.add(y);
-				floatsData.add(fontWidth);
-				floatsData.add(fontHeight);
+				if(font.hasCharacter(c)) {
+					floatsData.add(x);
+					floatsData.add(y);
+					floatsData.add(fontWidth);
+					floatsData.add(fontHeight);
 
-				Vector4f uvBounds = font.getBounds(c);
-				floatsData.add(uvBounds.x);
-				floatsData.add(uvBounds.y);
-				floatsData.add(uvBounds.z);
-				floatsData.add(uvBounds.w);
+					Vector4f uvBounds = font.getBounds(c);
+					floatsData.add(uvBounds.x);
+					floatsData.add(uvBounds.y);
+					floatsData.add(uvBounds.z);
+					floatsData.add(uvBounds.w);
 
-				floatsData.add(color.x);
-				floatsData.add(color.y);
-				floatsData.add(color.z);
+					floatsData.add(color.x);
+					floatsData.add(color.y);
+					floatsData.add(color.z);
 
-				floatsData.add((float) chars);
-				floatsData.add(0.2f);
+					floatsData.add((float) indexes);
+					floatsData.add(wobbleStrength);
 
-				x += fontWidth * font.getAdvance(c) / 2;
+					indexes++;
+				}
+
+				if(c == '\n') {
+					width = Math.max(0, x - Constants.FONT_SPACING * fontWidth);
+					x = 0;
+					y -= fontHeight * (2 + Constants.FONT_SPACING);
+				} else {
+					x += fontWidth * (2 + Constants.FONT_SPACING);
+				}
+
 				chars++;
 			}
 		}
+		this.width = Math.max(width, x - Constants.FONT_SPACING * fontWidth);
+		this.height = -y + fontHeight * 2;
 
 		int floats = 4 + 4 + 3 + 1 + 1;	//4 for position, 4 for atlas bounds, 3 for color, 1 for the char index, 1 for wobble strength
 		float[] data = new float[floatsData.size()];
@@ -151,5 +168,13 @@ public class TextModel extends Renderable {
 	@Override
 	public int getFaceCount() {
 		return 2;
+	}
+
+	public float getWidth() {
+		return width / 2;
+	}
+
+	public float getHeight() {
+		return height / 2;
 	}
 }

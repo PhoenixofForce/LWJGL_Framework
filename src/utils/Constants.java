@@ -12,7 +12,7 @@ public class Constants {
 	public static final float STICK_DEAD_ZONE = 0.2f;
 
 	public static final float FONT_ASPECT = 7.0f / 5.0f; 		//font height : font width
-
+	public static final float FONT_SPACING = 0.25f;
 
 	public static final float[] RECT_VERT = new float[]{
 			-1.0f, -1.0f,

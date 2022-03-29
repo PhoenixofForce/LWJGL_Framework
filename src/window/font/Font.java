@@ -11,13 +11,6 @@ public abstract class Font {
 	public abstract int getYoffset(char c);
 	public abstract int getAdvance(char c);
 
-	public int getWidth(String s) {
-		int x = 0;
-		for(char c: s.toCharArray()) {
-			x += getAdvance(c);
-		}
-
-		return x;
-	}
+	public abstract boolean hasCharacter(char c);
 
 }

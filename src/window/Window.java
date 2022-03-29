@@ -234,10 +234,12 @@ public class Window extends BasicColorGuiElement {
 
 		GuiElement crosshair = new BasicColorGuiElement(this, 0.5f, 0.5f, 10, 10);
 
-		GuiElement text = new GuiText(this, 0.5f, 0.5f, new TextureAtlasFont("Font"), 16f)
+		GuiElement text = new GuiText(this, Anchor.TOP_LEFT, 20, -20, new TextureAtlasFont("Font"), 16f)
 				.addText("Phoenix", new Vector3f(1, 0, 0))
-				.addText("of", new Vector3f(0, 1, 0))
+				.addText("of", new Vector3f(0, 1, 0), 0.02f)
 				.addText("Force", new Vector3f(0, 0, 1))
+				.newLine()
+				.addText("Test Test2")
 				.build();
 	}
 }
