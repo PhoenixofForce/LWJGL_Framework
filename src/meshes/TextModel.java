@@ -4,11 +4,12 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import rendering.Renderable;
 import utils.Constants;
-import window.Window;
 import window.font.Font;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL15.*;
@@ -21,6 +22,13 @@ import static org.lwjgl.opengl.GL45.glEnableVertexArrayAttrib;
 
 public class TextModel extends Renderable {
 
+	/*
+		NOTE: In this class are some * 2 and / 2 when calculating widths ant heights
+		im not sure why that is needed, but i thinks its because the vertices used are from [-1, 1] which makes the rectangle 2 long
+	 */
+
+	private float maxWidth, maxHeight;
+
 	private int rectVAO, rectVBO, rectUVVBO;
 	private int instanceVBO;
 
@@ -30,8 +38,11 @@ public class TextModel extends Renderable {
 
 	private static final int floats = 4 + 4 + 3 + 1 + 1;	//4 for position, 4 for atlas bounds, 3 for color, 1 for the char index, 1 for wobble strength
 
-	public TextModel() {
+	public TextModel(float maxWidth, float maxHeight) {
 		super();
+		this.maxWidth = (maxWidth == 0? Float.MAX_VALUE: maxWidth);
+		this.maxHeight = (maxHeight == 0? Float.MAX_VALUE: maxHeight);
+
 		initVao();
 		createInstanceVBO();
 	}
@@ -89,7 +100,7 @@ public class TextModel extends Renderable {
 		glBindVertexArray(0);
 	}
 
-	public void updateInstance(Font font, float fontSize, float width, List<String> text, List<Vector3f> colors, List<Float> wobbleStrengths) {
+	public void updateInstance(Font font, float fontSize, float width, List<String> textFragments, List<Vector3f> colorFragments, List<Float> wobbleStrengthFragments) {
 		List<Float> floatsData = new ArrayList<>();
 
 		float fontWidth = fontSize;
@@ -100,60 +111,116 @@ public class TextModel extends Renderable {
 
 		chars = 0;
 		int indexes = 0;
-		for(int i = 0; i < text.size(); i++) {
-			String s = text.get(i);
-			Vector3f color = colors.get(i);
-			float wobbleStrength = wobbleStrengths.get(i);
 
-			for(char c: s.toUpperCase().toCharArray()) {
-				//TODO: use offsets
+		mainLoop:
+		for(int fragmentIndex = 0; fragmentIndex < textFragments.size(); fragmentIndex++) {
+			if(-y + fontHeight * 2 > maxHeight * 2) break mainLoop; //height restrain
 
-				if(font.hasCharacter(c)) {
-					floatsData.add(x);
-					floatsData.add(y);
-					floatsData.add(fontWidth);
-					floatsData.add(fontHeight);
+			Vector3f color = colorFragments.get(fragmentIndex);
+			float wobbleStrength = wobbleStrengthFragments.get(fragmentIndex);
 
-					Vector4f uvBounds = font.getBounds(c);
-					floatsData.add(uvBounds.x);
-					floatsData.add(uvBounds.y);
-					floatsData.add(uvBounds.z);
-					floatsData.add(uvBounds.w);
+			String[] words = (textFragments.get(fragmentIndex) + "a").split(" ");	//add a an character at the end so we keep spaces at the end
 
-					floatsData.add(color.x);
-					floatsData.add(color.y);
-					floatsData.add(color.z);
+			for(int wordIndex = 0; wordIndex < words.length; wordIndex++) {
+				String word = words[wordIndex];
+				if(wordIndex == words.length - 1) word = word.substring(0, word.length() - 1);	//cut of the a again
 
-					floatsData.add((float) indexes);
-					floatsData.add(wobbleStrength);
+				float stringLength = calculateWidth(word, fontSize);
 
-					indexes++;
+
+				if(x + stringLength > maxWidth * 2 && !word.startsWith("\n")) {	//if word is too long for current line
+					//start a new line
+					if(x > 0) {
+						width = Math.max(0, x - Constants.FONT_SPACING * fontWidth);
+						x = 0;
+						y -= fontHeight * (2 + Constants.FONT_SPACING);
+					}
+
+					if(-y + fontHeight * 2 > maxHeight * 2) break mainLoop;
+
+					if(stringLength > maxWidth * 2) {		//if word is longer than a line
+						word = cutLine(word, fontSize);		//cut it so that it fits
+					}
 				}
 
-				if(c == '\n') {
-					width = Math.max(0, x - Constants.FONT_SPACING * fontWidth);
-					x = 0;
-					y -= fontHeight * (2 + Constants.FONT_SPACING);
-				} else {
-					x += fontWidth * (2 + Constants.FONT_SPACING);
+				char[] charArray = word.toUpperCase().toCharArray();	//TODO: my font has only uppercase character
+				for (char c : charArray) {
+					if (font.hasCharacter(c)) {
+						addData(floatsData, x, y, fontWidth, fontHeight);
+						addData(floatsData, font.getBounds(c));
+						addData(floatsData, color);
+						addData(floatsData, indexes, wobbleStrength);
+
+						indexes++;
+					}
+
+					if (c == '\n') {
+						width = Math.max(0, x - Constants.FONT_SPACING * fontWidth);
+						x = 0;
+						y -= fontHeight * (2 + Constants.FONT_SPACING);
+
+						if(-y + fontHeight * 2 > maxHeight * 2) break mainLoop;
+					} else {
+						x += fontWidth * (2 + Constants.FONT_SPACING);		//times 2 to start directly after the char, + spacing for spacing
+					}
+
+					chars++;
 				}
 
-				chars++;
+				//We need no space after the last character
+				if(wordIndex < words.length - 1) x += fontWidth * (2 + Constants.FONT_SPACING);
 			}
 		}
+
+		//remove spacing
 		this.width = Math.max(width, x - Constants.FONT_SPACING * fontWidth);
 		this.height = -y + fontHeight * 2;
 
+		//parse data to opengl
 		float[] data = new float[floatsData.size()];
 		for(int i = 0; i < floatsData.size(); i++) {
 			data[i] = floatsData.get(i);
 		}
 
-
 		glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
 		glBufferData(GL_ARRAY_BUFFER, chars * floats * 4L, GL_STREAM_DRAW);
 		glBufferData(GL_ARRAY_BUFFER, data, GL_STREAM_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
+	/*
+		Cuts a string so that it spans multiple lines
+		12345 <- maxLineLength
+		ThisIsALongLineForDemo
+
+		=>
+
+		12345 <- maxLineLength
+		This-
+		IsAL-
+		ongL-
+		ineF-
+		orDe-
+		mo
+	 */
+	private String cutLine(String in, float fontSize) {
+		//https://stackoverflow.com/questions/3760152/split-string-to-equal-length-substrings-in-java
+
+		int lineLength = charsInLine(maxWidth, fontSize) - 1;
+		String[] slices = in.split("(?<=\\G.{" + lineLength + "})");
+
+		return String.join("-\n", slices);
+	}
+
+
+	private float calculateWidth(String text, float size) {
+		return text.length() * size * (2 + Constants.FONT_SPACING) - Constants.FONT_SPACING * size;
+	}
+
+	private int charsInLine(float width, float size) {
+		float out = width + Constants.FONT_SPACING * size;
+		out /= (size * (2 + Constants.FONT_SPACING));
+		return (int) Math.floor(out * 2);
 	}
 
 	@Override
@@ -189,4 +256,27 @@ public class TextModel extends Renderable {
 	public float getHeight() {
 		return height / 2;
 	}
+
+
+	private void addData(List<Float> floats, float... toAdd) {
+		for(float f: toAdd) floats.add(f);
+	}
+
+	private void addData(List<Float> floats, Vector3f... toAdd) {
+		for(Vector3f f: toAdd) {
+			floats.add(f.x);
+			floats.add(f.y);
+			floats.add(f.z);
+		}
+	}
+
+	private void addData(List<Float> floats, Vector4f... toAdd) {
+		for(Vector4f f: toAdd) {
+			floats.add(f.x);
+			floats.add(f.y);
+			floats.add(f.z);
+			floats.add(f.w);
+		}
+	}
+
 }

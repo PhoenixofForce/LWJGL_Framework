@@ -6,6 +6,7 @@ import rendering.Renderer;
 import rendering.ShaderHandler;
 import rendering.Uniform;
 import utils.Constants;
+import utils.TimeUtils;
 import window.Window;
 import window.font.Font;
 
@@ -45,7 +46,7 @@ public class GuiText extends BasicColorGuiElement {
         |Dolor sit  |
         +-----------+
 
-        And with the second type you specify the width of the box (5)	(TODO: not implemented)
+        And with the second type you specify the width of the box (5)
         +-----+
         +-----+
 
@@ -63,13 +64,25 @@ public class GuiText extends BasicColorGuiElement {
 	}
 
 	public GuiText(GuiElement parent, Anchor[] anchors, float xOff, float yOff, Font font, float fontSize) {
-		super(parent, anchors, xOff, yOff, 0, 0);
+		this(parent, anchors, xOff, yOff, font, fontSize, 2000);
+	}
+
+	public GuiText(GuiElement parent, Anchor[] anchors, float xOff, float yOff, Font font, float fontSize, long writerDuration) {
+		this(parent, anchors, xOff, yOff, 0, font, fontSize, writerDuration);
+	}
+
+	public GuiText(GuiElement parent, Anchor[] anchors, float xOff, float yOff, float width, Font font, float fontSize, long writerDuration) {
+		this(parent, anchors, xOff, yOff, width, 0, font, fontSize, writerDuration);
+	}
+
+	public GuiText(GuiElement parent, Anchor[] anchors, float xOff, float yOff, float width, float height, Font font, float fontSize, long writerDuration) {
+		super(parent, anchors, xOff, yOff, width, height);
 		this.font = font;
 		this.fontSize = fontSize;
 
-		fixedWidth = false;
-		fixedHeight = false;
-		clear(2000);
+		fixedWidth =  width != 0;
+		fixedHeight = height != 0;
+		clear(writerDuration);
 	}
 
 	@Override
@@ -136,11 +149,11 @@ public class GuiText extends BasicColorGuiElement {
 
 	public GuiText build() {
 		if(model == null) {
-			model = new TextModel();
+			model = new TextModel(getWidth(), getHeight());
 		}
 		model.updateInstance(font, fontSize, width, text, colors, wobbleStrengths);
 
-		displayTime = -writerDuration / model.charCount();
+		if(model.charCount() > 0) displayTime = -writerDuration / model.charCount();
 
 		if(!fixedWidth) this.setRawWidth(model.getWidth());
 		if(!fixedHeight) this.setRawHeight(model.getHeight());
