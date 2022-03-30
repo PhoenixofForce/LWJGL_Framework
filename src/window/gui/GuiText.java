@@ -24,10 +24,12 @@ public class GuiText extends BasicColorGuiElement {
 	private float fontSize;
 
 	private TextModel model;
-	private boolean wasBuild;
 
 	private long writerDuration = 2000;
 	private long displayTime = -500;
+
+	private boolean fixedWidth;
+	private boolean fixedHeight;
 
 	/*
 		There are two types of texts
@@ -64,11 +66,10 @@ public class GuiText extends BasicColorGuiElement {
 		super(parent, anchors, xOff, yOff, 0, 0);
 		this.font = font;
 		this.fontSize = fontSize;
-		this.wasBuild = false;
 
-		text = new ArrayList<>();
-		colors = new ArrayList<>();
-		wobbleStrengths = new ArrayList<>();
+		fixedWidth = false;
+		fixedHeight = false;
+		clear(2000);
 	}
 
 	@Override
@@ -79,7 +80,7 @@ public class GuiText extends BasicColorGuiElement {
 
 	@Override
 	public void renderComponent() {
-		if(wasBuild) {
+		if(model != null) {
 			super.renderComponent();
 			//(translationX, translationY) needs to be the center of the first char
 			//getCenterX points to center of the whole text
@@ -119,13 +120,30 @@ public class GuiText extends BasicColorGuiElement {
 		return this.addText("\n");
 	}
 
-	public GuiText build() {
-		wasBuild = true;
-		model = new TextModel(font, fontSize, width, text, colors, wobbleStrengths);
-		displayTime = -writerDuration / model.charCount() * 8;
+	public GuiText clear() {
+		return clear(0);
+	}
 
-		if(width == 0) this.setRawWidth(model.getWidth());
-		if(height == 0) this.setRawHeight(model.getHeight());
+	public GuiText clear(long writerDuration) {
+		this.writerDuration = writerDuration;
+
+		text = new ArrayList<>();
+		colors = new ArrayList<>();
+		wobbleStrengths = new ArrayList<>();
+
+		return this;
+	}
+
+	public GuiText build() {
+		if(model == null) {
+			model = new TextModel();
+		}
+		model.updateInstance(font, fontSize, width, text, colors, wobbleStrengths);
+
+		displayTime = -writerDuration / model.charCount();
+
+		if(!fixedWidth) this.setRawWidth(model.getWidth());
+		if(!fixedHeight) this.setRawHeight(model.getHeight());
 
 		return this;
 	}

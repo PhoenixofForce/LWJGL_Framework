@@ -117,6 +117,6 @@ public abstract class Renderable {
 		buffers.forEach(GL46::glDeleteBuffers);
 
 		glBindVertexArray(0);
-		glDeleteVertexArrays(vao);
+		glDeleteVertexArrays(getVAO());
 	}
 }

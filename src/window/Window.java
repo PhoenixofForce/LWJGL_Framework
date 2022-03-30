@@ -22,6 +22,8 @@ import window.gui.GuiText;
 import window.inputs.InputHandler;
 
 import java.nio.*;
+import java.nio.charset.Charset;
+import java.util.Random;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -155,10 +157,16 @@ public class Window extends BasicColorGuiElement {
 		InputHandler.update();
 	}
 
+	private GuiText text;
+
 	private void update(long dt) {
 		updateGui(dt);
 		ParticleSpawner.updateAll(dt);
 		cam.update(dt);
+
+		if(Constants.RUNTIME >= 500) {
+			text.clear().addText("TICKS: ").addText(Constants.RUNTIME + "", Constants.RUNTIME > 1000? new Vector3f(1, 0, 0): (Constants.RUNTIME > 750? new Vector3f(1, 1, 0): new Vector3f(0, 0, 1))).build();
+		}
 
 		Constants.RUNTIME++;
 	}
@@ -202,7 +210,7 @@ public class Window extends BasicColorGuiElement {
 		ScreenRect.getInstance().cleanUp();
 	}
 
-	private void testOpenGLError() {
+	public void testOpenGLError() {
 		int errorCode = glGetError();
 		if (errorCode != GL_NO_ERROR) {
 			if(errorCode == GL_INVALID_ENUM) throw new RuntimeException("Invalid Enumereraion (" + errorCode + ")");
@@ -234,7 +242,7 @@ public class Window extends BasicColorGuiElement {
 
 		GuiElement crosshair = new BasicColorGuiElement(this, 0.5f, 0.5f, 10, 10);
 
-		GuiElement text = new GuiText(this, Anchor.TOP_LEFT, 20, -20, new TextureAtlasFont("Font"), 16f)
+		text = new GuiText(this, Anchor.TOP_LEFT, 20, -20, new TextureAtlasFont("Font"), 16f)
 				.addText("Phoenix", new Vector3f(1, 0, 0))
 				.addText("of", new Vector3f(0, 1, 0), 0.02f)
 				.addText("Force", new Vector3f(0, 0, 1))
