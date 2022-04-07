@@ -2,6 +2,7 @@ package window.gui;
 
 import window.inputs.InputHandler;
 import window.Window;
+import window.listener.MouseClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +38,12 @@ public abstract class GuiElement {
 	protected GuiElement parent;
 	protected float xOffset, yOffset;
 	protected float width, height;
+	protected Anchor xAnchor, yAnchor;
 
 	protected List<GuiElement> children;
-	protected Anchor xAnchor, yAnchor;
+	private MouseClickListener listener;
+
+	private boolean isHidden;
 
 	public GuiElement(GuiElement parent, Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height) {
 		this.parent = parent;
@@ -68,6 +72,8 @@ public abstract class GuiElement {
 	}
 
 	public void renderGui() {
+		if(isHidden) return;
+
 		if(parent != null) {
 			renderComponent();
 		}
@@ -86,6 +92,79 @@ public abstract class GuiElement {
 
 	public abstract void renderComponent();
 	public void updateComponent(long dt) { }
+
+	private void addChild(GuiElement element) {
+		children.add(element);
+	}
+	public void setMouseClickListener(MouseClickListener listener) {
+		this.listener = listener;
+	}
+
+	public void hide() {
+		isHidden = true;
+	}
+
+	public void unhide() {
+		isHidden = false;
+	}
+
+	//>--| Input |--<\\
+
+	protected float[] handleMouseButton(int event, int button, float x, float y) {
+		float[] out = null;
+		boolean isClickOnChild = false;
+
+		for(GuiElement child: children) {
+			if(child.containsPoint(x, y)) {
+				isClickOnChild = true;
+				out = child.handleMouseButton(event, button, x, y);
+				break;
+			}
+		}
+
+		if(!isClickOnChild) {
+			onClick(event, button);
+		}
+
+		float xOff = xAnchor.calculateOffset(getWidth());
+		float yOff = yAnchor.calculateOffset(getHeight());
+		return out == null?
+				new float[]{getCenterX() - xOff + Math.signum(xOff), getCenterY() - yOff + Math.signum(yOff)}:
+				out;
+	}
+
+	public void onClick(int event, int button) {
+		if(listener != null) listener.onClick(event, button);
+	}
+
+	protected boolean isMouseEntered() {
+		float x = InputHandler.mouseX;
+		float y = InputHandler.mouseY;
+
+		if(containsPoint(x, y)) {
+			for(GuiElement child: children) {
+				if(child.containsPoint(x, y)) return false;
+			}
+			return true;
+		}
+
+		return false;
+	}
+
+	protected boolean containsPoint(float x, float y) {
+		float width = getWidth();
+		float height = getHeight();
+
+		float lowerX = getCenterX() - width / 2f;
+		float lowerY = getCenterY() - height / 2f;
+
+		boolean out = x >= lowerX && x < lowerX + width &&
+				y >= lowerY && y < lowerY + height;
+
+		return out;
+	}
+
+	//>--| Sizes and positions |--<\\
 
 	public float getCenterX() {
 		float out = 0;
@@ -170,60 +249,5 @@ public abstract class GuiElement {
 	protected float toScreenSpace(float value, float length) {
 		float out = value / length;
 		return out * 2 - 1;
-	}
-
-	private void addChild(GuiElement element) {
-		children.add(element);
-	}
-
-	protected void handleMouseButton(int event, int button, float x, float y) {
-		boolean isClickOnChild = false;
-
-		for(GuiElement child: children) {
-			if(child.containsPoint(x, y)) {
-				isClickOnChild = true;
-				child.handleMouseButton(event, button, x, y);
-				break;
-			}
-		}
-
-		if(!isClickOnChild) {
-			if(event == GLFW_RELEASE) onClick(button);
-		}
-	}
-
-	public void onClick(int button) { }
-
-	protected boolean isMouseEntered() {
-		float x = InputHandler.mouseX;
-		float y = InputHandler.mouseY;
-
-		if(containsPoint(x, y)) {
-			for(GuiElement child: children) {
-				if(child.containsPoint(x, y)) return false;
-			}
-			return true;
-		}
-
-		return false;
-	}
-
-	protected boolean containsPoint(float x, float y) {
-		float width = getWidth();
-		float height = getHeight();
-
-		float lowerX = getCenterX() - width / 2f;
-		float lowerY = getCenterY() - height / 2f;
-
-		boolean out = x >= lowerX && x < lowerX + width &&
-				y >= lowerY && y < lowerY + height;
-
-		/*
-		System.out.println(lowerX + " " + x + " " + (lowerX + width));
-		System.out.println(lowerY + " " + y + " " + (lowerY + height));
-		System.out.println(out);
-		 */
-
-		return out;
 	}
 }

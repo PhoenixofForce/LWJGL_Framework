@@ -13,7 +13,7 @@ import rendering.Uniform;
 public class ModelRenderComponent extends RenderingComponent {
 
 	private Uniform uniform;
-	private static Matrix4f transformation = new Matrix4f(
+	private static final Matrix4f transformation = new Matrix4f(
 			1, 0, 0, 0,
 			0, 1, 0, 0,
 			0, 0, 1, 0,

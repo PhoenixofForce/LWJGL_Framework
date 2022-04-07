@@ -6,7 +6,6 @@ import rendering.Renderer;
 import rendering.ShaderHandler;
 import rendering.Uniform;
 import utils.Constants;
-import utils.TimeUtils;
 import window.Window;
 import window.font.Font;
 
@@ -26,8 +25,10 @@ public class GuiText extends BasicColorGuiElement {
 
 	private TextModel model;
 
-	private long writerDuration = 2000;
-	private long displayTime = -500;
+	private long writerDuration = 0;
+	private long displayTime = 0;
+
+	private long clearAfterMS;
 
 	private boolean fixedWidth;
 	private boolean fixedHeight;
@@ -89,6 +90,10 @@ public class GuiText extends BasicColorGuiElement {
 	public void updateGui(long dt) {
 		super.updateGui(dt);
 		displayTime += dt;
+
+		if(clearAfterMS >= 0 && displayTime >= clearAfterMS + writerDuration) {
+			clear().addText("").build();
+		}
 	}
 
 	@Override
@@ -137,8 +142,13 @@ public class GuiText extends BasicColorGuiElement {
 		return clear(0);
 	}
 
-	public GuiText clear(long writerDuration) {
-		this.writerDuration = writerDuration;
+	public GuiText clear(long writerDurationPerChar) {
+		return clear(writerDurationPerChar, -1L);
+	}
+
+	public GuiText clear(long writerDurationPerChar, long clearAfterMS) {
+		this.writerDuration = writerDurationPerChar;
+		this.clearAfterMS = clearAfterMS;
 
 		text = new ArrayList<>();
 		colors = new ArrayList<>();
@@ -153,7 +163,9 @@ public class GuiText extends BasicColorGuiElement {
 		}
 		model.updateInstance(font, fontSize, width, text, colors, wobbleStrengths);
 
-		if(model.charCount() > 0) displayTime = -writerDuration / model.charCount();
+		//writer duration is set per char so we have to multiple it with the amount of characters
+		if(model.charCount() > 0) displayTime = -writerDuration;
+		writerDuration *= model.charCount();
 
 		if(!fixedWidth) this.setRawWidth(model.getWidth());
 		if(!fixedHeight) this.setRawHeight(model.getHeight());

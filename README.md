@@ -25,6 +25,8 @@ This project serves as a codebase for my games. Feel free to use, improve, adapt
 * MapLoader for maps from the [Level Editor](https://github.com/PhoenixofForce/Level_Editor)
   * Script language, which is also used in many of my other games
 * Lights
+* Having multiple buttons for the same controls
+* Multiplayer support
 
 #### Have to think about
 * (Maybe have RenderStates, that set BlendFunc, DepthTest and so on)

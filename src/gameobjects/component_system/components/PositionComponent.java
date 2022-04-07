@@ -7,9 +7,9 @@ import org.joml.Vector3f;
 
 public class PositionComponent extends Component {
 
-	private Vector3f position;
-	private Vector3f rotation;
-	private Vector3f scale;
+	protected Vector3f position;
+	protected Vector3f rotation;
+	protected Vector3f scale;
 
 	public PositionComponent(Entity e) {
 		this(e, new Vector3f(0, 0, 0));

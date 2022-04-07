@@ -44,4 +44,7 @@ public class MathUtils {
 		return res;
 	}
 
+	public static Vector3f vecFromColor(int r, int g, int b) {
+		return new Vector3f(r / 255.0f, g / 255.0f, b / 255.0f);
+	}
 }

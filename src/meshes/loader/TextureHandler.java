@@ -123,9 +123,10 @@ public class TextureHandler {
 		}
 
 		int amount = Integer.parseInt(s.nextLine());
+		String[] line = new String[0];
 		for (int i = 0; i < amount; i++) {
 			try {
-				String[] line = s.nextLine().split(" ");
+				line = s.nextLine().split(" ");
 
 				String texture = line[0];
 				int x = Integer.parseInt(line[1]);
@@ -135,7 +136,7 @@ public class TextureHandler {
 
 				out.add(new SingleTexture(texture, new Vector4f(x, y, width, height)));
 			} catch (Exception e) {
-				throw new RuntimeException(String.format("Loading spriteSheet: %s in line %d (%s)", fileName, i + 2, e.toString()));
+				throw new RuntimeException(String.format("Loading spriteSheet: %s in line %d (%s)", fileName, i + 2, Arrays.toString(line)));
 			}
 		}
 
@@ -164,7 +165,7 @@ public class TextureHandler {
 		GL46.glTexParameteri(GL46.GL_TEXTURE_2D, GL46.GL_TEXTURE_WRAP_S, GL46.GL_REPEAT);
 		GL46.glTexParameteri(GL46.GL_TEXTURE_2D, GL46.GL_TEXTURE_WRAP_T, GL46.GL_REPEAT);
 
-		GL46.glTexImage2D(GL46.GL_TEXTURE_2D, 0, GL46.GL_SRGB_ALPHA, image.getWidth(), image.getHeight(), 0, GL46.GL_RGBA, GL46.GL_UNSIGNED_BYTE, formatImage(image));
+		GL46.glTexImage2D(GL46.GL_TEXTURE_2D, 0, GL46.GL_RGBA, image.getWidth(), image.getHeight(), 0, GL46.GL_RGBA, GL46.GL_UNSIGNED_BYTE, formatImage(image));
 		GL46.glGenerateMipmap(GL46.GL_TEXTURE_2D);
 		GL46.glBindTexture(GL46.GL_TEXTURE_2D, 0);
 		return texture;

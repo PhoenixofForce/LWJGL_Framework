@@ -2,6 +2,7 @@ package rendering;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import utils.VecUtils;
 
@@ -50,10 +51,22 @@ public class UniformLoader {
 		}
 	}
 
+	private static final int vec4Start = vec3Start + maxVec3s;
+	private static final int maxVec4s = 100;
+	public static void loadVec4s(Vector4f... vecs) {
+		for(int i = 0; i < Math.min(vecs.length, maxVec4s); i++) {
+			Vector4f v = vecs[i];
+			if(v == null) v = new Vector4f();
+			glUniform4f(vec4Start + i, v.x, v.y, v.z, v.w);
+		}
+	}
+
 	static {
 		System.out.println("Matrices start with: " + matrixStart);
 		System.out.println("Textures start with: " + textureStart);
 		System.out.println("Floats start with: " + floatStart);
 		System.out.println("Vec3f start with: " + vec3Start);
+		System.out.println("Vec4f start with: " + vec4Start);
 	}
+
 }

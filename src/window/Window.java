@@ -114,12 +114,17 @@ public class Window extends BasicColorGuiElement {
 		cam = new Camera();
 	}
 
+	private float[] clickStart;
 	private void initCallbacks() {
 		InputHandler.callbacks();
 
 		glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
-			float[] mousePosition = InputHandler.getMousePosition();
-			handleMouseButton(action, button, mousePosition[0], mousePosition[1]);
+			if(action == GLFW_PRESS) {
+				clickStart = InputHandler.getMousePosition();
+				clickStart = handleMouseButton(action, button, clickStart[0], clickStart[1]);
+			} else {
+				handleMouseButton(action, button, clickStart[0], clickStart[1]);
+			}
 		});
 
 		glfwSetWindowSizeCallback(window, (window, width, height) -> {
@@ -242,7 +247,7 @@ public class Window extends BasicColorGuiElement {
 
 		GuiElement crosshair = new BasicColorGuiElement(this, 0.5f, 0.5f, 10, 10);
 
-		text = new GuiText(this, Anchor.TOP_LEFT,  20, -20f, 400, new TextureAtlasFont("Font"), 16f, 10000)
+		text = new GuiText(this, Anchor.TOP_LEFT,  20, -20f, 400, new TextureAtlasFont("Font"), 16f, 50)
 				.addText("Phoenix", new Vector3f(1, 0, 0))
 				.addText("of", new Vector3f(0, 1, 0), 0.02f)
 				.addText("Force", new Vector3f(0, 0, 1))
