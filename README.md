@@ -9,7 +9,7 @@ This project serves as a codebase for my games. Feel free to use, improve, adapt
   * Make Basic Elements (Buttons, slider, checkboxes)
 * Text Rendering
   * ~~Colored Text~~
-  * ~~Text Effects (wobble, ...)~~
+  * Text Effects (~~wobble~~, ...)
   * Sprites
   * Correctly use fonts
   * ~~TypeWriter Effect~~
