@@ -152,6 +152,8 @@ public class TextModel extends Renderable {
 						addData(floatsData, indexes, wobbleStrength);
 
 						indexes++;
+						if(c == '.') indexes += 9; //longer pauses after sentence
+						else if(c == ',') indexes += 4; //short pauses after commata
 					}
 
 					if (c == '\n') {

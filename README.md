@@ -8,10 +8,11 @@ This project serves as a codebase for my games. Feel free to use, improve, adapt
 * Gui
   * Make Basic Elements (Buttons, slider, checkboxes)
 * Text Rendering
-  * Colored Text
-  * Text Effects (wobble, ...)
+  * ~~Colored Text~~
+  * ~~Text Effects (wobble, ...)~~
   * Sprites
-  * TypeWriter Effect
+  * Correctly use fonts
+  * ~~TypeWriter Effect~~
   * Intruduce Text format ex: `[color: #FF0000, effects: [wobble]] Hello` for a wobbly red Hello
 * Particles
   * Animated Particles

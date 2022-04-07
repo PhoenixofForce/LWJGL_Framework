@@ -23,8 +23,15 @@ out vec3 color;
 out vec2 fragTexCoord;
 out float charID;
 
+vec2 random2( vec2 p ) {
+    return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3))))*43758.5453);
+}
+
 void main()
 {
+
+    vec2 shakey = random2((spriteSheetBounds.xy + vec2(1)) * ticks * charIndex) * wobbleStrength;
+    shakey = vec2(shakey.x, shakey.y * 1.4);
 
     float wobble = sin((ticks + charIndex * 2) * 0.1f) * wobbleStrength;
 
@@ -38,7 +45,7 @@ void main()
     );
 
 
-    gl_Position = transformation * cPosition + vec4(0, wobble, 0, 0);
+    gl_Position = transformation * cPosition + vec4(0, 0 + wobble, 0, 0);
 
     vec2 atlasSize = textureSize(atlas, 0);
     vec2 range = spriteSheetBounds.zw;

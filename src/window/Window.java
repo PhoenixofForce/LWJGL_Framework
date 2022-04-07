@@ -164,7 +164,7 @@ public class Window extends BasicColorGuiElement {
 		ParticleSpawner.updateAll(dt);
 		cam.update(dt);
 
-		if(Constants.RUNTIME >= 500) {
+		if(Constants.RUNTIME >= 1000) {
 			text.clear().addText("TICKS: ").addText(Constants.RUNTIME + "", Constants.RUNTIME > 1000? new Vector3f(1, 0, 0): (Constants.RUNTIME > 750? new Vector3f(1, 1, 0): new Vector3f(0, 0, 1))).build();
 		}
 
@@ -242,7 +242,7 @@ public class Window extends BasicColorGuiElement {
 
 		GuiElement crosshair = new BasicColorGuiElement(this, 0.5f, 0.5f, 10, 10);
 
-		text = new GuiText(this, Anchor.TOP_LEFT, 20, -20, 450, new TextureAtlasFont("Font"), 16f, 2000)
+		text = new GuiText(this, Anchor.TOP_LEFT,  20, -20f, 400, new TextureAtlasFont("Font"), 16f, 10000)
 				.addText("Phoenix", new Vector3f(1, 0, 0))
 				.addText("of", new Vector3f(0, 1, 0), 0.02f)
 				.addText("Force", new Vector3f(0, 0, 1))
@@ -251,7 +251,7 @@ public class Window extends BasicColorGuiElement {
 				.newLine()
 				.addText("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam")
 				.newLine()
-				.addText("Test Test2")
+				.addText("Test . Test2")
 				.build();
 	}
 }

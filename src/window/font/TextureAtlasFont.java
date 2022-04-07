@@ -44,6 +44,11 @@ public class TextureAtlasFont extends Font {
 	}
 
 	@Override
+	public float getMaximunLength() {
+		return atlas.getTextureBounds("A").w;
+	}
+
+	@Override
 	public boolean hasCharacter(char c) {
 		return atlas.hasTexture(c + "");
 	}

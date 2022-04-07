@@ -11,6 +11,8 @@ public abstract class Font {
 	public abstract int getYoffset(char c);
 	public abstract int getAdvance(char c);
 
+	public abstract float getMaximunLength();
+
 	public abstract boolean hasCharacter(char c);
 
 }
