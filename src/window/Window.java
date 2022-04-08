@@ -294,7 +294,7 @@ public class Window extends BasicColorGuiElement {
 		GuiCheckbox checkbox = new GuiCheckbox(this, Anchor.BOTTOM_LEFT, 50, 320, 20, 20);
 		GuiSelector selector = new GuiSelector(this, Anchor.BOTTOM_LEFT, 50, 400, 200, 50);
 
-		text = new GuiText(this, Anchor.TOP_LEFT,  20, -20f, 250, new TextureAtlasFont("Font"), 8f, 50)
+		text = new GuiText(this, Anchor.TOP_LEFT,  20, -20f, 250, new TextureAtlasFont("Font"), 11f, 50)
 				.addText("Phoenix", new Vector3f(1, 0, 0))
 				.addText("of", new Vector3f(0, 1, 0), 0.02f)
 				.addText("Force", new Vector3f(0, 0, 1))

@@ -17,3 +17,4 @@ Moved to [this project page](https://github.com/PhoenixofForce/LWJGL_Engine/proj
 * [glsl-conditionals by dmnsgn](https://github.com/dmnsgn/glsl-conditionals)
 * [glsl-blend by jamieowen](https://github.com/jamieowen/glsl-blend)
 * [Music by Pudgyplatypus](https://opengameart.org/content/royalty-free-game-music-loops)
+* [Peaberry Font by Emily Huo](https://emhuo.itch.io/peaberry-pixel-font)
