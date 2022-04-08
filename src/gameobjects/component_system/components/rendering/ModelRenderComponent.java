@@ -8,7 +8,7 @@ import gameobjects.component_system.components.RenderingComponent;
 import assets.ObjHandler;
 import rendering.Renderer;
 import rendering.ShaderHandler;
-import rendering.MassUniform;
+import rendering.uniform.MassUniform;
 
 public class ModelRenderComponent extends RenderingComponent {
 

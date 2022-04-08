@@ -4,7 +4,7 @@ import assets.models.TextModel;
 import org.joml.Vector3f;
 import rendering.Renderer;
 import rendering.ShaderHandler;
-import rendering.MassUniform;
+import rendering.uniform.MassUniform;
 import utils.Constants;
 import window.Window;
 import window.font.Font;
@@ -66,7 +66,7 @@ public class GuiText extends GuiElement {
 	}
 
 	public GuiText(GuiElement parent, Anchor[] anchors, float xOff, float yOff, Font font, float fontSize) {
-		this(parent, anchors, xOff, yOff, font, fontSize, 2000);
+		this(parent, anchors, xOff, yOff, font, fontSize, 0);
 	}
 
 	public GuiText(GuiElement parent, Anchor[] anchors, float xOff, float yOff, Font font, float fontSize, long writerDuration) {
@@ -86,6 +86,9 @@ public class GuiText extends GuiElement {
 		fixedHeight = height != 0;
 		clear(writerDuration);
 	}
+
+	@Override
+	protected void initComponent() {}
 
 	@Override
 	public void updateGui(long dt) {

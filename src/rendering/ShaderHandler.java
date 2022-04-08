@@ -18,6 +18,7 @@ public class ShaderHandler {
 		DEFAULT("default_vertexShader", "default_fragmentShader"),
 		PARTICLE("particle_vertexShader", "particle_fragmentShader"),
 		TEXT("text_vertexShader", "text_fragmentShader"),
+		GUI("gui_vertexShader", "gui_fragmentShader"),
 		;
 
 		private final String vertexFileName, fragmentFileName;
@@ -93,7 +94,11 @@ public class ShaderHandler {
 
 		glGetShaderiv(out, GL_COMPILE_STATUS, res);
 		if (res[0] == 0) {
-			System.err.println("Compile error at " + st.toString().toLowerCase() + " " + (type == GL_VERTEX_SHADER ? "vertex" : (type == GL_GEOMETRY_SHADER ? "geometry" : "fragment")) + " shader: " + glGetShaderInfoLog(out));
+			String info = glGetShaderInfoLog(out);
+			int line = Integer.parseInt(info.split("\\(")[1].split("\\)")[0]);
+
+			System.err.println("Compile error at " + st.toString().toLowerCase() + " " + (type == GL_VERTEX_SHADER ? "vertex" : (type == GL_GEOMETRY_SHADER ? "geometry" : "fragment")) + " shader: " + info);
+			System.err.println(shaderCode.split("\r\n")[line - 1]);
 		}
 
 		return out;

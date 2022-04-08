@@ -1,4 +1,4 @@
-package rendering;
+package rendering.uniform;
 
 public interface Uniform {
 

@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL46;
 import rendering.Renderer;
 import rendering.ShaderHandler;
-import rendering.MassUniform;
+import rendering.uniform.MassUniform;
 
 import java.util.ArrayList;
 import java.util.HashMap;

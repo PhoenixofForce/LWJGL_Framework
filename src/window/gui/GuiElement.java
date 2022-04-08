@@ -59,6 +59,8 @@ public abstract class GuiElement {
 
 		children = new ArrayList<>();
 		if(parent != null) parent.addChild(this);
+
+		initComponent();
 	}
 
 	public GuiElement(GuiElement parent, Anchor[] anchors, float xOffset, float yOffset, float width, float height) {
@@ -72,6 +74,8 @@ public abstract class GuiElement {
 	public GuiElement(float xOffset, float yOffset, float width, float height) {
 		this(Window.INSTANCE, xOffset, yOffset, width, height);
 	}
+
+	protected abstract void initComponent();
 
 	public void renderGui() {
 		if(isHidden) return;

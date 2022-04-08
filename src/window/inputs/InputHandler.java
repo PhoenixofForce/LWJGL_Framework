@@ -111,7 +111,6 @@ public class InputHandler {
 						}
 
 						float down_right = Math.max(0, values2.get(j) - Constants.STICK_DEAD_ZONE) / (1 - Constants.STICK_DEAD_ZONE);
-						if(down_right != 0) System.out.println(down_right);
 						pressed = down_right != 0;
 
 						code = 121 + j;

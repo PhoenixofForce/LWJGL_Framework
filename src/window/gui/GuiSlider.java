@@ -16,25 +16,21 @@ public class GuiSlider extends GuiElement {
 
 	public GuiSlider(GuiElement parent, Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height) {
 		super(parent, xAnchor, yAnchor, xOffset, yOffset, width, height);
-		initComponent();
 	}
 
 	public GuiSlider(GuiElement parent, Anchor[] anchors, float xOffset, float yOffset, float width, float height) {
 		super(parent, anchors, xOffset, yOffset, width, height);
-		initComponent();
 	}
 
 	public GuiSlider(GuiElement parent, float xOffset, float yOffset, float width, float height) {
 		super(parent, xOffset, yOffset, width, height);
-		initComponent();
 	}
 
 	public GuiSlider(float xOffset, float yOffset, float width, float height) {
 		super(xOffset, yOffset, width, height);
-		initComponent();
 	}
 
-	private void initComponent() {
+	protected void initComponent() {
 		bar = new BasicColorGuiElement(this, Anchor.CENTERCENTER, 0.5f, 0.5f, 1f, 0.1f);
 		bar.setMouseClickListener(this::onClick);
 		bar.setColors(new Color(200, 200, 200));
