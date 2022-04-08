@@ -5,7 +5,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import rendering.Renderer;
 import rendering.ShaderHandler;
-import rendering.Uniform;
+import rendering.MassUniform;
 import window.Window;
 
 import java.awt.*;
@@ -62,17 +62,13 @@ public class BasicColorGuiElement extends GuiElement {
 		Vector3f renderColor = color;
 		if(isMouseEntered()) {
 			renderColor = color2;
-
-			/*float ratio = glWidth / glHeight;
-			glHeight *= 1.2;
-			glWidth = ratio * glHeight;*/
 		}
 
 		Matrix4f transformationMatrix = new Matrix4f();
 		transformationMatrix.translate(translationX, translationY, 0);
 		transformationMatrix.scale(glWidth, glHeight, 1);
 
-		Uniform uniform = new Uniform();
+		MassUniform uniform = new MassUniform();
 		uniform.setMatrices(new Matrix4f(), new Matrix4f(), transformationMatrix);
 		uniform.setVector3fs(renderColor);
 		Renderer.renderArrays(ShaderHandler.ShaderType.DEFAULT, ScreenRect.getInstance(), uniform);

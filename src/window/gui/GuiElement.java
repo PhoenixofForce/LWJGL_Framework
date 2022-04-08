@@ -7,12 +7,10 @@ import window.listener.MouseClickListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
-
 /*
  * Offsets
  *  - an offset larger than 1 is an absolute offset
- *  - an offset smaller than 1 is an relative offset
+ *  - an offset smaller than 1 is a relative offset
  *  - a negative offset means that point is specified from the oposite border of the parent
  *  - position are always from the bottom left of the parent
  *
@@ -24,7 +22,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
  *
  * For the given example let * denote a point, > the xOffset and v the yOffset
  * When x and y are absolutes offsets (20, 30) then > is equal to 20 pixels and v to 30 pixels
- * In the case of relative offsets (0.2, 0.3) > would be equal to 20% of the parents width(the box), and v to 30% of the height
+ * In the case of relative offsets (0.2, 0.3) > would be equal to 20% of the parents' width(the box), and v to 30% of the height
  *
  * Width and Height
  *  - can be initialized the same way

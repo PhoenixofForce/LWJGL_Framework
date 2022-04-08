@@ -27,7 +27,7 @@ public abstract class Component {
 	@Override
 	public String toString() {
 		Class<? extends Component> c = this.getClass();
-		while(c.getSuperclass().getSimpleName() != Component.class.getSimpleName()) {
+		while(!c.getSuperclass().getSimpleName().equals(Component.class.getSimpleName())) {
 			c = (Class<? extends Component>) c.getSuperclass();
 		}
 

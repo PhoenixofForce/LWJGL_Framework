@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL46;
 import rendering.Renderer;
 import rendering.ShaderHandler;
-import rendering.Uniform;
+import rendering.MassUniform;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,15 +70,16 @@ public class ParticleSpawner {
 		spawner.put(id, null);
 	}
 	
-	public static void cleanUpAll() {
+	public static void cleanUpAll(boolean deleteModel) {
 		spawner.clear();
+		if(deleteModel) model.cleanUp();
 	}
 	
 	//---------------------------------------
 
 	private static final ParticleModel model = new ParticleModel();
 
-	private Uniform uniform;
+	private MassUniform uniform;
 	private ParticleType type;
 
 	private boolean isSpawning = true;
@@ -92,7 +93,7 @@ public class ParticleSpawner {
 		this.particles = new ArrayList<>();
 		this.position = position;
 
-		uniform = new Uniform();
+		uniform = new MassUniform();
 	}
 
 	private void update(long dt) {

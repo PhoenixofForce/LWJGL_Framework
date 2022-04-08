@@ -12,7 +12,7 @@ public enum Anchor {
 	 */
 	BEGIN(1), CENTER(0), END(-1);
 
-	float multiplier;
+	final float multiplier;
 	Anchor(float multiplier) {
 		this.multiplier = multiplier;
 	}

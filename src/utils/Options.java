@@ -1,13 +1,11 @@
 package utils;
 
 import window.inputs.InputHandler;
-
 import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Options {
-
 
 	public static boolean useVsync = true;
 	public static int fps = 60; //0 for unlimited

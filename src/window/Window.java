@@ -1,19 +1,11 @@
 package window;
 
+import assets.AssetLoader;
 import assets.audio.AudioPlayer;
-import assets.audio.AudioSource;
 import assets.audio.AudioType;
+import assets.models.ScreenRect;
 import gameobjects.entities.Camera;
 import gameobjects.particles.ParticleSpawner;
-import assets.AssetLoader;
-import assets.models.ScreenRect;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-import org.lwjgl.*;
-import org.lwjgl.glfw.*;
-import org.lwjgl.openal.*;
-import org.lwjgl.opengl.*;
-import org.lwjgl.system.*;
 import rendering.ShaderHandler;
 import utils.Constants;
 import utils.Options;
@@ -26,6 +18,15 @@ import window.gui.GuiText;
 import window.inputs.InputHandler;
 
 import java.nio.*;
+
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
+import org.lwjgl.*;
+import org.lwjgl.glfw.*;
+import org.lwjgl.openal.*;
+import org.lwjgl.opengl.*;
+import org.lwjgl.system.*;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -156,7 +157,7 @@ public class Window extends BasicColorGuiElement {
 				clickStart = InputHandler.getMousePosition();
 				clickStart = handleMouseButton(action, button, clickStart[0], clickStart[1]);
 
-				AudioPlayer.playSoundEffect(AudioType.EFFECT, new Vector3f());
+				AudioType.EFFECT.play();
 			} else {
 				handleMouseButton(action, button, clickStart[0], clickStart[1]);
 			}
@@ -168,9 +169,7 @@ public class Window extends BasicColorGuiElement {
 			glViewport(-1, -1, width, height);
 		});
 
-		glfwSetErrorCallback((e, f) -> {
-			System.err.println(e + " " + f);
-		});
+		glfwSetErrorCallback((e, f) -> System.err.println(e + " " + f));
 	}
 
 	private void loop() {
@@ -201,8 +200,8 @@ public class Window extends BasicColorGuiElement {
 		updateGui(dt);
 		AudioPlayer.update(dt);
 		ParticleSpawner.updateAll(dt);
-		cam.update(dt);
 
+		cam.update(dt);
 		if(Constants.RUNTIME >= 1000) {
 			text.clear().addText("TICKS: ").addText(Constants.RUNTIME + "", Constants.RUNTIME > 1000? new Vector3f(1, 0, 0): (Constants.RUNTIME > 750? new Vector3f(1, 1, 0): new Vector3f(0, 0, 1))).build();
 		}
@@ -231,8 +230,10 @@ public class Window extends BasicColorGuiElement {
 		glfwTerminate();
 		glfwSetErrorCallback(null).free();
 
+		AudioPlayer.cleanUp(true);
 		ShaderHandler.cleanup();
 		AssetLoader.cleanUp();
+		ParticleSpawner.cleanUpAll(true);
 		ScreenRect.getInstance().cleanUp();
 	}
 

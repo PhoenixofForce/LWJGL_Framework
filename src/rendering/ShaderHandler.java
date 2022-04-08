@@ -6,7 +6,6 @@ import utils.Constants;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +17,7 @@ public class ShaderHandler {
 	public enum ShaderType {
 		DEFAULT("default_vertexShader", "default_fragmentShader"),
 		PARTICLE("particle_vertexShader", "particle_fragmentShader"),
-		TEXT("text_vertexShader", "text_fragmentShader");
+		TEXT("text_vertexShader", "text_fragmentShader"),
 		;
 
 		private final String vertexFileName, fragmentFileName;

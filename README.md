@@ -4,7 +4,7 @@ This project serves as a codebase for my games. Feel free to use, improve, adapt
 Moved to [this wiki page](https://github.com/PhoenixofForce/LWJGL_Engine/projects/1)
 
 ### Notes
-* Games wont work on macOS (because of OpenGL version)
+* Games won't work on macOS (because of OpenGL version)
 
 ### Required Libraries
 * [LWJGL 3.3.0 (LWJGL, GLFW, OpenGL, OpenAL)](https://www.lwjgl.org/download)

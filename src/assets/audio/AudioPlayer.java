@@ -8,8 +8,8 @@ import java.util.List;
 
 public class AudioPlayer {
 
-	private static List<AudioSource> audioSources = new ArrayList<>();
-	private static AudioSource musicSource = new AudioSource(false)
+	private static final List<AudioSource> audioSources = new ArrayList<>();
+	private static final AudioSource musicSource = new AudioSource(false)
 			.setVolume(Options.musicVolume * Options.totalVolume)
 			.setLooping(true);
 
@@ -45,5 +45,14 @@ public class AudioPlayer {
 				i--;
 			}
 		}
+	}
+
+	public static void cleanUp(boolean deleteMusic) {
+		for(int i = audioSources.size() - 1; i >= 0; i--) {
+			AudioSource src = audioSources.get(0);
+			src.stop().cleanUp();
+		}
+
+		if(deleteMusic) musicSource.stop().cleanUp();
 	}
 }

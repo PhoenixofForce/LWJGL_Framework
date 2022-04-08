@@ -42,16 +42,14 @@ public abstract class Entity {
 	//>--| COMPONENT LIFECYCLE  |--<\\
 
 	private void initComponents() {
-		components.forEach((k, v) -> {
-			v.sort(Comparator.comparingDouble(Component::getPriority));
-		});
+		components.forEach((k, v) -> v.sort(Comparator.comparingDouble(Component::getPriority)));
 
 		components.forEach((k, v) -> {
 			for(int i = v.size() - 1; i >= 0; i--) {
 				Component c = v.get(i);
 				boolean initSuccess = c.init();
 				if(!initSuccess) {
-					System.err.println("Error initialising " + c.toString() + " of " + this.toString());
+					System.err.println("Error initialising " + c + " of " + this);
 					v.remove(c);
 				}
 			}
@@ -59,15 +57,11 @@ public abstract class Entity {
 	}
 
 	private void updateComponents(long dt) {
-		components.forEach((k, v) -> {
-			v.forEach(c -> c.update(dt));
-		});
+		components.forEach((k, v) -> v.forEach(c -> c.update(dt)));
 	}
 
 	private void cleanupComponents() {
-		components.forEach((k, v) -> {
-			v.forEach(Component::cleanup);
-		});
+		components.forEach((k, v) -> v.forEach(Component::cleanup));
 	}
 
 	//>--| COMPONENT HANDLING  |--<\\

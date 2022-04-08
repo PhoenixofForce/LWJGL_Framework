@@ -8,11 +8,11 @@ import gameobjects.component_system.components.RenderingComponent;
 import assets.ObjHandler;
 import rendering.Renderer;
 import rendering.ShaderHandler;
-import rendering.Uniform;
+import rendering.MassUniform;
 
 public class ModelRenderComponent extends RenderingComponent {
 
-	private Uniform uniform;
+	private MassUniform uniform;
 	private static final Matrix4f transformation = new Matrix4f(
 			1, 0, 0, 0,
 			0, 1, 0, 0,
@@ -25,7 +25,7 @@ public class ModelRenderComponent extends RenderingComponent {
 		super(e);
 		this.model = model;
 
-		uniform = new Uniform();
+		uniform = new MassUniform();
 	}
 
 	@Override

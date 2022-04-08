@@ -4,7 +4,7 @@ import assets.models.TextModel;
 import org.joml.Vector3f;
 import rendering.Renderer;
 import rendering.ShaderHandler;
-import rendering.Uniform;
+import rendering.MassUniform;
 import utils.Constants;
 import window.Window;
 import window.font.Font;
@@ -110,7 +110,7 @@ public class GuiText extends GuiElement {
 			float translationY = toScreenSpace(getCenterY() + getHeight() / 2 - (fontSize * Constants.FONT_ASPECT / 2), Window.INSTANCE.getHeight());
 
 			ShaderHandler.ShaderType type = ShaderHandler.ShaderType.TEXT;
-			Uniform u = new Uniform();
+			MassUniform u = new MassUniform();
 			u.setTextures(font.getAtlas());
 			u.setFloats(translationX, translationY, Window.INSTANCE.getWidth(), Window.INSTANCE.getHeight(), Constants.RUNTIME, model.charCount(), (float) displayTime / writerDuration);
 
@@ -165,7 +165,7 @@ public class GuiText extends GuiElement {
 		}
 		model.updateInstance(font, fontSize, width, text, colors, wobbleStrengths);
 
-		//writer duration is set per char so we have to multiple it with the amount of characters
+		//writer duration is set per char, so we have to multiply it with the amount of characters
 		if(model.charCount() > 0) displayTime = -writerDuration;
 		writerDuration *= model.charCount();
 

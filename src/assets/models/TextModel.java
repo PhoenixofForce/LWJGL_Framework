@@ -9,10 +9,6 @@ import window.font.Font;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 import static org.lwjgl.opengl.GL45.glDisableVertexArrayAttrib;
@@ -117,7 +113,7 @@ public class TextModel extends Renderable {
 			Vector3f color = colorFragments.get(fragmentIndex);
 			float wobbleStrength = wobbleStrengthFragments.get(fragmentIndex);
 
-			String[] words = (textFragments.get(fragmentIndex) + "a").split(" ");	//add a an character at the end so we keep spaces at the end
+			String[] words = (textFragments.get(fragmentIndex) + "a").split(" ");	//add an a character at the end so we keep spaces at the end
 
 			for(int wordIndex = 0; wordIndex < words.length; wordIndex++) {
 				String word = words[wordIndex];
@@ -235,6 +231,7 @@ public class TextModel extends Renderable {
 		super.cleanUp();
 	}
 
+
 	public int charCount() {
 		return chars;
 	}
@@ -278,5 +275,4 @@ public class TextModel extends Renderable {
 			floats.add(f.w);
 		}
 	}
-
 }

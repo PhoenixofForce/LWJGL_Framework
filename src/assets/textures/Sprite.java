@@ -53,7 +53,7 @@ public class Sprite {
 	 * Gets current sprite of the animation
 	 *
 	 * @param startTime   time when the animation started (in ms)
-	 * @param currentTime the real time when the the texture is needed (in ms)
+	 * @param currentTime the real time when the texture is needed (in ms)
 	 * @return coordinates from current sprite
 	 */
 	public String getTexture(long startTime, long currentTime) {

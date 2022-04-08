@@ -4,14 +4,14 @@ import utils.TimeUtils;
 
 public class KeyHit {
 
-	private int keyCode;
+	private final int keyCode;
 
 	private long clickStart;
 	private long clickEnd;
 
 	private boolean finishedClick;
 
-	public float value;	//for trigger and joystick
+	public float value;
 
 	public KeyHit(int keyCode) {
 		this(keyCode, 1);

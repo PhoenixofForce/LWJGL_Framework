@@ -1,10 +1,6 @@
 package rendering;
 
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL46.*;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 public class Renderer {
 
@@ -15,6 +11,7 @@ public class Renderer {
 		glUseProgram(shaderType.get());
 
 		uniform.load();
+		uniform.clear();
 
 		glDrawElements(GL_TRIANGLES, 3 * renderable.getFaceCount(), GL_UNSIGNED_INT, 0);
 
@@ -29,6 +26,7 @@ public class Renderer {
 		glUseProgram(shaderType.get());
 
 		uniform.load();
+		uniform.clear();
 
 		glDrawElementsInstanced(GL_TRIANGLES, 3 * renderable.getFaceCount(), GL_UNSIGNED_INT, 0, count);
 
@@ -43,6 +41,7 @@ public class Renderer {
 		glUseProgram(shaderType.get());
 
 		uniform.load();
+		uniform.clear();
 
 		glDrawArrays(GL_TRIANGLES, 0, 3 * renderable.getFaceCount());
 
@@ -57,6 +56,7 @@ public class Renderer {
 		glUseProgram(shaderType.get());
 
 		uniform.load();
+		uniform.clear();
 
 		glDrawArraysInstanced(GL_TRIANGLES, 0, 3 * renderable.getFaceCount(), count);
 
