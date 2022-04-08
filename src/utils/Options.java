@@ -12,6 +12,9 @@ public class Options {
 	public static boolean useVsync = true;
 	public static int fps = 60; //0 for unlimited
 
+	public static float totalVolume = 0.25f;
+	public static float musicVolume = 0.1f;
+	public static float effectVolume = 1f;
 
 	//>--| Controlls |--<\\
 	public static Map<ControllableAction, Integer> keyboardMapping = Map.of(

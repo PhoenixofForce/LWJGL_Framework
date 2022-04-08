@@ -1,6 +1,6 @@
 package window.gui;
 
-import meshes.TextModel;
+import assets.models.TextModel;
 import org.joml.Vector3f;
 import rendering.Renderer;
 import rendering.ShaderHandler;
@@ -12,8 +12,9 @@ import window.font.Font;
 import java.util.ArrayList;
 import java.util.List;
 
-//BasicColorGuiElement for Debug purposes
-public class GuiText extends BasicColorGuiElement {
+public class GuiText extends GuiElement {
+
+	//TODO: Alignments
 
 	private Font font;
 
@@ -99,7 +100,8 @@ public class GuiText extends BasicColorGuiElement {
 	@Override
 	public void renderComponent() {
 		if(model != null) {
-			super.renderComponent();
+			//super.renderComponent();
+
 			//(translationX, translationY) needs to be the center of the first char
 			//getCenterX points to center of the whole text
 			//-getWidth/2 to the left side of the first letter

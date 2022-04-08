@@ -1,4 +1,4 @@
-package meshes;
+package assets.models;
 
 import gameobjects.particles.Particle;
 import gameobjects.particles.ParticleSpawner;

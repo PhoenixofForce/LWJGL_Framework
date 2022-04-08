@@ -1,7 +1,7 @@
-package meshes.loader;
+package assets;
 
-import meshes.dim3.Model;
-import meshes.dim3.TexturedModel;
+import assets.models.Model;
+import assets.models.TexturedModel;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import utils.VecUtils;

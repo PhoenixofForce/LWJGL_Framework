@@ -67,6 +67,7 @@ public class UniformLoader {
 		System.out.println("Floats start with: " + floatStart);
 		System.out.println("Vec3f start with: " + vec3Start);
 		System.out.println("Vec4f start with: " + vec4Start);
+		System.out.println();
 	}
 
 }

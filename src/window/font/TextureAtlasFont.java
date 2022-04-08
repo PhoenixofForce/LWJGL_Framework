@@ -1,7 +1,7 @@
 package window.font;
 
-import meshes.dim2.TextureAtlas;
-import meshes.loader.TextureHandler;
+import assets.textures.TextureAtlas;
+import assets.TextureHandler;
 import org.joml.Vector4f;
 
 public class TextureAtlasFont extends Font {

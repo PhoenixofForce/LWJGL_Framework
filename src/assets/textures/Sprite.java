@@ -1,7 +1,6 @@
-package meshes.dim2;
+package assets.textures;
 
 import maths.Easing;
-import meshes.loader.TextureHandler;
 import utils.TimeUtils;
 
 import java.util.ArrayList;

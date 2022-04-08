@@ -1,6 +1,6 @@
-package meshes.dim3;
+package assets.models;
 
-import meshes.loader.TextureHandler;
+import assets.TextureHandler;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 

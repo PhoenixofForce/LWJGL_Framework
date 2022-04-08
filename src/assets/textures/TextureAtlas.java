@@ -1,9 +1,9 @@
-package meshes.dim2;
+package assets.textures;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import meshes.loader.TextureHandler;
+import assets.TextureHandler;
 import org.joml.Vector4f;
 
 public class TextureAtlas {

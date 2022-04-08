@@ -5,7 +5,7 @@ import org.joml.Vector3f;
 
 import gameobjects.Entity;
 import gameobjects.component_system.components.RenderingComponent;
-import meshes.loader.ObjHandler;
+import assets.ObjHandler;
 import rendering.Renderer;
 import rendering.ShaderHandler;
 import rendering.Uniform;

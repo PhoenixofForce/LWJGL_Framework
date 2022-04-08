@@ -1,6 +1,6 @@
 package window.gui;
 
-import meshes.ScreenRect;
+import assets.models.ScreenRect;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import rendering.Renderer;

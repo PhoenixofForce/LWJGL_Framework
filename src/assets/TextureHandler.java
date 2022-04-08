@@ -1,6 +1,6 @@
-package meshes.loader;
+package assets;
 
-import meshes.dim2.TextureAtlas;
+import assets.textures.TextureAtlas;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL46;
@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;

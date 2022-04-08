@@ -1,13 +1,17 @@
 package window;
 
+import assets.audio.AudioPlayer;
+import assets.audio.AudioSource;
+import assets.audio.AudioType;
 import gameobjects.entities.Camera;
 import gameobjects.particles.ParticleSpawner;
-import meshes.loader.AssetLoader;
-import meshes.ScreenRect;
+import assets.AssetLoader;
+import assets.models.ScreenRect;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
+import org.lwjgl.openal.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import rendering.ShaderHandler;
@@ -22,8 +26,6 @@ import window.gui.GuiText;
 import window.inputs.InputHandler;
 
 import java.nio.*;
-import java.nio.charset.Charset;
-import java.util.Random;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -37,12 +39,15 @@ public class Window extends BasicColorGuiElement {
 
 	// The window handle
 	public long window;
+	public long audioDevice, audioContext;
+
 	private int width = 960;
 	private int height = 600;
 
 	private final String title = "This is an engine!";
 
 	private Camera cam;
+	private GuiText text;
 
 	public Window() {
 		super(null, 0, 0, 0, 0);
@@ -59,6 +64,42 @@ public class Window extends BasicColorGuiElement {
 	}
 
 	private void init() {
+		initOpenAL();
+		initGLFW();
+		initCallbacks();
+		initOpenGL();
+
+		System.out.printf("OpenGL Version %s%n", GL11.glGetString(GL11.GL_VERSION));
+		System.out.printf("OpenAL Version %s%n", AL11.alGetString(AL11.AL_VERSION));
+		System.out.println();
+
+		ShaderHandler.initShader();
+		AssetLoader.loadAll();
+		loadGui();
+
+		cam = new Camera();
+
+		ParticleSpawner.getNewSpawner(new Vector3f(0, 5, 0), ParticleSpawner.DEFAULT);
+
+		glfwShowWindow(window);
+		AudioPlayer.playMusic(AudioType.MUSIC);
+	}
+
+	private void initOpenAL() {
+		audioDevice = ALC11.alcOpenDevice((ByteBuffer) null);
+		ALCCapabilities caps = ALC.createCapabilities(audioDevice);
+
+		audioContext = ALC11.alcCreateContext(audioDevice, (IntBuffer) null);
+		ALC11.alcMakeContextCurrent(audioContext);
+
+		AL.createCapabilities(caps);
+
+		//Creates an audio listener at (0, 0, 0)
+		AL10.alListener3f(AL10.AL_POSITION, 0, 0, 0);
+		AL10.alListener3f(AL10.AL_VELOCITY, 0, 0, 0);
+	}
+
+	private void initGLFW() {
 		GLFWErrorCallback.createPrint(System.err).set();
 
 		if ( !glfwInit() )
@@ -72,8 +113,6 @@ public class Window extends BasicColorGuiElement {
 		window = glfwCreateWindow(width, height, title, NULL, NULL);
 		if ( window == NULL )
 			throw new RuntimeException("Failed to create the GLFW window");
-
-		initCallbacks();
 
 		// Get the thread stack and push a new frame
 		try ( MemoryStack stack = stackPush() ) {
@@ -95,24 +134,18 @@ public class Window extends BasicColorGuiElement {
 		} // the stack frame is popped automatically
 
 		glfwMakeContextCurrent(window);
-		glfwSwapInterval(Options.useVsync? 1: 0);			//vsync on
+		glfwSwapInterval(Options.useVsync? 1: 0);
+	}
 
+	private void initOpenGL() {
 		GL.createCapabilities();
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		glDepthFunc(GL_LEQUAL);
 
-		ShaderHandler.initShader();
-		AssetLoader.loadAll();
-		loadGui();
-
-		ParticleSpawner.getNewSpawner(new Vector3f(0, 5, 0), ParticleSpawner.DEFAULT);
-
-		glfwShowWindow(window);
 		glClearColor(0, 0, 0, 0.0f);
-
-		cam = new Camera();
 	}
+
 
 	private float[] clickStart;
 	private void initCallbacks() {
@@ -122,6 +155,8 @@ public class Window extends BasicColorGuiElement {
 			if(action == GLFW_PRESS) {
 				clickStart = InputHandler.getMousePosition();
 				clickStart = handleMouseButton(action, button, clickStart[0], clickStart[1]);
+
+				AudioPlayer.playSoundEffect(AudioType.EFFECT, new Vector3f());
 			} else {
 				handleMouseButton(action, button, clickStart[0], clickStart[1]);
 			}
@@ -162,10 +197,9 @@ public class Window extends BasicColorGuiElement {
 		InputHandler.update();
 	}
 
-	private GuiText text;
-
 	private void update(long dt) {
 		updateGui(dt);
+		AudioPlayer.update(dt);
 		ParticleSpawner.updateAll(dt);
 		cam.update(dt);
 
@@ -181,19 +215,6 @@ public class Window extends BasicColorGuiElement {
 
 		Matrix4f projection_matrix = new Matrix4f().perspective((float)Math.PI/3, ((float) width)/height,0.001f, 1250f);
 		Matrix4f view_matrix = new Matrix4f().lookAt(cam.getPosition(), new Vector3f(cam.getLookingDirection()).add(cam.getPosition()), cam.getUp());
-
-		/*
-		Matrix4f transformationMatrix = new Matrix4f(
-				1, 0, 0, 0,
-				0, 1, 0, 0,
-				0, 0, 1, 0,
-				0, 0, 0, 1);
-
-		Uniform uniform = new Uniform();
-		uniform.setMatrices(projection_matrix, view_matrix, transformationMatrix);
-		uniform.setVector3fs(new Vector3f(1, 0, 1));
-		Renderer.render(ShaderHandler.ShaderType.DEFAULT, ObjHandler.loadOBJ("pawn"), uniform);
-		 */
 
 		ParticleSpawner.renderAll(projection_matrix, view_matrix);
 		super.renderGui();
@@ -211,7 +232,7 @@ public class Window extends BasicColorGuiElement {
 		glfwSetErrorCallback(null).free();
 
 		ShaderHandler.cleanup();
-		AssetLoader.unloadAll();
+		AssetLoader.cleanUp();
 		ScreenRect.getInstance().cleanUp();
 	}
 
@@ -247,16 +268,10 @@ public class Window extends BasicColorGuiElement {
 
 		GuiElement crosshair = new BasicColorGuiElement(this, 0.5f, 0.5f, 10, 10);
 
-		text = new GuiText(this, Anchor.TOP_LEFT,  20, -20f, 400, new TextureAtlasFont("Font"), 16f, 50)
+		text = new GuiText(this, Anchor.TOP_LEFT,  20, -20f, 250, new TextureAtlasFont("Font"), 8f, 50)
 				.addText("Phoenix", new Vector3f(1, 0, 0))
 				.addText("of", new Vector3f(0, 1, 0), 0.02f)
 				.addText("Force", new Vector3f(0, 0, 1))
-				.newLine()
-				.addText("OneLongLineForMultipleLines")
-				.newLine()
-				.addText("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam")
-				.newLine()
-				.addText("Test . Test2")
 				.build();
 	}
 }

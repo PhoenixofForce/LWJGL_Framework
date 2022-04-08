@@ -1,4 +1,4 @@
-package meshes;
+package assets.models;
 
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -7,9 +7,7 @@ import utils.Constants;
 import window.font.Font;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL15.*;

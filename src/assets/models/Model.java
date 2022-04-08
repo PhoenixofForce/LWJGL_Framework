@@ -1,4 +1,4 @@
-package meshes.dim3;
+package assets.models;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;

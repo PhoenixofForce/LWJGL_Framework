@@ -1,4 +1,6 @@
-package meshes.loader;
+package assets;
+
+import assets.audio.AudioType;
 
 import java.util.Optional;
 
@@ -7,6 +9,7 @@ public class AssetLoader {
 	public static void loadAll() {
 		loadTextures();
 		loadModels();
+		loadAudio();
 	}
 
 	public static void loadTextures() {
@@ -21,8 +24,15 @@ public class AssetLoader {
 		ObjHandler.loadOBJWithoutTexture("cube");
 	}
 
-	public static void unloadAll() {
+	public static void loadAudio() {
+		for(AudioType type: AudioType.values()) {
+			AudioHandler.loadAudio(type);
+		}
+	}
+
+	public static void cleanUp() {
 		TextureHandler.cleanUp();
 		ObjHandler.cleanUp();
+		AudioHandler.cleanUp();
 	}
 }

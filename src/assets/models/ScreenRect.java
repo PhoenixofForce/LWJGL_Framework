@@ -1,4 +1,4 @@
-package meshes;
+package assets.models;
 
 import rendering.Renderable;
 import utils.Constants;
