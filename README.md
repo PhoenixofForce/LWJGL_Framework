@@ -1,7 +1,7 @@
 ## LWJGL Engine
 This project serves as a codebase for my games. Feel free to use, improve, adapt it or copy some code.
 ### Todo
-Moved to [this wiki page](https://github.com/PhoenixofForce/LWJGL_Engine/projects/1)
+Moved to [this project page](https://github.com/PhoenixofForce/LWJGL_Engine/projects/1)
 
 ### Notes
 * Games won't work on macOS (because of OpenGL version)

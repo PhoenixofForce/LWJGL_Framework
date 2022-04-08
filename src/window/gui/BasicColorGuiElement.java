@@ -1,8 +1,10 @@
 package window.gui;
 
 import assets.models.ScreenRect;
+import maths.MathUtils;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.lwjgl.system.MathUtil;
 import rendering.Renderer;
 import rendering.ShaderHandler;
 import rendering.MassUniform;
@@ -72,5 +74,19 @@ public class BasicColorGuiElement extends GuiElement {
 		uniform.setMatrices(new Matrix4f(), new Matrix4f(), transformationMatrix);
 		uniform.setVector3fs(renderColor);
 		Renderer.renderArrays(ShaderHandler.ShaderType.DEFAULT, ScreenRect.getInstance(), uniform);
+	}
+
+	public BasicColorGuiElement setColors(Color mainColor, Color hoverColor) {
+		this.color = MathUtils.vecFromColor(mainColor);
+		this.color2 = MathUtils.vecFromColor(hoverColor);
+
+		return this;
+	}
+
+	public BasicColorGuiElement setColors(Color mainColor) {
+		this.color = MathUtils.vecFromColor(mainColor);
+		this.color2 = color;
+
+		return this;
 	}
 }

@@ -72,7 +72,7 @@ public class SmoothFloat {
 		}
 	}
 
-	public float getValue() {
+	public float getDisplayValue() {
 		return currentValue;
 	}
 

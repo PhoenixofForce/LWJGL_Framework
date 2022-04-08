@@ -36,12 +36,14 @@ public abstract class GuiElement {
 	protected GuiElement parent;
 	protected float xOffset, yOffset;
 	protected float width, height;
+	protected float scaleW, scaleH;
 	protected Anchor xAnchor, yAnchor;
 
 	protected List<GuiElement> children;
 	private MouseClickListener listener;
 
-	private boolean isHidden;
+	protected boolean isClickable = true;
+	private boolean isHidden = false;
 
 	public GuiElement(GuiElement parent, Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height) {
 		this.parent = parent;
@@ -52,6 +54,8 @@ public abstract class GuiElement {
 		this.yOffset = yOffset;
 		this.width = width;
 		this.height = height;
+		this.scaleW = 1;
+		this.scaleH = 1;
 
 		children = new ArrayList<>();
 		if(parent != null) parent.addChild(this);
@@ -108,26 +112,24 @@ public abstract class GuiElement {
 
 	//>--| Input |--<\\
 
-	protected float[] handleMouseButton(int event, int button, float x, float y) {
-		float[] out = null;
+	public GuiElement handleMouseButton(int event, int button, float x, float y) {
+		GuiElement out = null;
 		boolean isClickOnChild = false;
 
 		for(GuiElement child: children) {
-			if(child.containsPoint(x, y)) {
+			if(child.containsPoint(x, y) && child.isClickable) {
 				isClickOnChild = true;
 				out = child.handleMouseButton(event, button, x, y);
 				break;
 			}
 		}
 
-		if(!isClickOnChild) {
+		if(!isClickOnChild && this.isClickable) {
 			onClick(event, button);
 		}
 
-		float xOff = xAnchor.calculateOffset(getWidth());
-		float yOff = yAnchor.calculateOffset(getHeight());
 		return out == null?
-				new float[]{getCenterX() - xOff + Math.signum(xOff), getCenterY() - yOff + Math.signum(yOff)}:
+				this:
 				out;
 	}
 
@@ -162,7 +164,24 @@ public abstract class GuiElement {
 		return out;
 	}
 
+	protected void setClickable(boolean isClickable) {
+		this.isClickable = isClickable;
+	}
+
 	//>--| Sizes and positions |--<\\
+
+	public void setX(float x) {
+		this.xOffset = x;
+	}
+
+	public void setY(float y) {
+		this.yOffset = y;
+	}
+
+	public void setScale(float scaleW, float scaleH) {
+		this.scaleW = scaleW;
+		this.scaleH = scaleH;
+	}
 
 	public float getCenterX() {
 		float out = 0;
@@ -219,9 +238,10 @@ public abstract class GuiElement {
 			out += width * parent.getWidth();
 		} else {
 			out = width;
+			if(width < 0 && parent != null) out += parent.getWidth();
 		}
 
-		return out;
+		return out * scaleW;
 	}
 
 	public float getRawHeight() {
@@ -239,9 +259,10 @@ public abstract class GuiElement {
 			out += height * parent.getHeight();
 		} else {
 			out = height;
+			if(height < 0 && parent != null) out += parent.getHeight();
 		}
 
-		return out;
+		return out * scaleH;
 	}
 
 	protected float toScreenSpace(float value, float length) {

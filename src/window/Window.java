@@ -11,13 +11,11 @@ import utils.Constants;
 import utils.Options;
 import utils.TimeUtils;
 import window.font.TextureAtlasFont;
-import window.gui.Anchor;
-import window.gui.BasicColorGuiElement;
-import window.gui.GuiElement;
-import window.gui.GuiText;
+import window.gui.*;
 import window.inputs.InputHandler;
 
 import java.nio.*;
+import java.util.List;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -148,18 +146,19 @@ public class Window extends BasicColorGuiElement {
 	}
 
 
-	private float[] clickStart;
+	private GuiElement lastClicked;
 	private void initCallbacks() {
 		InputHandler.callbacks();
 
 		glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
+			float[] mouse =  InputHandler.getMousePosition();
 			if(action == GLFW_PRESS) {
-				clickStart = InputHandler.getMousePosition();
-				clickStart = handleMouseButton(action, button, clickStart[0], clickStart[1]);
+				lastClicked = handleMouseButton(action, button, mouse[0], mouse[1]);
 
 				AudioType.EFFECT.play();
 			} else {
-				handleMouseButton(action, button, clickStart[0], clickStart[1]);
+				GuiElement toClick = lastClicked != null? lastClicked: this;
+				toClick.handleMouseButton(GLFW_REPEAT, button, InputHandler.mouseX, InputHandler.mouseY);
 			}
 		});
 
@@ -194,6 +193,12 @@ public class Window extends BasicColorGuiElement {
 
 	private void input() {
 		InputHandler.update();
+		for(int i: List.of(GLFW_MOUSE_BUTTON_LEFT, GLFW_MOUSE_BUTTON_RIGHT, GLFW_MOUSE_BUTTON_RIGHT)) {
+			if(InputHandler.isMousePressed(i)) {
+				GuiElement toClick = lastClicked != null? lastClicked: this;
+				toClick.handleMouseButton(GLFW_REPEAT, i, InputHandler.mouseX, InputHandler.mouseY);
+			}
+		}
 	}
 
 	private void update(long dt) {
@@ -268,6 +273,10 @@ public class Window extends BasicColorGuiElement {
 		GuiElement currentMana = new BasicColorGuiElement(manaBar, Anchor.TOP_LEFT, 0, 1, 0.3f, 20);
 
 		GuiElement crosshair = new BasicColorGuiElement(this, 0.5f, 0.5f, 10, 10);
+
+		GuiSlider slider = new GuiSlider(this, Anchor.BOTTOM_LEFT, 50, 200, 200, 20);
+		slider.setValue(Options.musicVolume);
+		slider.setChangeListener(v -> Options.musicVolume = v);
 
 		text = new GuiText(this, Anchor.TOP_LEFT,  20, -20f, 250, new TextureAtlasFont("Font"), 8f, 50)
 				.addText("Phoenix", new Vector3f(1, 0, 0))

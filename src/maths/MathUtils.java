@@ -2,6 +2,8 @@ package maths;
 
 import org.joml.Vector3f;
 
+import java.awt.*;
+
 public class MathUtils {
 
 	public static double map(double a, double f1, double t1, double f2, double t2) {
@@ -13,6 +15,12 @@ public class MathUtils {
 	}
 
 	public static double clamp(double l, double val, double r) {
+		if(val < l) return l;
+		if(val > r) return r;
+		return val;
+	}
+
+	public static float clamp(float l, float val, float r) {
 		if(val < l) return l;
 		if(val > r) return r;
 		return val;
@@ -46,5 +54,9 @@ public class MathUtils {
 
 	public static Vector3f vecFromColor(int r, int g, int b) {
 		return new Vector3f(r / 255.0f, g / 255.0f, b / 255.0f);
+	}
+
+	public static Vector3f vecFromColor(Color c) {
+		return vecFromColor(c.getRed(), c.getGreen(), c.getBlue());
 	}
 }
