@@ -25,6 +25,7 @@ public class AssetLoader {
 	}
 
 	public static void loadAudio() {
+		//TODO:
 		for(AudioType type: AudioType.values()) {
 			AudioHandler.loadAudio(type);
 		}

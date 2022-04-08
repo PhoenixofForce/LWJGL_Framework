@@ -40,14 +40,14 @@ public class MovementComponent extends Component {
 		float dts = dt / 1000.0f;
 
 		float dx = 0, dy = 0, dz = 0;
-		if (inputProvider.moveBackward()) dz -= movementSpeed;
-		if (inputProvider.moveForward()) dz += movementSpeed;
+		dz -= movementSpeed * inputProvider.moveBackward();
+		dz += movementSpeed * inputProvider.moveForward();
 
-		if (inputProvider.moveRight()) dx += movementSpeed;
-		if (inputProvider.moveLeft()) dx -= movementSpeed;
+		dx += movementSpeed * inputProvider.moveRight();
+		dx -= movementSpeed * inputProvider.moveLeft();
 
-		if (inputProvider.moveUp()) dy += movementSpeed;
-		if (inputProvider.moveDown()) dy -= movementSpeed;
+		dy += movementSpeed * inputProvider.moveUp();
+		dy -= movementSpeed * inputProvider.moveDown();
 
 		pc.add(lc.getForwardAxis().mul(dz * dts));
 		pc.add(lc.getRightAxis().mul(dx * dts));
@@ -55,11 +55,11 @@ public class MovementComponent extends Component {
 
 
 		float rotateY = 0, rotateX = 0;
-		if (inputProvider.turnLeft()) rotateY += rotationSpeed * dts;
-		if (inputProvider.turnRight()) rotateY -= rotationSpeed * dts;
+		rotateY += rotationSpeed * dts * inputProvider.turnLeft();
+		rotateY -= rotationSpeed * dts * inputProvider.turnRight();
 
-		if (inputProvider.turnUp()) rotateX += rotationSpeed * dts;
-		if (inputProvider.turnDown()) rotateX -= rotationSpeed * dts;
+		rotateX += rotationSpeed * dts * inputProvider.turnUp();
+		rotateX -= rotationSpeed * dts * inputProvider.turnDown();
 
 		rotation.add(rotateX, rotateY, 0);
 		rotation.x = Math.min((float) Math.PI/2-0.05f, Math.max((float) -Math.PI/2 + 0.05f, rotation.x));

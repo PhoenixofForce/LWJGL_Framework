@@ -13,8 +13,6 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class InputHandler {
 
-	//TODO: Gamepad Support
-
 	public static float mouseX = 0, mouseY = 0;
 
 	public static void getInputs() {
@@ -143,34 +141,44 @@ public class InputHandler {
 
 	private static final Map<Integer, KeyHit> lastPresses = new HashMap<>();
 
-	public static boolean isKeyPressed(int keyCode) {
+	public static float isKeyPressed(int keyCode) {
 		int action = glfwGetKey(Window.INSTANCE.window, keyCode);
-		return (action == GLFW_PRESS || (lastPresses.containsKey(keyCode) && lastPresses.get(keyCode).isClickInProgress()));
-	}
 
-	public static boolean isKeyPressed(int keyCode, long timeBuffer) {
-		return isKeyPressed(keyCode) || (lastPresses.containsKey(keyCode) && lastPresses.get(keyCode).timeSinceEnd() <= timeBuffer);
-	}
-
-	public static boolean isKeyPressedConsume(int keyCode, long timeBuffer) {
-		boolean out = isKeyPressed(keyCode, timeBuffer);
-		if(out) consumeClick(keyCode);
-		return out;	}
-
-	public static boolean isLongClick(int keyCode, long minimumForLong) {
-		if(lastPresses.containsKey(keyCode)) {
-			KeyHit hit = lastPresses.get(keyCode);
-			if(hit == null) return false;
-
-			return hit.getClickDuration() >= minimumForLong;
+		if(lastPresses.containsKey(keyCode) && lastPresses.get(keyCode).isClickInProgress()) {
+			return lastPresses.get(keyCode).value;
 		}
 
-		return false;
+		return action == GLFW_PRESS? 1: 0;
 	}
 
-	public static boolean isLongClickConsume(int keyCode, long minimumForLong) {
-		boolean out = isLongClick(keyCode, minimumForLong);
-		if(out) consumeClick(keyCode);
+	public static float isKeyPressed(int keyCode, long timeBuffer) {
+		if(lastPresses.containsKey(keyCode) && lastPresses.get(keyCode).timeSinceEnd() <= timeBuffer) {
+			return lastPresses.get(keyCode).value;
+		}
+
+		return isKeyPressed(keyCode);
+	}
+
+	public static float isKeyPressedConsume(int keyCode, long timeBuffer) {
+		float out = isKeyPressed(keyCode, timeBuffer);
+		if(out > 0.0f) consumeClick(keyCode);
+		return out;
+	}
+
+	public static float isLongClick(int keyCode, long minimumForLong) {
+		if(lastPresses.containsKey(keyCode)) {
+			KeyHit hit = lastPresses.get(keyCode);
+			if(hit == null) return 0.0f;
+
+			return hit.getClickDuration() >= minimumForLong? 1: 0;
+		}
+
+		return 0.0f;
+	}
+
+	public static float isLongClickConsume(int keyCode, long minimumForLong) {
+		float out = isLongClick(keyCode, minimumForLong);
+		if(out > 0.0) consumeClick(keyCode);
 		return out;
 	}
 

@@ -5,52 +5,52 @@ import utils.ControllableAction;
 public class PlayerInputProvider implements InputProvider {
 
 	@Override
-	public boolean moveLeft() {
+	public float moveLeft() {
 		return ControllableAction.MOVE_LEFT.anyPressed();
 	}
 
 	@Override
-	public boolean moveRight() {
+	public float moveRight() {
 		return ControllableAction.MOVE_RIGHT.anyPressed();
 	}
 
 	@Override
-	public boolean moveUp() {
+	public float moveUp() {
 		return ControllableAction.MOVE_UP.anyPressed();
 	}
 
 	@Override
-	public boolean moveDown() {
+	public float moveDown() {
 		return ControllableAction.MOVE_DOWN.anyPressed();
 	}
 
 	@Override
-	public boolean moveForward() {
+	public float moveForward() {
 		return ControllableAction.MOVE_FORWARD.anyPressed();
 	}
 
 	@Override
-	public boolean moveBackward() {
+	public float moveBackward() {
 		return ControllableAction.MOVE_BACKWARD.anyPressed();
 	}
 
 	@Override
-	public boolean turnLeft() {
+	public float turnLeft() {
 		return ControllableAction.TURN_LEFT.anyPressed();
 	}
 
 	@Override
-	public boolean turnRight() {
+	public float turnRight() {
 		return ControllableAction.TURN_RIGHT.anyPressed();
 	}
 
 	@Override
-	public boolean turnUp() {
+	public float turnUp() {
 		return ControllableAction.TURN_UP.anyPressed();
 	}
 
 	@Override
-	public boolean turnDown() {
+	public float turnDown() {
 		return ControllableAction.TURN_DOWN.anyPressed();
 	}
 }

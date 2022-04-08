@@ -3,52 +3,52 @@ package gameobjects.input_provider;
 public class StaticInputProvider implements InputProvider {
 
 	@Override
-	public boolean moveLeft() {
-		return false;
+	public float moveLeft() {
+		return 0.0f;
 	}
 
 	@Override
-	public boolean moveRight() {
-		return false;
+	public float moveRight() {
+		return 0.0f;
 	}
 
 	@Override
-	public boolean moveUp() {
-		return false;
+	public float moveUp() {
+		return 0.0f;
 	}
 
 	@Override
-	public boolean moveDown() {
-		return false;
+	public float moveDown() {
+		return 0.0f;
 	}
 
 	@Override
-	public boolean moveForward() {
-		return false;
+	public float moveForward() {
+		return 0.0f;
 	}
 
 	@Override
-	public boolean moveBackward() {
-		return false;
+	public float moveBackward() {
+		return 0.0f;
 	}
 
 	@Override
-	public boolean turnLeft() {
-		return false;
+	public float turnLeft() {
+		return 0.0f;
 	}
 
 	@Override
-	public boolean turnRight() {
-		return false;
+	public float turnRight() {
+		return 0.0f;
 	}
 
 	@Override
-	public boolean turnUp() {
-		return false;
+	public float turnUp() {
+		return 0.0f;
 	}
 
 	@Override
-	public boolean turnDown() {
-		return false;
+	public float turnDown() {
+		return 0.0f;
 	}
 }

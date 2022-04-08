@@ -28,12 +28,12 @@ public class KeyHit {
 	public void reset() {
 		this.clickStart = TimeUtils.getTime();
 		this.clickEnd = finishedClick? -1: TimeUtils.getTime();
+		this.value = 0;
 	}
 
 	public void setEnd() {
 		this.clickEnd = TimeUtils.getTime();
 		this.finishedClick = true;
-		this.value = 0;
 	}
 
 	public long getClickDuration() {

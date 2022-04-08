@@ -3,16 +3,13 @@ This project serves as a codebase for my games. Feel free to use, improve, adapt
 ### Todo
 #### Must Haves
 * Entity Component System
-  * ~~Want to look into an InputProvider System for controls~~
   * Collisions
 * Gui
   * Make Basic Elements (Buttons, slider, checkboxes)
 * Text Rendering
-  * ~~Colored Text~~
-  * Text Effects (~~wobble~~, ...)
+  * alignment
   * Sprites
   * Correctly use fonts
-  * ~~TypeWriter Effect~~
   * Intruduce Text format ex: `[color: #FF0000, effects: [wobble]] Hello` for a wobbly red Hello
 * Particles
   * Animated Particles
@@ -21,7 +18,6 @@ This project serves as a codebase for my games. Feel free to use, improve, adapt
   * Find faster way to create float[] for instanced vbo => more particles 
   * Fix DirectionChange (it is not supposed to be an addiion, more like an rotation in the given direction)
 * Audio
-  * ~~Basic functionality~~
   * Multi-Track music (for adaptive music)
 
 #### Will probably do
