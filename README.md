@@ -1,43 +1,7 @@
 ## LWJGL Engine
 This project serves as a codebase for my games. Feel free to use, improve, adapt it or copy some code.
 ### Todo
-#### Must Haves
-* Entity Component System
-  * Collisions
-* Gui
-  * Make Basic Elements (Buttons, slider, checkboxes)
-* Text Rendering
-  * alignment
-  * Sprites
-  * Correctly use fonts
-  * Intruduce Text format ex: `[color: #FF0000, effects: [wobble]] Hello` for a wobbly red Hello
-* Particles
-  * Animated Particles
-  * Intruduce functions to change the values
-  * Death Emitter
-  * Find faster way to create float[] for instanced vbo => more particles 
-  * Fix DirectionChange (it is not supposed to be an addiion, more like an rotation in the given direction)
-* Audio
-  * Multi-Track music (for adaptive music)
-
-#### Will probably do
-* MapLoader for maps from the [Level Editor](https://github.com/PhoenixofForce/Level_Editor)
-  * Script language, which is also used in many of my other games
-* Lights
-* Having multiple buttons for the same controls
-* Multiplayer support
-
-#### Have to think about
-* (Maybe have RenderStates, that set BlendFunc, DepthTest and so on)
-* Load obj with mtl
-* 3d-Animation
-* System to have multiple Views (Main Menu, Options Menu, Game)
-* State Machine (for Animations, ...)  
-* i18n
-* Dialogue System
-* Rewrite the current uniform system into
-  * `uniform.set(int location, Vec3 vec) { uniforms.add(new Vec3Location(location, vec3)) }`
-  * `uniform.load() { uniforms.forEach(u -> UL.load(u.getLocation(), u.getValue()) }`
+Moved to [this wiki page](https://github.com/PhoenixofForce/LWJGL_Engine/projects/1)
 
 ### Notes
 * Games wont work on macOS (because of OpenGL version)
