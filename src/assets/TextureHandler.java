@@ -8,11 +8,13 @@ import utils.Constants;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -188,6 +190,19 @@ public class TextureHandler {
 		buffer.flip();
 
 		return buffer;
+	}
+
+	public record WindowIcon(ByteBuffer buffer, int width, int height) {}
+	public static Optional<WindowIcon> getWindowIcon() {
+		try {
+			BufferedImage bi = ImageIO.read(new File(Constants.TEXTURE_PATH + "icon.png"));
+			ByteBuffer ib = formatImage(bi);
+			return Optional.of(new WindowIcon(ib, bi.getWidth(), bi.getHeight()));
+		}
+		catch (Exception e){
+			System.out.println("Couldn't open icon image..." + e.toString());
+			return Optional.empty();
+		}
 	}
 
 	public static void cleanUp() {

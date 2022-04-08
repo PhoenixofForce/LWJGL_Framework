@@ -1,6 +1,7 @@
 package window;
 
 import assets.AssetLoader;
+import assets.TextureHandler;
 import assets.audio.AudioPlayer;
 import assets.audio.AudioType;
 import assets.models.ScreenRect;
@@ -16,6 +17,7 @@ import window.inputs.InputHandler;
 
 import java.nio.*;
 import java.util.List;
+import java.util.Optional;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -79,9 +81,9 @@ public class Window extends BasicColorGuiElement {
 		cam = new Camera();
 
 		ParticleSpawner.getNewSpawner(new Vector3f(0, 5, 0), ParticleSpawner.DEFAULT);
+		AudioPlayer.playMusic(AudioType.MUSIC);
 
 		glfwShowWindow(window);
-		AudioPlayer.playMusic(AudioType.MUSIC);
 	}
 
 	private void initOpenAL() {
@@ -134,6 +136,18 @@ public class Window extends BasicColorGuiElement {
 
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(Options.useVsync? 1: 0);
+
+		Optional<TextureHandler.WindowIcon> opIcon = TextureHandler.getWindowIcon();
+		if(opIcon.isPresent()) {
+			TextureHandler.WindowIcon windowIcon = opIcon.get();
+
+			ByteBuffer icon = windowIcon.buffer();
+			GLFWImage.Buffer gb = GLFWImage.create(1);
+			GLFWImage iconGI = GLFWImage.create().set(windowIcon.width(), windowIcon.height(), icon);
+			gb.put(0, iconGI);
+
+			glfwSetWindowIcon(window, gb);
+		}
 	}
 
 	private void initOpenGL() {
@@ -154,11 +168,9 @@ public class Window extends BasicColorGuiElement {
 			float[] mouse =  InputHandler.getMousePosition();
 			if(action == GLFW_PRESS) {
 				lastClicked = handleMouseButton(action, button, mouse[0], mouse[1]);
-
-				AudioType.EFFECT.play();
 			} else {
 				GuiElement toClick = lastClicked != null? lastClicked: this;
-				toClick.handleMouseButton(GLFW_REPEAT, button, InputHandler.mouseX, InputHandler.mouseY);
+				toClick.handleMouseButton(action, button, InputHandler.mouseX, InputHandler.mouseY);
 			}
 		});
 
@@ -283,5 +295,9 @@ public class Window extends BasicColorGuiElement {
 				.addText("of", new Vector3f(0, 1, 0), 0.02f)
 				.addText("Force", new Vector3f(0, 0, 1))
 				.build();
+
+		this.setMouseClickListener((e, b) -> {
+			if(e != 2) AudioType.EFFECT.play();
+		});
 	}
 }
