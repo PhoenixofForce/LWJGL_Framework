@@ -1,6 +1,9 @@
 package window.inputs;
 
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWVidMode;
 import utils.Constants;
+import utils.Screenshot;
 import window.Window;
 
 import java.nio.ByteBuffer;
@@ -21,12 +24,21 @@ public class InputHandler {
 		mouseY = mousePosition[1];
 	}
 
+	static boolean b = false;
 	public static void callbacks() {
 		glfwSetKeyCallback(Window.INSTANCE.window, (window, key, scancode, action, mods) -> {
 			KeyHit click = lastPresses.get(key);
 
 			if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
 				glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
+			if(key == GLFW_KEY_F2 && action == GLFW_RELEASE) {
+				Screenshot.screenShot();
+			}
+
+			if(action == GLFW_RELEASE && ((key == GLFW_KEY_ENTER && isKeyPressed(GLFW_KEY_LEFT_ALT) > 0) ||
+					(key == GLFW_KEY_LEFT_ALT && isKeyPressed(GLFW_KEY_ENTER) > 0))) {
+				Window.INSTANCE.setFullscreen(!Window.INSTANCE.isFullscreen());
+			}
 
 			if(action == GLFW_PRESS) {
 				click = new KeyHit(key);

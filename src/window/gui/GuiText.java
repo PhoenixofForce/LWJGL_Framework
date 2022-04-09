@@ -1,14 +1,18 @@
 package window.gui;
 
+import assets.audio.AudioSource;
+import assets.audio.AudioType;
 import assets.models.TextModel;
 import org.joml.Vector3f;
 import rendering.Renderer;
 import rendering.ShaderHandler;
 import rendering.uniform.MassUniform;
 import utils.Constants;
+import utils.Options;
 import window.Window;
 import window.font.Font;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +65,8 @@ public class GuiText extends GuiElement {
         +-----+
 	 */
 
+	private AudioSource blipSource;
+
 	public GuiText(GuiElement parent, float xOff, float yOff, Font font, float fontSize) {
 		this(parent, Anchor.TOP_LEFT, xOff, yOff, font, fontSize);
 	}
@@ -90,6 +96,7 @@ public class GuiText extends GuiElement {
 	@Override
 	protected void initComponent() {
 		//super.initComponent();
+		blipSource = new AudioSource(false).setLooping(true).setVolume(Options.totalVolume * Options.effectVolume);
 	}
 
 	@Override
@@ -99,6 +106,10 @@ public class GuiText extends GuiElement {
 
 		if(clearAfterMS >= 0 && displayTime >= clearAfterMS + writerDuration) {
 			clear().addText("").build();
+		}
+
+		if(displayTime > writerDuration) {
+			blipSource.stop();
 		}
 	}
 
@@ -171,11 +182,15 @@ public class GuiText extends GuiElement {
 		model.updateInstance(font, fontSize, width, text, colors, wobbleStrengths);
 
 		//writer duration is set per char, so we have to multiply it with the amount of characters
-		if(model.charCount() > 0) displayTime = -writerDuration;
+		displayTime = -writerDuration;
 		writerDuration *= model.charCount();
 
 		if(!fixedWidth) this.setRawWidth(model.getWidth());
 		if(!fixedHeight) this.setRawHeight(model.getHeight());
+
+		if(writerDuration > 0) {
+			blipSource.play(AudioType.BLIP);
+		}
 
 		return this;
 	}

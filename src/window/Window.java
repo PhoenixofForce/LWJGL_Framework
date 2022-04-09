@@ -52,6 +52,8 @@ public class Window extends BasicColorGuiElement {
 	private Camera cam;
 	private GuiText text;
 
+	private boolean isFullscreen;
+
 	public Window() {
 		super(null, 0, 0, 0, 0);
 	}
@@ -86,6 +88,7 @@ public class Window extends BasicColorGuiElement {
 		AudioPlayer.playMusic(AudioType.MUSIC);
 
 		glfwShowWindow(window);
+		setFullscreen(Options.fullScreen);
 	}
 
 	private void initOpenAL() {
@@ -254,6 +257,21 @@ public class Window extends BasicColorGuiElement {
 		AssetLoader.cleanUp();
 		ParticleSpawner.cleanUpAll(true);
 		ScreenRect.getInstance().cleanUp();
+	}
+
+	public void setFullscreen(boolean value) {
+		GLFWVidMode mode = glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
+
+		if(value) {
+			glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, mode.width(), mode.height(), mode.refreshRate());
+		} else {
+			glfwSetWindowMonitor(window, NULL, (mode.width() - 960) / 2, (mode.height() - 600) / 2, 960, 600, GLFW_DONT_CARE);
+		}
+		this.isFullscreen = value;
+	}
+
+	public boolean isFullscreen() {
+		return isFullscreen;
 	}
 
 	public void testOpenGLError() {

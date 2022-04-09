@@ -206,7 +206,6 @@ public class TextModel extends Renderable {
 				indexes++;
 				if(List.of(".", "?", "!").contains(texture)) indexes += 9;		//longer pauses at sentence ends
 				else if(List.of(",", ":", ";", "-").contains(texture)) indexes += 4;	//medium pauses at these
-				else if(List.of(" ", "\n").contains(texture)) indexes--;
 			}
 
 			y -= fontSize * (Constants.FONT_SPACING + 2);
@@ -221,6 +220,8 @@ public class TextModel extends Renderable {
 		glBufferData(GL_ARRAY_BUFFER, chars * floats * 4L, GL_STREAM_DRAW);
 		glBufferData(GL_ARRAY_BUFFER, data, GL_STREAM_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		this.chars = indexes;
 	}
 
 	/*

@@ -6,6 +6,7 @@ public enum AudioType {
 
 	MUSIC("Chillstep_1"),
 	EFFECT("powerup"),
+	BLIP("blip");
 	;
 
 	private final String fileName;
