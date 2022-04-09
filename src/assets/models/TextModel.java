@@ -123,57 +123,73 @@ public class TextModel extends Renderable {
 			Vector3f color = colorFragments.get(i);
 			float wobble = wobbleStrengthFragments.get(i);
 
-			for(char c: text.toCharArray()) {
-				String character = c + "";
+			String[] words = (text + "a").split(" "); 	//additional a to keep spaces at the end
+			for(int wordIndex = 0; wordIndex < words.length; wordIndex++) {
+				String word = words[wordIndex];
+				if (wordIndex == words.length - 1) word = word.substring(0, word.length() - 1);    //cut of the a again
 
-				if(c == '<' && !escaped) {
-					inSpecialText = true;
-					specialText = "";
-					continue;
-				} else if(c == '>' && !escaped) {
-					inSpecialText = false;
-					if(!font.hasCharacter(specialText)) continue;
+				float wordLength = calculateWidth(font, fontSize, word);
+				System.out.println(word + " " + currentLineLength + " " + wordLength + " " + (currentLineLength + wordLength) + " " + maxWidth);
 
-					if(currentLineLength + font.getAdvance(specialText, fontSize) >= maxWidth * 2) {
+				if(currentLineLength + wordLength > maxWidth && !word.startsWith("\n")) {	//to long for current line
+					if(currentLineLength > 0) {
 						this.width = Math.max(currentLineLength, this.width);
-
 						lines.add(currentLine);
 						currentLine = new ArrayList<>();
 						currentLineLength = 0;
 					}
 
-					currentLineLength += font.getAdvance(specialText, fontSize) * 2;
-					currentLine.add(new TextFragment(specialText, color, wobble));
-
-					continue;
-				} else if(c == '\\' && !escaped) {
-					escaped = true;
-					continue;
+					if(wordLength > maxWidth) {	//cut line
+						word = cutWord(font , fontSize, word);
+					}
 				}
 
-				if(inSpecialText) {
-					specialText += c;
-					continue;
+				for(char c: word.toCharArray()) {
+					String character = c + "";
+
+					if(c == '<' && !escaped) {
+						inSpecialText = true;
+						specialText = "";
+						continue;
+					} else if(c == '>' && !escaped) {
+						inSpecialText = false;
+						if(!font.hasCharacter(specialText)) continue;
+
+						currentLineLength += font.getAdvance(specialText, fontSize) * 2;
+						currentLine.add(new TextFragment(specialText, color, wobble));
+
+						continue;
+					} else if(c == '\\' && !escaped) {
+						escaped = true;
+						continue;
+					}
+
+					if(inSpecialText) {
+						specialText += c;
+						continue;
+					}
+
+					if(!font.hasCharacter(character) && c != '\n') {
+						if(font.hasCharacter(character.toUpperCase())) character = character.toUpperCase();
+						else if(font.hasCharacter(character.toLowerCase())) character = character.toLowerCase();
+						else continue;
+					}
+
+					if(c == '\n') {
+						this.width = Math.max(currentLineLength, this.width);
+						lines.add(currentLine);
+						currentLine = new ArrayList<>();
+						currentLineLength = 0;
+					}
+
+					currentLineLength += font.getAdvance(character, fontSize);
+					currentLine.add(new TextFragment(character, color, wobble));
+
+					escaped = false;
 				}
 
-				if(!font.hasCharacter(character) && c != '\n') {
-					if(font.hasCharacter(character.toUpperCase())) character = character.toUpperCase();
-					else if(font.hasCharacter(character.toLowerCase())) character = character.toLowerCase();
-					else continue;
-				}
-
-				if(currentLineLength + font.getAdvance(character, fontSize) >= maxWidth * 2 || c == '\n') {
-					this.width = Math.max(currentLineLength, this.width);
-
-					lines.add(currentLine);
-					currentLine = new ArrayList<>();
-					currentLineLength = 0;
-				}
-
-				currentLineLength += font.getAdvance(character, fontSize) * 2;
-				currentLine.add(new TextFragment(character, color, wobble));
-
-				escaped = false;
+				currentLine.add(new TextFragment(" ", new Vector3f(1), 0));
+				currentLineLength += font.getAdvance(" ", fontSize);
 			}
 		}
 
@@ -230,14 +246,8 @@ public class TextModel extends Renderable {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	private float calculateWidth(Font font, float fontSize, List<TextFragment> fragments) {
-		float out = 0;
-
-		for(TextFragment frag: fragments) {
-			out += font.getAdvance(frag.texture, fontSize) * 2;
-		}
-
-		return out;
+	private String cutWord(Font font, float fontSize, String word) {
+		return word;
 	}
 
 	/*
@@ -250,6 +260,8 @@ public class TextModel extends Renderable {
 		boolean escaped = false;
 		boolean inSpecialText = false;
 		for(char c: text.toCharArray()) {
+			String character = c + "";
+
 			if(c == '<' && !escaped) {
 				inSpecialText = true;
 				continue;
@@ -270,14 +282,23 @@ public class TextModel extends Renderable {
 				continue;
 			}
 
-			if(font.hasCharacter(c+""))
-				out += font.getAdvance(c+"", fontSize);
+			if(!font.hasCharacter(character) && c != '\n') {
+				if(font.hasCharacter(character.toUpperCase())) character = character.toUpperCase();
+				else if(font.hasCharacter(character.toLowerCase())) character = character.toLowerCase();
+				else continue;
+			}
+
+			if(font.hasCharacter(character))
+				out += font.getAdvance(character, fontSize);
 
 			escaped = false;
 		}
 
 		return out;
 	}
+
+
+
 
 	@Override
 	public void cleanUp() {
