@@ -88,7 +88,9 @@ public class GuiText extends GuiElement {
 	}
 
 	@Override
-	protected void initComponent() {}
+	protected void initComponent() {
+		//super.initComponent();
+	}
 
 	@Override
 	public void updateGui(long dt) {
@@ -109,8 +111,8 @@ public class GuiText extends GuiElement {
 			//getCenterX points to center of the whole text
 			//-getWidth/2 to the left side of the first letter
 			//+fontSize (aka width)/2 to the middle of the first letter
-			float translationX = toScreenSpace(getCenterX() - getWidth() / 2 + fontSize / 2, Window.INSTANCE.getWidth());
-			float translationY = toScreenSpace(getCenterY() + getHeight() / 2 - (fontSize * Constants.FONT_ASPECT / 2), Window.INSTANCE.getHeight());
+			float translationX = toScreenSpace(getCenterX() - getWidth() / 2 + (fontSize / Constants.FONT_ASPECT) / 2, Window.INSTANCE.getWidth());
+			float translationY = toScreenSpace(getCenterY() + getHeight() / 2 - (fontSize / 2), Window.INSTANCE.getHeight());
 
 			ShaderHandler.ShaderType type = ShaderHandler.ShaderType.TEXT;
 			MassUniform u = new MassUniform();

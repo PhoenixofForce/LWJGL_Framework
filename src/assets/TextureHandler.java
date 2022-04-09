@@ -95,6 +95,17 @@ public class TextureHandler {
 		return atlas;
 	}
 
+	public static TextureAtlas loadPixelTextureAtlasPNG(String spriteSheetName, String fileName, Optional<String> path, List<SingleTexture> singleTextures) {
+		loadPixelImagePng(spriteSheetName, fileName, path);
+
+		TextureAtlas atlas = new TextureAtlas(spriteSheetName);
+		singleTextures.forEach(s -> atlas.addTexture(s.name, s.coords));
+
+		textureAtlases.put(spriteSheetName, atlas);
+
+		return atlas;
+	}
+
 	public static int getTexture(String texture) {
 		if(!textureMap.containsKey(texture)) {
 			System.err.println("Tried to access unloaded texture " + texture);
@@ -110,7 +121,7 @@ public class TextureHandler {
 		return textureAtlases.get(atlasName);
 	}
 
-	private record SingleTexture(String name, Vector4f coords) { }
+	public record SingleTexture(String name, Vector4f coords) { }
 	private static List<SingleTexture> readTextFile(String fileName, Optional<String> path) {
 		List<SingleTexture> out = new ArrayList<>();
 

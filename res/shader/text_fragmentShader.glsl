@@ -12,7 +12,7 @@ layout(location = 206) uniform float writerProgess;
 
 void main() {
     vec4 texColor = texture(atlas, fragTexCoord);
-    if(texColor.a < 0.5 || writerProgess * maxChars < charID) discard;
+    if(texColor.a < 1.0 || writerProgess * maxChars < charID) discard;
 
     finalColor = vec4(texColor.rgb * color, 1);
 }

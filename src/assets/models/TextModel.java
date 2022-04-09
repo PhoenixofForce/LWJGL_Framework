@@ -8,6 +8,7 @@ import window.font.Font;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
@@ -16,9 +17,16 @@ import static org.lwjgl.opengl.GL45.glEnableVertexArrayAttrib;
 
 public class TextModel extends Renderable {
 
+	private record TextFragment(String texture, Vector3f color, float wobbleStrength) { }
+
+
 	/*
 		NOTE: In this class are some * 2 and / 2 when calculating widths ant heights
 		im not sure why that is needed, but i thinks its because the vertices used are from [-1, 1] which makes the rectangle 2 long
+
+		<Special Character> denotes special textures.
+		If you want < to be written you need to escape it with an \ (or \\ when in java string)
+
 	 */
 
 	private float maxWidth, maxHeight;
@@ -59,7 +67,6 @@ public class TextModel extends Renderable {
 		glEnableVertexArrayAttrib(rectVAO, 1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
 
-
 		buffers.add(rectVBO);
 		buffers.add(rectUVVBO);
 	}
@@ -95,84 +102,116 @@ public class TextModel extends Renderable {
 	}
 
 	public void updateInstance(Font font, float fontSize, float width, List<String> textFragments, List<Vector3f> colorFragments, List<Float> wobbleStrengthFragments) {
+		List<List<TextFragment>> lines = preprocess(font, fontSize, textFragments, colorFragments, wobbleStrengthFragments);
+		this.width = lines.stream().map(e -> calculateFragmentWidth(font, fontSize, e)).max(Float::compare).orElse(0f) * 2;
+		this.width = Math.max(this.width, width);
+		buildModel(font, fontSize, lines);
+	}
+
+	/*
+		Preprocesses the text so that each line is filled as much as possible
+
+	 */
+	private List<List<TextFragment>> preprocess(Font font, float fontSize, List<String> textFragments, List<Vector3f> colorFragments, List<Float> wobbleStrengthFragments) {
+		List<List<TextFragment>> lines = new ArrayList<>();
+
+		int currentLineLength = 0;
+		List<TextFragment> currentLine = new ArrayList<>();
+
+		for(int i = 0; i < textFragments.size(); i++) {
+			String text = textFragments.get(i);
+			Vector3f color = colorFragments.get(i);
+			float wobble = wobbleStrengthFragments.get(i);
+
+			List<String> parsedText = parseText(font, text);
+			List<List<String>> words = toWords(parsedText);
+
+			for(int wordIndex = 0; wordIndex < words.size(); wordIndex++) {
+				List<String> word = words.get(wordIndex);
+
+				if(word.size() == 1 && word.get(0).equals("\n")) {
+					lines.add(currentLine);
+					currentLine = new ArrayList<>();
+					currentLineLength = 0;
+					continue;
+				}
+
+				float wordLength = calculateWidth(font, fontSize, word);
+				if(currentLineLength + wordLength > maxWidth) {
+					if(currentLineLength > 0) {
+						lines.add(currentLine);
+						currentLine = new ArrayList<>();
+						currentLineLength = 0;
+					}
+
+					if(wordLength > maxWidth) {
+						List<List<String>> cutWord = cutWord(font, fontSize, word);
+						words.set(wordIndex, cutWord.get(0));
+
+						for(int j = cutWord.size() - 1; j >= 1; j--) {
+							words.add(wordIndex+1, cutWord.get(j));
+						}
+
+						word = words.get(wordIndex);
+					}
+				}
+
+				for(String s: word) {
+					if(s.equals(" ") && currentLineLength == 0) continue;
+
+					currentLineLength += font.getAdvance(s, fontSize);
+					currentLine.add(new TextFragment(s, color, wobble));
+				}
+			}
+		}
+
+		lines.add(currentLine);
+		this.width = Math.max(currentLineLength * 2, this.width);
+		this.height = (2 + Constants.FONT_SPACING) * lines.size() * fontSize - Constants.FONT_SPACING * fontSize;
+
+		return lines;
+	}
+
+	private void buildModel(Font font, float fontSize, List<List<TextFragment>> lines) {
+		float effectiveWidth = maxWidth == Float.MAX_VALUE? width: maxWidth;
+
 		List<Float> floatsData = new ArrayList<>();
-
-		float fontWidth = fontSize;
-		float fontHeight = Constants.FONT_ASPECT * fontWidth;
-
 		float x = 0;
 		float y = 0;
 
 		chars = 0;
 		int indexes = 0;
 
-		mainLoop:
-		for(int fragmentIndex = 0; fragmentIndex < textFragments.size(); fragmentIndex++) {
-			if(-y + fontHeight * 2 > maxHeight * 2) break mainLoop; //height restrain
+		for(List<TextFragment> line: lines) {
+			x = 0;	//TODO: calculate alignment position here
+					// left = 0
+					// center = this.width - lineWidth
+				    // right = this.width * 2 - lineWidth * 2
+					// Left(0), center(1), Right(2)
+					// x = this.width * align.float - lineWidth * align.float
 
-			Vector3f color = colorFragments.get(fragmentIndex);
-			float wobbleStrength = wobbleStrengthFragments.get(fragmentIndex);
+			for(TextFragment character: line) {
+				String texture = character.texture;
 
-			String[] words = (textFragments.get(fragmentIndex) + "a").split(" ");	//add an a character at the end so we keep spaces at the end
+				float fontWidth = font.getWidth(texture, fontSize);
+				float fontHeight = font.getHeight(texture, fontSize);
 
-			for(int wordIndex = 0; wordIndex < words.length; wordIndex++) {
-				String word = words[wordIndex];
-				if(wordIndex == words.length - 1) word = word.substring(0, word.length() - 1);	//cut of the a again
+				addData(floatsData, x + font.getXoffset(texture, fontSize), y - font.getYoffset(texture, fontSize) , fontWidth, fontHeight);
+				addData(floatsData, font.getBounds(texture));
+				addData(floatsData, character.color);
+				addData(floatsData, indexes, character.wobbleStrength);
 
-				float stringLength = calculateWidth(word, fontSize);
-
-
-				if(x + stringLength > maxWidth * 2 && !word.startsWith("\n")) {	//if word is too long for current line
-					//start a new line
-					if(x > 0) {
-						width = Math.max(0, x - Constants.FONT_SPACING * fontWidth);
-						x = 0;
-						y -= fontHeight * (2 + Constants.FONT_SPACING);
-					}
-
-					if(-y + fontHeight * 2 > maxHeight * 2) break mainLoop;
-
-					if(stringLength > maxWidth * 2) {		//if word is longer than a line
-						word = cutLine(word, fontSize);		//cut it so that it fits
-					}
-				}
-
-				char[] charArray = word.toUpperCase().toCharArray();	//TODO: my font has only uppercase character
-				for (char c : charArray) {
-					if (font.hasCharacter(c)) {
-						addData(floatsData, x, y, fontWidth, fontHeight);
-						addData(floatsData, font.getBounds(c));
-						addData(floatsData, color);
-						addData(floatsData, indexes, wobbleStrength);
-
-						indexes++;
-						if(c == '.') indexes += 9; //longer pauses after sentence
-						else if(c == ',') indexes += 4; //short pauses after commata
-					}
-
-					if (c == '\n') {
-						width = Math.max(0, x - Constants.FONT_SPACING * fontWidth);
-						x = 0;
-						y -= fontHeight * (2 + Constants.FONT_SPACING);
-
-						if(-y + fontHeight * 2 > maxHeight * 2) break mainLoop;
-					} else {
-						x += fontWidth * (2 + Constants.FONT_SPACING);		//times 2 to start directly after the char, + spacing for spacing
-					}
-
-					chars++;
-				}
-
-				//We need no space after the last character
-				if(wordIndex < words.length - 1) x += fontWidth * (2 + Constants.FONT_SPACING);
+				x += font.getAdvance(texture, fontSize) * 2;
+				chars++;
+				indexes++;
+				if(List.of(".", "?", "!").contains(texture)) indexes += 9;		//longer pauses at sentence ends
+				else if(List.of(",", ":", ";", "-").contains(texture)) indexes += 4;	//medium pauses at these
+				else if(List.of(" ", "\n").contains(texture)) indexes--;
 			}
+
+			y -= fontSize * (Constants.FONT_SPACING + 2);
 		}
 
-		//remove spacing
-		this.width = Math.max(width, x - Constants.FONT_SPACING * fontWidth);
-		this.height = -y + fontHeight * 2;
-
-		//parse data to opengl
 		float[] data = new float[floatsData.size()];
 		for(int i = 0; i < floatsData.size(); i++) {
 			data[i] = floatsData.get(i);
@@ -185,39 +224,128 @@ public class TextModel extends Renderable {
 	}
 
 	/*
-		Cuts a string so that it spans multiple lines
-		12345 <- maxLineLength
-		ThisIsALongLineForDemo
-
-		=>
-
-		12345 <- maxLineLength
-		This-
-		IsAL-
-		ongL-
-		ineF-
-		orDe-
-		mo
+		Parses the text into characters that the font has
 	 */
-	private String cutLine(String in, float fontSize) {
-		//https://stackoverflow.com/questions/3760152/split-string-to-equal-length-substrings-in-java
+	private List<String> parseText(Font font, String text) {
+		List<String> out = new ArrayList<>();
 
-		int lineLength = charsInLine(maxWidth, fontSize) - 1;
-		String[] slices = in.split("(?<=\\G.{" + lineLength + "})");
+		String specialText = "";
+		boolean escaped = false;
+		boolean inSpecialText = false;
+		for(char c: text.toCharArray()) {
+			String character = c + "";
 
-		return String.join("-\n", slices);
+			if(c == '<' && !escaped) {
+				inSpecialText = true;
+				continue;
+			} else if(c == '>' && !escaped) {
+				inSpecialText = false;
+
+				if(font.hasCharacter(specialText)) {
+					out.add(specialText);
+				}
+
+				continue;
+			} else if(c == '\\' && !escaped) {
+				escaped = true;
+				continue;
+			}
+
+			if(inSpecialText) {
+				specialText += c;
+				continue;
+			}
+
+			if(!font.hasCharacter(character) && c != '\n') {
+				if(font.hasCharacter(character.toUpperCase())) character = character.toUpperCase();
+				else if(font.hasCharacter(character.toLowerCase())) character = character.toLowerCase();
+				else continue;
+			}
+
+			if(font.hasCharacter(character) || c == '\n')
+				out.add(character);
+
+			escaped = false;
+		}
+
+		return out;
 	}
 
+	/*
+		Splits the parsed text into words. A word is
+		ajkshd
+		<smiley>
+		space
+		\n
+	 */
+	private List<List<String>> toWords(List<String> symbols) {
+		List<List<String>> out = new ArrayList<>();
+		List<String> currentWord = new ArrayList<>();
 
-	private float calculateWidth(String text, float size) {
-		return text.length() * size * (2 + Constants.FONT_SPACING) - Constants.FONT_SPACING * size;
+		for(String symbol: symbols) {
+			if(symbol.equals("\n")|| symbol.equals(" ") || symbol.length() > 1) {
+				if(currentWord.size() > 0) out.add(currentWord);
+				out.add(new ArrayList<>(List.of(symbol)));
+				currentWord = new ArrayList<>();
+			} else {
+				currentWord.add(symbol);
+			}
+		}
+		if(currentWord.size() > 0) out.add(currentWord);
+
+		return out;
 	}
 
-	private int charsInLine(float width, float size) {
-		float out = width + Constants.FONT_SPACING * size;
-		out /= (size * (2 + Constants.FONT_SPACING));
-		return (int) Math.floor(out * 2);
+	private float calculateWidth(Font font, float fontSize, List<String> parsed) {
+		float out = 0.0f;
+		for(String s: parsed) out += font.getAdvance(s, fontSize);
+		return out;
 	}
+
+	private float calculateFragmentWidth(Font font, float fontSize, List<TextFragment> parsed) {
+		float out = 0.0f;
+		for(TextFragment s: parsed) out += font.getAdvance(s.texture(), fontSize);
+		return out;
+	}
+
+	/*
+		Cuts a word
+		that is too long for the current line
+
+		thisistheexampleline
+
+		into smaller lines
+
+		thisis-
+		theexa-
+		mpleli-
+		ne
+	 */
+	private List<List<String>> cutWord(Font font, float fontSize, List<String> word) {
+		float maxLength = maxWidth;
+		if(font.hasCharacter("-")) maxLength -= font.getWidth("-", fontSize);
+
+		List<List<String>> out = new ArrayList<>();
+		List<String> currentLine = new ArrayList<>();
+		float currentLength = 0;
+
+		for(String character: word) {
+			if(currentLength + font.getAdvance(character, fontSize) >= maxLength) {
+				currentLine.add("-");
+				out.add(currentLine);
+				out.add(new ArrayList<>(List.of("\n")));
+				currentLength = 0;
+				currentLine = new ArrayList<>();
+			}
+
+			currentLine.add(character);
+			currentLength += font.getAdvance(character, fontSize);
+		}
+		if(currentLine.size() > 0) out.add(currentLine);
+
+		return out;
+	}
+
 
 	@Override
 	public void cleanUp() {
