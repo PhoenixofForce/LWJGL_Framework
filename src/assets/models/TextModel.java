@@ -114,24 +114,28 @@ public class TextModel extends Renderable {
 		int currentLineLength = 0;
 		List<TextFragment> currentLine = new ArrayList<>();
 
-		String specialText = "";
-		boolean escaped = false;
-		boolean inSpecialText = false;
-
 		for(int i = 0; i < textFragments.size(); i++) {
 			String text = textFragments.get(i);
 			Vector3f color = colorFragments.get(i);
 			float wobble = wobbleStrengthFragments.get(i);
 
-			String[] words = (text + "a").split(" "); 	//additional a to keep spaces at the end
-			for(int wordIndex = 0; wordIndex < words.length; wordIndex++) {
-				String word = words[wordIndex];
-				if (wordIndex == words.length - 1) word = word.substring(0, word.length() - 1);    //cut of the a again
+			List<String> parsedText = parseText(font, text);
+			List<List<String>> words = toWords(parsedText);
+			System.out.println(words.toString().replace("\n", "\\n"));
+
+			for(int j = 0; j < words.size(); j++) {
+				List<String> word = words.get(j);
+
+				if(word.size() == 1 && word.get(0).equals("\n")) {
+					this.width = Math.max(currentLineLength, this.width);
+					lines.add(currentLine);
+					currentLine = new ArrayList<>();
+					currentLineLength = 0;
+					continue;
+				}
 
 				float wordLength = calculateWidth(font, fontSize, word);
-				System.out.println(word + " " + currentLineLength + " " + wordLength + " " + (currentLineLength + wordLength) + " " + maxWidth);
-
-				if(currentLineLength + wordLength > maxWidth && !word.startsWith("\n")) {	//to long for current line
+				if(currentLineLength + wordLength > maxWidth) {
 					if(currentLineLength > 0) {
 						this.width = Math.max(currentLineLength, this.width);
 						lines.add(currentLine);
@@ -139,57 +143,15 @@ public class TextModel extends Renderable {
 						currentLineLength = 0;
 					}
 
-					if(wordLength > maxWidth) {	//cut line
-						word = cutWord(font , fontSize, word);
-					}
+					//cut word here
 				}
 
-				for(char c: word.toCharArray()) {
-					String character = c + "";
+				for(String s: word) {
+					if(s.equals(" ") && currentLineLength == 0) continue;
 
-					if(c == '<' && !escaped) {
-						inSpecialText = true;
-						specialText = "";
-						continue;
-					} else if(c == '>' && !escaped) {
-						inSpecialText = false;
-						if(!font.hasCharacter(specialText)) continue;
-
-						currentLineLength += font.getAdvance(specialText, fontSize) * 2;
-						currentLine.add(new TextFragment(specialText, color, wobble));
-
-						continue;
-					} else if(c == '\\' && !escaped) {
-						escaped = true;
-						continue;
-					}
-
-					if(inSpecialText) {
-						specialText += c;
-						continue;
-					}
-
-					if(!font.hasCharacter(character) && c != '\n') {
-						if(font.hasCharacter(character.toUpperCase())) character = character.toUpperCase();
-						else if(font.hasCharacter(character.toLowerCase())) character = character.toLowerCase();
-						else continue;
-					}
-
-					if(c == '\n') {
-						this.width = Math.max(currentLineLength, this.width);
-						lines.add(currentLine);
-						currentLine = new ArrayList<>();
-						currentLineLength = 0;
-					}
-
-					currentLineLength += font.getAdvance(character, fontSize);
-					currentLine.add(new TextFragment(character, color, wobble));
-
-					escaped = false;
+					currentLineLength += font.getAdvance(s, fontSize);
+					currentLine.add(new TextFragment(s, color, wobble));
 				}
-
-				currentLine.add(new TextFragment(" ", new Vector3f(1), 0));
-				currentLineLength += font.getAdvance(" ", fontSize);
 			}
 		}
 
@@ -230,6 +192,9 @@ public class TextModel extends Renderable {
 				x += font.getAdvance(texture, fontSize) * 2;
 				chars++;
 				indexes++;
+				if(List.of(".", "?", "!").contains(texture)) indexes += 9;
+				else if(List.of(",", ":", ";", "-").contains(texture)) indexes += 4;
+				else if(List.of(" ", "\n").contains(texture)) indexes--;
 			}
 
 			y -= fontSize * (Constants.FONT_SPACING + 2);
@@ -246,15 +211,12 @@ public class TextModel extends Renderable {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	private String cutWord(Font font, float fontSize, String word) {
-		return word;
-	}
-
 	/*
 			We want the pure width. With no regards to new lines
 	 */
-	private float calculateWidth(Font font, float fontSize, String text) {
-		float out = 0;
+
+	private List<String> parseText(Font font, String text) {
+		List<String> out = new ArrayList<>();
 
 		String specialText = "";
 		boolean escaped = false;
@@ -268,8 +230,9 @@ public class TextModel extends Renderable {
 			} else if(c == '>' && !escaped) {
 				inSpecialText = false;
 
-				if(font.hasCharacter(specialText))
-					out += font.getAdvance(specialText, fontSize);
+				if(font.hasCharacter(specialText)) {
+					out.add(specialText);
+				}
 
 				continue;
 			} else if(c == '\\' && !escaped) {
@@ -288,8 +251,8 @@ public class TextModel extends Renderable {
 				else continue;
 			}
 
-			if(font.hasCharacter(character))
-				out += font.getAdvance(character, fontSize);
+			if(font.hasCharacter(character) || c == '\n')
+				out.add(character);
 
 			escaped = false;
 		}
@@ -297,7 +260,37 @@ public class TextModel extends Renderable {
 		return out;
 	}
 
+	private List<List<String>> toWords(List<String> symbols) {
+		List<List<String>> out = new ArrayList<>();
+		List<String> currentWord = new ArrayList<>();
 
+		for(String symbol: symbols) {
+			if(symbol.equals("\n")|| symbol.equals(" ") || symbol.length() > 1) {
+				if(currentWord.size() > 0) out.add(currentWord);
+				out.add(new ArrayList<>(List.of(symbol)));
+				currentWord = new ArrayList<>();
+			} else {
+				currentWord.add(symbol);
+			}
+		}
+		if(currentWord.size() > 0) out.add(currentWord);
+
+		return out;
+	}
+
+	private float calculateWidth(Font font, float fontSize, String text) {
+		return calculateWidth(font, fontSize, parseText(font, text));
+	}
+
+	private float calculateWidth(Font font, float fontSize, List<String> parsed) {
+		float out = 0.0f;
+		for(String s: parsed) out += font.getAdvance(s, fontSize);
+		return out;
+	}
+
+	private String cutWord(Font font, float fontSize, String word) {
+		return word;
+	}
 
 
 	@Override
