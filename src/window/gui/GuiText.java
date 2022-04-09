@@ -12,7 +12,7 @@ import window.font.Font;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuiText extends GuiElement {
+public class GuiText extends BasicColorGuiElement {
 
 	//TODO: Alignments
 
@@ -88,7 +88,9 @@ public class GuiText extends GuiElement {
 	}
 
 	@Override
-	protected void initComponent() {}
+	protected void initComponent() {
+		super.initComponent();
+	}
 
 	@Override
 	public void updateGui(long dt) {
@@ -103,7 +105,7 @@ public class GuiText extends GuiElement {
 	@Override
 	public void renderComponent() {
 		if(model != null) {
-			//super.renderComponent();
+			super.renderComponent();
 
 			//(translationX, translationY) needs to be the center of the first char
 			//getCenterX points to center of the whole text

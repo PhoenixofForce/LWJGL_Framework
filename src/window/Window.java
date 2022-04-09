@@ -11,6 +11,8 @@ import rendering.ShaderHandler;
 import utils.Constants;
 import utils.Options;
 import utils.TimeUtils;
+import window.font.Font;
+import window.font.GeneralFont;
 import window.font.TextureAtlasFont;
 import window.gui.*;
 import window.inputs.InputHandler;
@@ -294,10 +296,13 @@ public class Window extends BasicColorGuiElement {
 		GuiCheckbox checkbox = new GuiCheckbox(this, Anchor.BOTTOM_LEFT, 50, 320, 20, 20);
 		GuiSelector selector = new GuiSelector(this, Anchor.BOTTOM_LEFT, 50, 400, 200, 50);
 
-		text = new GuiText(this, Anchor.TOP_LEFT,  20, -20f, 250, new TextureAtlasFont("Font"), 11f, 50)
-				.addText("Phoenix", new Vector3f(1, 0, 0))
-				.addText("of", new Vector3f(0, 1, 0), 0.02f)
-				.addText("Force", new Vector3f(0, 0, 1))
+		Font font1 = new GeneralFont("WhitePeaberryOutline", 2);
+		Font font2 = new TextureAtlasFont("Font");
+
+		text = new GuiText(this, Anchor.TOP_LEFT,  20, -20f, 320, font2, 32f, 50)
+				.addText("The quick brown fox jumps over the lazy dog", new Vector3f(1, 0, 0))
+				.newLine()
+				.addText("\\<test\\> = <test>")
 				.build();
 
 		this.setMouseClickListener((e, b) -> {

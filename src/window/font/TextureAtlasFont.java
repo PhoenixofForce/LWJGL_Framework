@@ -3,6 +3,7 @@ package window.font;
 import assets.textures.TextureAtlas;
 import assets.TextureHandler;
 import org.joml.Vector4f;
+import utils.Constants;
 
 public class TextureAtlasFont extends Font {
 
@@ -24,32 +25,33 @@ public class TextureAtlasFont extends Font {
 	}
 
 	@Override
-	public Vector4f getBounds(char c) {
+	public Vector4f getBounds(String c) {
 		return atlas.getTextureBounds(c + "");
 	}
 
 	@Override
-	public int getXoffset(char c) {
+	public int getXoffset(String c) {
 		return 0;
 	}
 
 	@Override
-	public int getYoffset(char c) {
+	public int getYoffset(String c) {
 		return 0;
 	}
 
 	@Override
-	public int getAdvance(char c) {
+	public int getAdvance(String c) {
 		return advance;
 	}
 
+
 	@Override
-	public float getMaximunLength() {
-		return atlas.getTextureBounds("A").w;
+	public boolean hasCharacter(String c) {
+		return atlas.hasTexture(c + "") || " ".equals(c);
 	}
 
 	@Override
-	public boolean hasCharacter(char c) {
-		return atlas.hasTexture(c + "");
+	public float getAdvance(String c, float fontSize) {
+		return super.getAdvance(c, fontSize) * (1 + Constants.FONT_SPACING);
 	}
 }
