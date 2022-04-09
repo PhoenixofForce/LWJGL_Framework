@@ -12,7 +12,7 @@ import window.font.Font;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuiText extends BasicColorGuiElement {
+public class GuiText extends GuiElement {
 
 	//TODO: Alignments
 
@@ -89,7 +89,7 @@ public class GuiText extends BasicColorGuiElement {
 
 	@Override
 	protected void initComponent() {
-		super.initComponent();
+		//super.initComponent();
 	}
 
 	@Override
@@ -105,14 +105,14 @@ public class GuiText extends BasicColorGuiElement {
 	@Override
 	public void renderComponent() {
 		if(model != null) {
-			super.renderComponent();
+			//super.renderComponent();
 
 			//(translationX, translationY) needs to be the center of the first char
 			//getCenterX points to center of the whole text
 			//-getWidth/2 to the left side of the first letter
 			//+fontSize (aka width)/2 to the middle of the first letter
-			float translationX = toScreenSpace(getCenterX() - getWidth() / 2 + fontSize / 2, Window.INSTANCE.getWidth());
-			float translationY = toScreenSpace(getCenterY() + getHeight() / 2 - (fontSize * Constants.FONT_ASPECT / 2), Window.INSTANCE.getHeight());
+			float translationX = toScreenSpace(getCenterX() - getWidth() / 2 + (fontSize / Constants.FONT_ASPECT) / 2, Window.INSTANCE.getWidth());
+			float translationY = toScreenSpace(getCenterY() + getHeight() / 2 - (fontSize / 2), Window.INSTANCE.getHeight());
 
 			ShaderHandler.ShaderType type = ShaderHandler.ShaderType.TEXT;
 			MassUniform u = new MassUniform();

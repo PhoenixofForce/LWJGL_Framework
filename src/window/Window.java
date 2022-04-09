@@ -299,12 +299,10 @@ public class Window extends BasicColorGuiElement {
 		Font font1 = new GeneralFont("WhitePeaberryOutline", 2);
 		Font font2 = new TextureAtlasFont("Font");
 
-		text = new GuiText(this, Anchor.TOP_LEFT,  20, -20f, 450, font2, 32f, 50)
+		text = new GuiText(this, Anchor.TOP_LEFT,  20, -20f, 500, font1, 24f, 50)
 				.addText("The quick brown fox jumps over the lazy dog", new Vector3f(1, 0, 0))
 				.newLine()
-				.addText("ThisIsAVeryLongLineAgain")
-				.newLine()
-				.addText("\\<test\\> = <test>")
+				.addText("\\<test\\> becomes <test>", new Vector3f(0, 1, 0), 0.02f)
 				.build();
 
 		this.setMouseClickListener((e, b) -> {

@@ -67,7 +67,6 @@ public class TextModel extends Renderable {
 		glEnableVertexArrayAttrib(rectVAO, 1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
 
-
 		buffers.add(rectVBO);
 		buffers.add(rectUVVBO);
 	}
@@ -104,10 +103,15 @@ public class TextModel extends Renderable {
 
 	public void updateInstance(Font font, float fontSize, float width, List<String> textFragments, List<Vector3f> colorFragments, List<Float> wobbleStrengthFragments) {
 		List<List<TextFragment>> lines = preprocess(font, fontSize, textFragments, colorFragments, wobbleStrengthFragments);
+		this.width = lines.stream().map(e -> calculateFragmentWidth(font, fontSize, e)).max(Float::compare).orElse(0f) * 2;
 		this.width = Math.max(this.width, width);
 		buildModel(font, fontSize, lines);
 	}
 
+	/*
+		Preprocesses the text so that each line is filled as much as possible
+
+	 */
 	private List<List<TextFragment>> preprocess(Font font, float fontSize, List<String> textFragments, List<Vector3f> colorFragments, List<Float> wobbleStrengthFragments) {
 		List<List<TextFragment>> lines = new ArrayList<>();
 
@@ -121,13 +125,11 @@ public class TextModel extends Renderable {
 
 			List<String> parsedText = parseText(font, text);
 			List<List<String>> words = toWords(parsedText);
-			System.out.println(words.toString().replace("\n", "\\n"));
 
-			for(int j = 0; j < words.size(); j++) {
-				List<String> word = words.get(j);
+			for(int wordIndex = 0; wordIndex < words.size(); wordIndex++) {
+				List<String> word = words.get(wordIndex);
 
 				if(word.size() == 1 && word.get(0).equals("\n")) {
-					this.width = Math.max(currentLineLength, this.width);
 					lines.add(currentLine);
 					currentLine = new ArrayList<>();
 					currentLineLength = 0;
@@ -137,13 +139,21 @@ public class TextModel extends Renderable {
 				float wordLength = calculateWidth(font, fontSize, word);
 				if(currentLineLength + wordLength > maxWidth) {
 					if(currentLineLength > 0) {
-						this.width = Math.max(currentLineLength, this.width);
 						lines.add(currentLine);
 						currentLine = new ArrayList<>();
 						currentLineLength = 0;
 					}
 
-					//cut word here
+					if(wordLength > maxWidth) {
+						List<List<String>> cutWord = cutWord(font, fontSize, word);
+						words.set(wordIndex, cutWord.get(0));
+
+						for(int j = cutWord.size() - 1; j >= 1; j--) {
+							words.add(wordIndex+1, cutWord.get(j));
+						}
+
+						word = words.get(wordIndex);
+					}
 				}
 
 				for(String s: word) {
@@ -156,13 +166,15 @@ public class TextModel extends Renderable {
 		}
 
 		lines.add(currentLine);
-		this.width = Math.max(currentLineLength, this.width);
-		this.height = (2 + Constants.FONT_SPACING) * lines.size() * fontSize;
+		this.width = Math.max(currentLineLength * 2, this.width);
+		this.height = (2 + Constants.FONT_SPACING) * lines.size() * fontSize - Constants.FONT_SPACING * fontSize;
 
 		return lines;
 	}
 
 	private void buildModel(Font font, float fontSize, List<List<TextFragment>> lines) {
+		float effectiveWidth = maxWidth == Float.MAX_VALUE? width: maxWidth;
+
 		List<Float> floatsData = new ArrayList<>();
 		float x = 0;
 		float y = 0;
@@ -173,9 +185,9 @@ public class TextModel extends Renderable {
 		for(List<TextFragment> line: lines) {
 			x = 0;	//TODO: calculate alignment position here
 					// left = 0
-					// center = this.width / 2 - lineWidth / 2
-				    // right = this.width - lineWidth
-					// Left(0), center(1/2), Right(1)
+					// center = this.width - lineWidth
+				    // right = this.width * 2 - lineWidth * 2
+					// Left(0), center(1), Right(2)
 					// x = this.width * align.float - lineWidth * align.float
 
 			for(TextFragment character: line) {
@@ -192,8 +204,8 @@ public class TextModel extends Renderable {
 				x += font.getAdvance(texture, fontSize) * 2;
 				chars++;
 				indexes++;
-				if(List.of(".", "?", "!").contains(texture)) indexes += 9;
-				else if(List.of(",", ":", ";", "-").contains(texture)) indexes += 4;
+				if(List.of(".", "?", "!").contains(texture)) indexes += 9;		//longer pauses at sentence ends
+				else if(List.of(",", ":", ";", "-").contains(texture)) indexes += 4;	//medium pauses at these
 				else if(List.of(" ", "\n").contains(texture)) indexes--;
 			}
 
@@ -212,9 +224,8 @@ public class TextModel extends Renderable {
 	}
 
 	/*
-			We want the pure width. With no regards to new lines
+		Parses the text into characters that the font has
 	 */
-
 	private List<String> parseText(Font font, String text) {
 		List<String> out = new ArrayList<>();
 
@@ -260,6 +271,13 @@ public class TextModel extends Renderable {
 		return out;
 	}
 
+	/*
+		Splits the parsed text into words. A word is
+		ajkshd
+		<smiley>
+		space
+		\n
+	 */
 	private List<List<String>> toWords(List<String> symbols) {
 		List<List<String>> out = new ArrayList<>();
 		List<String> currentWord = new ArrayList<>();
@@ -278,18 +296,54 @@ public class TextModel extends Renderable {
 		return out;
 	}
 
-	private float calculateWidth(Font font, float fontSize, String text) {
-		return calculateWidth(font, fontSize, parseText(font, text));
-	}
-
 	private float calculateWidth(Font font, float fontSize, List<String> parsed) {
 		float out = 0.0f;
 		for(String s: parsed) out += font.getAdvance(s, fontSize);
 		return out;
 	}
 
-	private String cutWord(Font font, float fontSize, String word) {
-		return word;
+	private float calculateFragmentWidth(Font font, float fontSize, List<TextFragment> parsed) {
+		float out = 0.0f;
+		for(TextFragment s: parsed) out += font.getAdvance(s.texture(), fontSize);
+		return out;
+	}
+
+	/*
+		Cuts a word
+		that is too long for the current line
+
+		thisistheexampleline
+
+		into smaller lines
+
+		thisis-
+		theexa-
+		mpleli-
+		ne
+	 */
+	private List<List<String>> cutWord(Font font, float fontSize, List<String> word) {
+		float maxLength = maxWidth;
+		if(font.hasCharacter("-")) maxLength -= font.getWidth("-", fontSize);
+
+		List<List<String>> out = new ArrayList<>();
+		List<String> currentLine = new ArrayList<>();
+		float currentLength = 0;
+
+		for(String character: word) {
+			if(currentLength + font.getAdvance(character, fontSize) >= maxLength) {
+				currentLine.add("-");
+				out.add(currentLine);
+				out.add(new ArrayList<>(List.of("\n")));
+				currentLength = 0;
+				currentLine = new ArrayList<>();
+			}
+
+			currentLine.add(character);
+			currentLength += font.getAdvance(character, fontSize);
+		}
+		if(currentLine.size() > 0) out.add(currentLine);
+
+		return out;
 	}
 
 
