@@ -49,10 +49,12 @@ public class AudioPlayer {
 
 	public static void cleanUp(boolean deleteMusic) {
 		for(int i = audioSources.size() - 1; i >= 0; i--) {
-			AudioSource src = audioSources.get(0);
-			src.stop().cleanUp();
+			AudioSource src = audioSources.remove(0);
+			src.stop();
+			if(src.shouldDeleteOnFinish()) src.cleanUp();
 		}
 
-		if(deleteMusic) musicSource.stop().cleanUp();
+		musicSource.stop();
+		if(deleteMusic) musicSource.cleanUp();
 	}
 }

@@ -81,6 +81,7 @@ public class AudioSource {
 	}
 	
 	public void cleanUp() {
+		stop();
 		AL11.alDeleteSources(sourceID);
 	}
 }

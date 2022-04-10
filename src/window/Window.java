@@ -3,32 +3,26 @@ package window;
 import assets.AssetLoader;
 import assets.TextureHandler;
 import assets.audio.AudioPlayer;
-import assets.audio.AudioType;
 import assets.models.ScreenRect;
-import gameobjects.entities.Camera;
 import gameobjects.particles.ParticleSpawner;
 import rendering.ShaderHandler;
 import utils.Constants;
 import utils.Options;
 import utils.TimeUtils;
-import window.font.Font;
-import window.font.GeneralFont;
-import window.font.TextureAtlasFont;
 import window.gui.*;
 import window.inputs.InputHandler;
 
 import java.nio.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.openal.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
+import window.views.View;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -44,16 +38,16 @@ public class Window extends BasicColorGuiElement {
 	public long window;
 	public long audioDevice, audioContext;
 
-	private int width = 960;
-	private int height = 600;
-
-	private Camera cam;
-	private GuiText text;
+	private int width = Constants.DEFAULT_WIDTH;
+	private int height = Constants.DEFAULT_HEIGHT;
 
 	private boolean isFullscreen;
+	private View currentView;
+	private View nextView;
 
-	public Window() {
+	public Window(View view) {
 		super(null, 0, 0, 0, 0);
+		this.currentView = view;
 	}
 
 	public void run() {
@@ -78,12 +72,8 @@ public class Window extends BasicColorGuiElement {
 
 		ShaderHandler.initShader();
 		AssetLoader.loadAll();
-		loadGui();
 
-		cam = new Camera();
-
-		ParticleSpawner.getNewSpawner(new Vector3f(0, 5, 0), ParticleSpawner.DEFAULT);
-		AudioPlayer.playMusic(AudioType.MUSIC);
+		if(currentView != null) currentView.init();
 
 		glfwShowWindow(window);
 		setFullscreen(Options.fullScreen);
@@ -194,6 +184,14 @@ public class Window extends BasicColorGuiElement {
 		long lastUpdate = TimeUtils.getTime();
 		long lastUpdateNano = TimeUtils.getNanoTime();
 		while ( !glfwWindowShouldClose(window) ) {
+			if(nextView != null) {
+				if(currentView != null) currentView.cleanUp();
+				softCleanUp();
+				nextView.init();
+				currentView = nextView;
+				nextView = null;
+			}
+
 			long dt = TimeUtils.getTime() - lastUpdate;
 			long dtNano = TimeUtils.getNanoTime() - lastUpdateNano;
 			lastUpdate = TimeUtils.getTime();
@@ -224,11 +222,7 @@ public class Window extends BasicColorGuiElement {
 		updateGui(dt);
 		AudioPlayer.update(dt);
 		ParticleSpawner.updateAll(dt);
-
-		cam.update(dt);
-		if(Constants.RUNTIME >= 1000) {
-			text.clear().addText("TICKS: ").addText(Constants.RUNTIME + "", Constants.RUNTIME > 1000? new Vector3f(1, 0, 0): (Constants.RUNTIME > 750? new Vector3f(1, 1, 0): new Vector3f(0, 0, 1))).build();
-		}
+		if(currentView != null) currentView.update(dt);
 
 		Constants.RUNTIME++;
 	}
@@ -236,13 +230,17 @@ public class Window extends BasicColorGuiElement {
 	private void render() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		Matrix4f projection_matrix = new Matrix4f().perspective((float)Math.PI/3, ((float) width)/height,0.001f, 1250f);
-		Matrix4f view_matrix = new Matrix4f().lookAt(cam.getPosition(), new Vector3f(cam.getLookingDirection()).add(cam.getPosition()), cam.getUp());
-
-		ParticleSpawner.renderAll(projection_matrix, view_matrix);
+		if(currentView != null) currentView.render();
 		super.renderGui();
 
 		glfwSwapBuffers(window);
+	}
+
+	private void softCleanUp() {
+		Constants.RUNTIME = 0;
+		cleanUpGui();
+		AudioPlayer.cleanUp(false);
+		ParticleSpawner.cleanUpAll(false);
 	}
 
 	private void cleanUp() {
@@ -254,6 +252,8 @@ public class Window extends BasicColorGuiElement {
 		glfwTerminate();
 		glfwSetErrorCallback(null).free();
 
+		cleanUpGui();
+		if(currentView != null) currentView.cleanUp();
 		AudioPlayer.cleanUp(true);
 		ShaderHandler.cleanup();
 		AssetLoader.cleanUp();
@@ -292,41 +292,15 @@ public class Window extends BasicColorGuiElement {
 
 	@Override
 	public float getWidth() {
-		return width;
+		return this.width;
 	}
 
 	@Override
 	public float getHeight() {
-		return height;
+		return this.height;
 	}
 
-	public void loadGui() {
-		GuiElement healtBar = new BasicColorGuiElement(this, Anchor.BEGIN, Anchor.BEGIN, 20, 20, 200, 20);
-		GuiElement staminaBar = new BasicColorGuiElement(this, Anchor.BOTTOM_RIGHT, -20, 20, 200, 20);
-		GuiElement manaBar = new BasicColorGuiElement(this, Anchor.BOTTOM_CENTER, 0.5f, 20, 200, 20);
-		GuiElement currentMana = new BasicColorGuiElement(manaBar, Anchor.TOP_LEFT, 0, 1, 0.3f, 20);
-
-		GuiElement crosshair = new BasicColorGuiElement(this, 0.5f, 0.5f, 10, 10);
-
-		GuiSlider slider = new GuiSlider(this, Anchor.BOTTOM_LEFT, 50, 200, 200, 20);
-		slider.setValue(Options.musicVolume);
-		slider.setChangeListener(v -> Options.musicVolume = v);
-
-		GuiButton button = new GuiButton(this, Anchor.CENTERCENTER, 150, 275, 200, 50);
-		GuiCheckbox checkbox = new GuiCheckbox(this, Anchor.BOTTOM_LEFT, 50, 320, 20, 20);
-		GuiSelector selector = new GuiSelector(this, Anchor.BOTTOM_LEFT, 50, 400, 200, 50);
-
-		Font font1 = new GeneralFont("WhitePeaberryOutline", 2);
-		Font font2 = new TextureAtlasFont("Font");
-
-		text = new GuiText(this, Anchor.TOP_LEFT,  20, -20f, 500, font1, 24f, 50)
-				.addText("The quick brown fox jumps over the lazy dog", new Vector3f(1, 0, 0))
-				.newLine()
-				.addText("\\<test\\> becomes <test>", new Vector3f(0, 1, 0), 0.02f)
-				.build();
-
-		this.setMouseClickListener((e, b) -> {
-			if(e != 2) AudioType.EFFECT.play();
-		});
+	public void setView(View view) {
+		this.nextView = view;
 	}
 }

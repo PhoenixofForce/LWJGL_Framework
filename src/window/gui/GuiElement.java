@@ -96,8 +96,17 @@ public abstract class GuiElement {
 		}
 	}
 
+	public void cleanUpGui() {
+		for(GuiElement child: children) {
+			child.cleanUpComponent();
+		}
+		children = new ArrayList<>();
+		cleanUpComponent();
+	}
+
 	public abstract void renderComponent();
 	public void updateComponent(long dt) { }
+	public abstract void cleanUpComponent();
 
 	private void addChild(GuiElement element) {
 		children.add(element);

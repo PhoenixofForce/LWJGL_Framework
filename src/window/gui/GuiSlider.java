@@ -53,6 +53,9 @@ public class GuiSlider extends GuiElement {
 	}
 
 	@Override
+	public void cleanUpComponent() { }
+
+	@Override
 	public void onClick(int event, int button) {
 		super.onClick(event, button);
 

@@ -135,6 +135,14 @@ public class GuiText extends GuiElement {
 		}
 	}
 
+	@Override
+	public void cleanUpComponent() {
+		if(model != null) {
+			model.cleanUp();
+			blipSource.stop().cleanUp();
+		}
+	}
+
 	//>--| BUILDER |--<\\
 
 	public GuiText addText(String string, Vector3f color, float wobbleStrength) {

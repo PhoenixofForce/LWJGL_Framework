@@ -72,6 +72,7 @@ public class ParticleSpawner {
 	
 	public static void cleanUpAll(boolean deleteModel) {
 		spawner.clear();
+		nextID = 0;
 		if(deleteModel) model.cleanUp();
 	}
 	

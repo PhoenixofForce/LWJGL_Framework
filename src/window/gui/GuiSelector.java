@@ -52,6 +52,9 @@ public class GuiSelector extends GuiElement {
 	@Override
 	public void renderComponent() {}
 
+	@Override
+	public void cleanUpComponent() { }
+
 	private void setOption(int option) {
 		this.selectedOption = option % optionCount;
 		while(selectedOption < 0) selectedOption += optionCount;

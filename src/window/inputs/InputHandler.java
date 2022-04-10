@@ -4,6 +4,7 @@ import maths.MathUtils;
 import utils.Constants;
 import utils.Screenshot;
 import window.Window;
+import window.views.TestView;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -77,6 +78,10 @@ public class InputHandler {
 			if(action == GLFW_RELEASE && ((key == GLFW_KEY_ENTER && isKeyPressed(GLFW_KEY_LEFT_ALT) > 0) ||
 					(key == GLFW_KEY_LEFT_ALT && isKeyPressed(GLFW_KEY_ENTER) > 0))) {
 				Window.INSTANCE.setFullscreen(!Window.INSTANCE.isFullscreen());
+			}
+
+			if(action == GLFW_RELEASE && key == GLFW_KEY_1) {
+				Window.INSTANCE.setView(new TestView());
 			}
 
 			if(action == GLFW_PRESS) {

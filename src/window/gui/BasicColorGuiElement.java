@@ -76,6 +76,9 @@ public class BasicColorGuiElement extends GuiElement {
 		Renderer.renderArrays(ShaderHandler.ShaderType.GUI, ScreenRect.getInstance(), uniform);
 	}
 
+	@Override
+	public void cleanUpComponent() { }
+
 	public BasicColorGuiElement setColors(Color mainColor, Color hoverColor) {
 		this.color = MathUtils.vecFromColor(mainColor);
 		this.color2 = MathUtils.vecFromColor(hoverColor);
