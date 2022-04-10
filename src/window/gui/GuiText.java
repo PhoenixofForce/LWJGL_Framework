@@ -122,7 +122,8 @@ public class GuiText extends GuiElement {
 			//getCenterX points to center of the whole text
 			//-getWidth/2 to the left side of the first letter
 			//+fontSize (aka width)/2 to the middle of the first letter
-			float translationX = toScreenSpace(getCenterX() - getWidth() / 2 + (fontSize / Constants.FONT_ASPECT) / 2, Window.INSTANCE.getWidth());
+			float width = font.getWidth(text.get(0).charAt(0) + "", fontSize);
+			float translationX = toScreenSpace(getCenterX() - getWidth() / 2 + (fontSize / width) / 2, Window.INSTANCE.getWidth());
 			float translationY = toScreenSpace(getCenterY() + getHeight() / 2 - (fontSize / 2), Window.INSTANCE.getHeight());
 
 			ShaderHandler.ShaderType type = ShaderHandler.ShaderType.TEXT;

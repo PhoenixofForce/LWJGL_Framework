@@ -47,8 +47,6 @@ public class Window extends BasicColorGuiElement {
 	private int width = 960;
 	private int height = 600;
 
-	private final String title = "This is an engine!";
-
 	private Camera cam;
 	private GuiText text;
 
@@ -116,7 +114,7 @@ public class Window extends BasicColorGuiElement {
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
 		// Create the window
-		window = glfwCreateWindow(width, height, title, NULL, NULL);
+		window = glfwCreateWindow(Constants.DEFAULT_WIDTH, Constants.DEFAULT_HEIGHT, Constants.TITLE, NULL, NULL);
 		if ( window == NULL )
 			throw new RuntimeException("Failed to create the GLFW window");
 
@@ -152,6 +150,10 @@ public class Window extends BasicColorGuiElement {
 			gb.put(0, iconGI);
 
 			glfwSetWindowIcon(window, gb);
+		}
+
+		if(Constants.GRAB_MOUSE) {
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 		}
 	}
 
@@ -197,7 +199,7 @@ public class Window extends BasicColorGuiElement {
 			lastUpdate = TimeUtils.getTime();
 			lastUpdateNano = TimeUtils.getNanoTime();
 
-			if(dt > 0) glfwSetWindowTitle(window, title + " (" + (int)(Math.ceil(1000000000.0 / dtNano)) + ")");
+			if(dt > 0) glfwSetWindowTitle(window, Constants.TITLE + " (" + (int)(Math.ceil(1000000000.0 / dtNano)) + ")");
 			
 			testOpenGLError();
 			glfwPollEvents();
@@ -265,7 +267,7 @@ public class Window extends BasicColorGuiElement {
 		if(value) {
 			glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, mode.width(), mode.height(), mode.refreshRate());
 		} else {
-			glfwSetWindowMonitor(window, NULL, (mode.width() - 960) / 2, (mode.height() - 600) / 2, 960, 600, GLFW_DONT_CARE);
+			glfwSetWindowMonitor(window, NULL, (mode.width() - Constants.DEFAULT_WIDTH) / 2, (mode.height() - Constants.DEFAULT_HEIGHT) / 2, Constants.DEFAULT_WIDTH, Constants.DEFAULT_HEIGHT, GLFW_DONT_CARE);
 		}
 		this.isFullscreen = value;
 	}

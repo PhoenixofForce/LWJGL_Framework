@@ -1,7 +1,6 @@
 package window.inputs;
 
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWVidMode;
+import maths.MathUtils;
 import utils.Constants;
 import utils.Screenshot;
 import window.Window;
@@ -17,14 +16,54 @@ import static org.lwjgl.glfw.GLFW.*;
 public class InputHandler {
 
 	public static float mouseX = 0, mouseY = 0;
+	public static float mouseDX, mouseDY;
 
 	public static void getInputs() {
 		float[] mousePosition = getMousePosition();
+
+		mouseDX = Math.signum(mousePosition[0] - mouseX) * Constants.MOUSE_SENSITIVITY;
+		mouseDY = Math.signum(mousePosition[1] - mouseY) * Constants.MOUSE_SENSITIVITY;
+
+
+		float movement = Math.abs(MathUtils.clamp(-1, mouseDX, 0));
+		KeyHit hit = lastPresses.getOrDefault(KeyCodes.MOUSE_MOVE_LEFT, null);
+		if(hit != null && movement == 0) hit.setValue(0);
+		if(hit == null) hit = new KeyHit(KeyCodes.MOUSE_MOVE_LEFT, 0);
+		hit.setValue(movement);
+		lastPresses.put(KeyCodes.MOUSE_MOVE_LEFT, hit);
+
+		movement = Math.abs(MathUtils.clamp(0, mouseDX, 1));
+		hit = lastPresses.getOrDefault(KeyCodes.MOUSE_MOVE_RIGHT, null);
+		if(hit != null && movement == 0) hit.setValue(0);
+		if(hit == null) hit = new KeyHit(KeyCodes.MOUSE_MOVE_RIGHT, 0);
+		hit.setValue(movement);
+		lastPresses.put(KeyCodes.MOUSE_MOVE_RIGHT, hit);
+
+
+
+		movement = Math.abs(MathUtils.clamp(-1, mouseDY, 0));
+		hit = lastPresses.getOrDefault(KeyCodes.MOUSE_MOVE_DOWN, null);
+		if(hit != null && movement == 0) hit.setValue(0);
+		if(hit == null) hit = new KeyHit(KeyCodes.MOUSE_MOVE_DOWN, 0);
+		hit.setValue(movement);
+		lastPresses.put(KeyCodes.MOUSE_MOVE_DOWN, hit);
+
+		movement = Math.abs(MathUtils.clamp(0, mouseDY, 1));
+		hit = lastPresses.getOrDefault(KeyCodes.MOUSE_MOVE_UP, null);
+		if(hit != null && movement == 0) hit.setValue(0);
+		if(hit == null) hit = new KeyHit(KeyCodes.MOUSE_MOVE_UP, 0);
+		hit.setValue(movement);
+		lastPresses.put(KeyCodes.MOUSE_MOVE_UP, hit);
+
+		if(Constants.GRAB_MOUSE) {
+			glfwSetCursorPos(Window.INSTANCE.window, Constants.DEFAULT_WIDTH / 2.0f, Constants.DEFAULT_HEIGHT / 2.0f);
+			mousePosition = getMousePosition();
+		}
+
 		mouseX = mousePosition[0];
 		mouseY = mousePosition[1];
 	}
 
-	static boolean b = false;
 	public static void callbacks() {
 		glfwSetKeyCallback(Window.INSTANCE.window, (window, key, scancode, action, mods) -> {
 			KeyHit click = lastPresses.get(key);
@@ -155,6 +194,11 @@ public class InputHandler {
 	public static float isKeyPressed(int keyCode) {
 		int action = glfwGetKey(Window.INSTANCE.window, keyCode);
 
+		if(keyCode == KeyCodes.MOUSE_MOVE_UP) {
+			System.out.println(lastPresses.containsKey(keyCode));
+			System.out.println(lastPresses.get(keyCode));
+		}
+
 		if(lastPresses.containsKey(keyCode) && lastPresses.get(keyCode).isClickInProgress()) {
 			return lastPresses.get(keyCode).value;
 		}
@@ -228,33 +272,4 @@ public class InputHandler {
 	public static boolean isMousePressed(MouseButton button) {
 		return isMousePressed(button.getButtonValue());
 	}
-
-	public static final int
-			GAMEPAD_1_BUTTON_A = 100  + GLFW_GAMEPAD_BUTTON_A,
-			GAMEPAD_1_BUTTON_B = 100  + GLFW_GAMEPAD_BUTTON_B,
-			GAMEPAD_1_BUTTON_X = 100  + GLFW_GAMEPAD_BUTTON_X,
-			GAMEPAD_1_BUTTON_Y = 100  + GLFW_GAMEPAD_BUTTON_Y,
-			GAMEPAD_1_BUTTON_LEFT_BUMPER = 100  + GLFW_GAMEPAD_BUTTON_LEFT_BUMPER,
-			GAMEPAD_1_BUTTON_RIGHT_BUMPER = 100  + GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER,
-			GAMEPAD_1_BUTTON_BACK = 100  + GLFW_GAMEPAD_BUTTON_BACK,
-			GAMEPAD_1_BUTTON_START = 100  + GLFW_GAMEPAD_BUTTON_START,
-			GAMEPAD_1_BUTTON_GUIDE = 100  + GLFW_GAMEPAD_BUTTON_GUIDE,
-			GAMEPAD_1_BUTTON_LEFT_THUMB = 100  + GLFW_GAMEPAD_BUTTON_LEFT_THUMB,
-			GAMEPAD_1_BUTTON_RIGHT_THUMB = 100  + GLFW_GAMEPAD_BUTTON_RIGHT_THUMB,
-			GAMEPAD_1_BUTTON_DPAD_UP = 100  + GLFW_GAMEPAD_BUTTON_DPAD_UP,
-			GAMEPAD_1_BUTTON_DPAD_RIGHT = 100  + GLFW_GAMEPAD_BUTTON_DPAD_RIGHT,
-			GAMEPAD_1_BUTTON_DPAD_DOWN = 100  + GLFW_GAMEPAD_BUTTON_DPAD_DOWN,
-			GAMEPAD_1_BUTTON_DPAD_LEFT = 100  + GLFW_GAMEPAD_BUTTON_DPAD_LEFT;
-
-	public static final int
-			GAMEPAD_1_LEFT_AXIS_LEFT = 115 + GLFW_GAMEPAD_AXIS_LEFT_X,
-			GAMEPAD_1_LEFT_AXIS_UP = 115 + GLFW_GAMEPAD_AXIS_LEFT_Y,
-			GAMEPAD_1_RIGHT_AXIS_LEFT = 115 + GLFW_GAMEPAD_AXIS_RIGHT_X,
-			GAMEPAD_1_RIGHT_AXIS_UP = 115 + GLFW_GAMEPAD_AXIS_RIGHT_Y,
-			GAMEPAD_1_LEFT_TRIGGER = 115 + GLFW_GAMEPAD_AXIS_LEFT_TRIGGER,
-			GAMEPAD_1_RIGHT_TRIGGER = 115 + GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER,
-			GAMEPAD_1_LEFT_AXIS_RIGHT = 121 + GLFW_GAMEPAD_AXIS_LEFT_X,
-			GAMEPAD_1_LEFT_AXIS_DOWN = 121 + GLFW_GAMEPAD_AXIS_LEFT_Y,
-			GAMEPAD_1_RIGHT_AXIS_RIGHT = 121 + GLFW_GAMEPAD_AXIS_RIGHT_X,
-			GAMEPAD_1_RIGHT_AXIS_DOWN = 121 + GLFW_GAMEPAD_AXIS_RIGHT_Y;
 }
