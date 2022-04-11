@@ -13,17 +13,17 @@ import window.gui.*;
 import window.inputs.InputHandler;
 
 import java.nio.*;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+import window.views.View;
 
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.openal.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
-import window.views.View;
-
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL46.*;
@@ -42,20 +42,27 @@ public class Window extends BasicColorGuiElement {
 	private int height = Constants.DEFAULT_HEIGHT;
 
 	private boolean isFullscreen;
+
 	private View currentView;
 	private View nextView;
+	private boolean shouldCleanUp;
 
-	public Window(View view) {
-		super(null, 0, 0, 0, 0);
-		this.currentView = view;
+	private final Map<String, Long> runtimeCount;
+
+	public Window() {
+		super(0, 0, 0, 0);
+		INSTANCE = this;
+		this.runtimeCount = new HashMap<>();
+		init();
 	}
 
-	public void run() {
-		INSTANCE = this;
+	public void run(View view) {
+		this.currentView = view;
+		if(view != null) view.init(this);
 
-		System.out.println("Hello LWJGL " + Version.getVersion() + "!");
+		glfwShowWindow(window);
+		setFullscreen(Options.fullScreen);
 
-		init();
 		loop();
 		cleanUp();
 	}
@@ -66,17 +73,13 @@ public class Window extends BasicColorGuiElement {
 		initCallbacks();
 		initOpenGL();
 
+		System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 		System.out.printf("OpenGL Version %s%n", GL11.glGetString(GL11.GL_VERSION));
 		System.out.printf("OpenAL Version %s%n", AL11.alGetString(AL11.AL_VERSION));
 		System.out.println();
 
 		ShaderHandler.initShader();
 		AssetLoader.loadAll();
-
-		if(currentView != null) currentView.init();
-
-		glfwShowWindow(window);
-		setFullscreen(Options.fullScreen);
 	}
 
 	private void initOpenAL() {
@@ -184,13 +187,7 @@ public class Window extends BasicColorGuiElement {
 		long lastUpdate = TimeUtils.getTime();
 		long lastUpdateNano = TimeUtils.getNanoTime();
 		while ( !glfwWindowShouldClose(window) ) {
-			if(nextView != null) {
-				if(currentView != null) currentView.cleanUp();
-				softCleanUp();
-				nextView.init();
-				currentView = nextView;
-				nextView = null;
-			}
+			switchViews();
 
 			long dt = TimeUtils.getTime() - lastUpdate;
 			long dtNano = TimeUtils.getNanoTime() - lastUpdateNano;
@@ -222,9 +219,11 @@ public class Window extends BasicColorGuiElement {
 		updateGui(dt);
 		AudioPlayer.update(dt);
 		ParticleSpawner.updateAll(dt);
-		if(currentView != null) currentView.update(dt);
+		if(currentView != null) {
+			currentView.update(dt);
 
-		Constants.RUNTIME++;
+			runtimeCount.put(currentViewString(), getRuntime() + 1);
+		}
 	}
 
 	private void render() {
@@ -236,11 +235,24 @@ public class Window extends BasicColorGuiElement {
 		glfwSwapBuffers(window);
 	}
 
+	private void switchViews() {
+		if(nextView != null) {
+			currentView.remove();
+			cleanUpGui(shouldCleanUp);
+			if(shouldCleanUp) {
+				if(currentView != null) currentView.cleanUp();
+				softCleanUp();
+			}
+
+			nextView.init(this);
+			currentView = nextView;
+			nextView = null;
+		}
+	}
+
 	private void softCleanUp() {
-		Constants.RUNTIME = 0;
-		cleanUpGui();
+		runtimeCount.remove(currentViewString());
 		AudioPlayer.cleanUp(false);
-		ParticleSpawner.cleanUpAll(false);
 	}
 
 	private void cleanUp() {
@@ -252,7 +264,7 @@ public class Window extends BasicColorGuiElement {
 		glfwTerminate();
 		glfwSetErrorCallback(null).free();
 
-		cleanUpGui();
+		cleanUpGui(true);
 		if(currentView != null) currentView.cleanUp();
 		AudioPlayer.cleanUp(true);
 		ShaderHandler.cleanup();
@@ -300,7 +312,20 @@ public class Window extends BasicColorGuiElement {
 		return this.height;
 	}
 
-	public void setView(View view) {
+	public void setView(View view, boolean shouldCleanUp) {
 		this.nextView = view;
+		this.shouldCleanUp = shouldCleanUp;
+	}
+
+	public long getRuntime() {
+		return runtimeCount.getOrDefault(currentViewString(), 0L);
+	}
+
+	private String currentViewString() {
+		return currentView.toString().hashCode() + "";
+	}
+
+	public View getCurrentView() {
+		return currentView;
 	}
 }

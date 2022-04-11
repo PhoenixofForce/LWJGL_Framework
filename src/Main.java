@@ -4,7 +4,7 @@ import window.views.TestView;
 public class Main {
 
 	public static void main(String[] args) {
-		new Window(new TestView()).run();
+		new Window().run(new TestView());
 	}
 
 }

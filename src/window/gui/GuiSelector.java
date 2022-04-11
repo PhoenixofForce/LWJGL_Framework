@@ -20,16 +20,12 @@ public class GuiSelector extends GuiElement {
 	private GuiButton right;
 	private GuiText selectionDisplay;
 
-	public GuiSelector(GuiElement parent, Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height) {
-		super(parent, xAnchor, yAnchor, xOffset, yOffset, width, height);
+	public GuiSelector(Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height) {
+		super(xAnchor, yAnchor, xOffset, yOffset, width, height);
 	}
 
-	public GuiSelector(GuiElement parent, Anchor[] anchors, float xOffset, float yOffset, float width, float height) {
-		super(parent, anchors, xOffset, yOffset, width, height);
-	}
-
-	public GuiSelector(GuiElement parent, float xOffset, float yOffset, float width, float height) {
-		super(parent, xOffset, yOffset, width, height);
+	public GuiSelector(Anchor[] anchors, float xOffset, float yOffset, float width, float height) {
+		super(anchors, xOffset, yOffset, width, height);
 	}
 
 	public GuiSelector(float xOffset, float yOffset, float width, float height) {
@@ -38,12 +34,16 @@ public class GuiSelector extends GuiElement {
 
 	@Override
 	protected void initComponent() {
-		left = new GuiButton(this, Anchor.BOTTOM_LEFT, 0, 0, 0.1f, 1f);
-		right = new GuiButton(this, Anchor.BOTTOM_RIGHT, 1f, 0, 0.1f, 1f);
-		selectionDisplay = new GuiText(this, Anchor.CENTERCENTER, 0.5f, 0.5f, new TextureAtlasFont("Font"), 16f);
+		left = new GuiButton(Anchor.BOTTOM_LEFT, 0, 0, 0.1f, 1f);
+		right = new GuiButton(Anchor.BOTTOM_RIGHT, 1f, 0, 0.1f, 1f);
+		selectionDisplay = new GuiText(Anchor.CENTERCENTER, 0.5f, 0.5f, new TextureAtlasFont("Font"), 16f);
 
 		left.setClickListener(() -> setOption(selectedOption - 1));
 		right.setClickListener(() -> setOption(selectedOption + 1));
+
+		this.addElement(left);
+		this.addElement(right);
+		this.addElement(selectionDisplay);
 
 		optionCount = options.size();
 		setOption(0);

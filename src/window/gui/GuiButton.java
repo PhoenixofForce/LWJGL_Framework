@@ -11,16 +11,12 @@ public class GuiButton extends BasicColorGuiElement {
 	private SmoothFloat size;
 	private ButtonClickListener listener;
 
-	public GuiButton(GuiElement parent, Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height) {
-		super(parent, xAnchor, yAnchor, xOffset, yOffset, width, height);
+	public GuiButton(Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height) {
+		super(xAnchor, yAnchor, xOffset, yOffset, width, height);
 	}
 
-	public GuiButton(GuiElement parent, Anchor[] anchors, float xOffset, float yOffset, float width, float height) {
-		super(parent, anchors, xOffset, yOffset, width, height);
-	}
-
-	public GuiButton(GuiElement parent, float xOffset, float yOffset, float width, float height) {
-		super(parent, xOffset, yOffset, width, height);
+	public GuiButton(Anchor[] anchors, float xOffset, float yOffset, float width, float height) {
+		super(anchors, xOffset, yOffset, width, height);
 	}
 
 	public GuiButton(float xOffset, float yOffset, float width, float height) {

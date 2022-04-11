@@ -7,7 +7,6 @@ import gameobjects.particles.ParticleSpawner;
 import maths.MathUtils;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import utils.Constants;
 import utils.Options;
 import window.Window;
 import window.font.Font;
@@ -19,32 +18,36 @@ public class TestView implements View {
 
 	private Camera cam;
 	private GuiText text;
+	private GuiElement healthBar, staminaBar, manaBar, currentMana, crosshair, button, checkbox, selector;
+	private GuiSlider slider;
 
-	@Override
-	public void init() {
+	private int particle;
+
+	public TestView() {
 		cam = new Camera();
-		ParticleSpawner.getNewSpawner(new Vector3f(0, 5, 0), new ParticleSpawner.ParticleType().setDirection(MathUtils.randomVectorAround(new Vector3f(1, 0, 0), 360), 0, new Vector3f(0)));
-		AudioPlayer.playMusic(AudioType.MUSIC);
+		this.particle = ParticleSpawner.getNewSpawner(new Vector3f(0, 5, 0), new ParticleSpawner.ParticleType().setDirection(MathUtils.randomVectorAround(new Vector3f(1, 0, 0), 360), 0, new Vector3f(0)));
 
-		GuiElement healtBar = new BasicColorGuiElement(Window.INSTANCE, Anchor.BEGIN, Anchor.BEGIN, 20, 20, 200, 20);
-		GuiElement staminaBar = new BasicColorGuiElement(Window.INSTANCE, Anchor.BOTTOM_RIGHT, -20, 20, 200, 20);
-		GuiElement manaBar = new BasicColorGuiElement(Window.INSTANCE, Anchor.BOTTOM_CENTER, 0.5f, 20, 200, 20);
-		GuiElement currentMana = new BasicColorGuiElement(manaBar, Anchor.TOP_LEFT, 0, 1, 0.3f, 20);
+		healthBar = new BasicColorGuiElement(Anchor.BEGIN, Anchor.BEGIN, 20, 20, 200, 20);
+		staminaBar = new BasicColorGuiElement(Anchor.BOTTOM_RIGHT, -20, 20, 200, 20);
+		manaBar = new BasicColorGuiElement(Anchor.BOTTOM_CENTER, 0.5f, 20, 200, 20);
+		currentMana = new BasicColorGuiElement(Anchor.TOP_LEFT, 0, 1, 0.3f, 20);
 
-		GuiElement crosshair = new BasicColorGuiElement(Window.INSTANCE, 0.5f, 0.5f, 10, 10);
+		manaBar.addElement(currentMana);
 
-		GuiSlider slider = new GuiSlider(Window.INSTANCE, Anchor.BOTTOM_LEFT, 50, 200, 200, 20);
+		crosshair = new BasicColorGuiElement(0.5f, 0.5f, 10, 10);
+
+		slider = new GuiSlider(Anchor.BOTTOM_LEFT, 50, 200, 200, 20);
 		slider.setValue(Options.musicVolume);
 		slider.setChangeListener(v -> Options.musicVolume = v);
 
-		GuiButton button = new GuiButton(Window.INSTANCE, Anchor.CENTERCENTER, 150, 275, 200, 50);
-		GuiCheckbox checkbox = new GuiCheckbox(Window.INSTANCE, Anchor.BOTTOM_LEFT, 50, 320, 20, 20);
-		GuiSelector selector = new GuiSelector(Window.INSTANCE, Anchor.BOTTOM_LEFT, 50, 400, 200, 50);
+		button = new GuiButton(Anchor.CENTERCENTER, 150, 275, 200, 50);
+		checkbox = new GuiCheckbox(Anchor.BOTTOM_LEFT, 50, 320, 20, 20);
+		selector = new GuiSelector(Anchor.BOTTOM_LEFT, 50, 400, 200, 50);
 
 		Font font1 = new GeneralFont("WhitePeaberryOutline", 2);
 		Font font2 = new TextureAtlasFont("Font");
 
-		text = new GuiText(Window.INSTANCE, Anchor.TOP_LEFT,  20, -20f, 500, font1, 24f, 50)
+		text = new GuiText(Anchor.TOP_LEFT,  20, -20f, 500, font1, 24f, 50)
 				.addText("The quick brown fox jumps over the lazy dog", new Vector3f(1, 0, 0))
 				.newLine()
 				.addText("\\<test\\> becomes <test>", new Vector3f(0, 1, 0), 0.02f)
@@ -56,10 +59,31 @@ public class TestView implements View {
 	}
 
 	@Override
+	public void init(Window window) {
+		window.addElement(healthBar);
+		window.addElement(staminaBar);
+		window.addElement(manaBar);
+		window.addElement(crosshair);
+		window.addElement(slider);
+		window.addElement(button);
+		window.addElement(checkbox);
+		window.addElement(selector);
+		window.addElement(text);
+
+		ParticleSpawner.toggleFreeze(particle);
+		ParticleSpawner.startSpawning(particle);
+		AudioPlayer.playMusic(AudioType.MUSIC);
+	}
+
+	@Override
 	public void update(long dt) {
 		cam.update(dt);
-		if(Constants.RUNTIME >= 1000) {
-			text.clear().addText("TICKS: ").addText(Constants.RUNTIME + "", Constants.RUNTIME > 1000? new Vector3f(1, 0, 0): (Constants.RUNTIME > 750? new Vector3f(1, 1, 0): new Vector3f(0, 0, 1))).build();
+		long runTime = Window.INSTANCE.getRuntime();
+
+		System.out.println(runTime);
+
+		if(runTime >= 1000) {
+			text.clear().addText("TICKS: ").addText(runTime + "", runTime > 5000? new Vector3f(1, 0, 0): (runTime > 2500? new Vector3f(1, 1, 0): new Vector3f(0, 0, 1))).build();
 		}
 	}
 
@@ -72,7 +96,12 @@ public class TestView implements View {
 	}
 
 	@Override
-	public void cleanUp() {
+	public void remove() {
+		ParticleSpawner.toggleFreeze(particle);
+	}
 
+	@Override
+	public void cleanUp() {
+		ParticleSpawner.cleanUp(particle);
 	}
 }

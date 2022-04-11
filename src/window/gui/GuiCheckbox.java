@@ -8,16 +8,12 @@ public class GuiCheckbox extends BasicColorGuiElement {
 
 	private boolean checked;
 
-	public GuiCheckbox(GuiElement parent, Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height) {
-		super(parent, xAnchor, yAnchor, xOffset, yOffset, width, height);
+	public GuiCheckbox(Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height) {
+		super(xAnchor, yAnchor, xOffset, yOffset, width, height);
 	}
 
-	public GuiCheckbox(GuiElement parent, Anchor[] anchors, float xOffset, float yOffset, float width, float height) {
-		super(parent, anchors, xOffset, yOffset, width, height);
-	}
-
-	public GuiCheckbox(GuiElement parent, float xOffset, float yOffset, float width, float height) {
-		super(parent, xOffset, yOffset, width, height);
+	public GuiCheckbox(Anchor[] anchors, float xOffset, float yOffset, float width, float height) {
+		super(anchors, xOffset, yOffset, width, height);
 	}
 
 	public GuiCheckbox(float xOffset, float yOffset, float width, float height) {

@@ -65,26 +65,24 @@ public class GuiText extends GuiElement {
         +-----+
 	 */
 
-	private AudioSource blipSource;
-
-	public GuiText(GuiElement parent, float xOff, float yOff, Font font, float fontSize) {
-		this(parent, Anchor.TOP_LEFT, xOff, yOff, font, fontSize);
+	public GuiText(float xOff, float yOff, Font font, float fontSize) {
+		this(Anchor.TOP_LEFT, xOff, yOff, font, fontSize);
 	}
 
-	public GuiText(GuiElement parent, Anchor[] anchors, float xOff, float yOff, Font font, float fontSize) {
-		this(parent, anchors, xOff, yOff, font, fontSize, 0);
+	public GuiText(Anchor[] anchors, float xOff, float yOff, Font font, float fontSize) {
+		this(anchors, xOff, yOff, font, fontSize, 0);
 	}
 
-	public GuiText(GuiElement parent, Anchor[] anchors, float xOff, float yOff, Font font, float fontSize, long writerDuration) {
-		this(parent, anchors, xOff, yOff, 0, font, fontSize, writerDuration);
+	public GuiText(Anchor[] anchors, float xOff, float yOff, Font font, float fontSize, long writerDuration) {
+		this(anchors, xOff, yOff, 0, font, fontSize, writerDuration);
 	}
 
-	public GuiText(GuiElement parent, Anchor[] anchors, float xOff, float yOff, float width, Font font, float fontSize, long writerDuration) {
-		this(parent, anchors, xOff, yOff, width, 0, font, fontSize, writerDuration);
+	public GuiText(Anchor[] anchors, float xOff, float yOff, float width, Font font, float fontSize, long writerDuration) {
+		this(anchors, xOff, yOff, width, 0, font, fontSize, writerDuration);
 	}
 
-	public GuiText(GuiElement parent, Anchor[] anchors, float xOff, float yOff, float width, float height, Font font, float fontSize, long writerDuration) {
-		super(parent, anchors, xOff, yOff, width, height);
+	public GuiText(Anchor[] anchors, float xOff, float yOff, float width, float height, Font font, float fontSize, long writerDuration) {
+		super(anchors, xOff, yOff, width, height);
 		this.font = font;
 		this.fontSize = fontSize;
 
@@ -96,7 +94,6 @@ public class GuiText extends GuiElement {
 	@Override
 	protected void initComponent() {
 		//super.initComponent();
-		blipSource = new AudioSource(false).setLooping(true).setVolume(Options.totalVolume * Options.effectVolume);
 	}
 
 	@Override
@@ -106,10 +103,6 @@ public class GuiText extends GuiElement {
 
 		if(clearAfterMS >= 0 && displayTime >= clearAfterMS + writerDuration) {
 			clear().addText("").build();
-		}
-
-		if(displayTime > writerDuration) {
-			blipSource.stop();
 		}
 	}
 
@@ -129,7 +122,7 @@ public class GuiText extends GuiElement {
 			ShaderHandler.ShaderType type = ShaderHandler.ShaderType.TEXT;
 			MassUniform u = new MassUniform();
 			u.setTextures(font.getAtlas());
-			u.setFloats(translationX, translationY, Window.INSTANCE.getWidth(), Window.INSTANCE.getHeight(), Constants.RUNTIME, model.charCount(), (float) displayTime / writerDuration);
+			u.setFloats(translationX, translationY, Window.INSTANCE.getWidth(), Window.INSTANCE.getHeight(), Window.INSTANCE.getRuntime(), model.charCount(), (float) displayTime / writerDuration);
 
 			Renderer.renderArraysInstanced(type, model, u, model.charCount());
 		}
@@ -139,7 +132,6 @@ public class GuiText extends GuiElement {
 	public void cleanUpComponent() {
 		if(model != null) {
 			model.cleanUp();
-			blipSource.stop().cleanUp();
 		}
 	}
 
@@ -196,10 +188,6 @@ public class GuiText extends GuiElement {
 
 		if(!fixedWidth) this.setRawWidth(model.getWidth());
 		if(!fixedHeight) this.setRawHeight(model.getHeight());
-
-		if(writerDuration > 0) {
-			blipSource.play(AudioType.BLIP);
-		}
 
 		return this;
 	}

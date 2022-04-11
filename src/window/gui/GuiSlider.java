@@ -14,16 +14,12 @@ public class GuiSlider extends GuiElement {
 
 	private SliderChangeListener changeListener;
 
-	public GuiSlider(GuiElement parent, Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height) {
-		super(parent, xAnchor, yAnchor, xOffset, yOffset, width, height);
+	public GuiSlider(Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height) {
+		super(xAnchor, yAnchor, xOffset, yOffset, width, height);
 	}
 
-	public GuiSlider(GuiElement parent, Anchor[] anchors, float xOffset, float yOffset, float width, float height) {
-		super(parent, anchors, xOffset, yOffset, width, height);
-	}
-
-	public GuiSlider(GuiElement parent, float xOffset, float yOffset, float width, float height) {
-		super(parent, xOffset, yOffset, width, height);
+	public GuiSlider(Anchor[] anchors, float xOffset, float yOffset, float width, float height) {
+		super(anchors, xOffset, yOffset, width, height);
 	}
 
 	public GuiSlider(float xOffset, float yOffset, float width, float height) {
@@ -31,13 +27,16 @@ public class GuiSlider extends GuiElement {
 	}
 
 	protected void initComponent() {
-		bar = new BasicColorGuiElement(this, Anchor.CENTERCENTER, 0.5f, 0.5f, 1f, 0.1f);
+		bar = new BasicColorGuiElement(Anchor.CENTERCENTER, 0.5f, 0.5f, 1f, 0.1f);
 		bar.setMouseClickListener(this::onClick);
 		bar.setColors(new Color(200, 200, 200));
 
-		slider = new BasicColorGuiElement(this, Anchor.CENTERCENTER, value, 0.5f, 10, 1f);
+		slider = new BasicColorGuiElement(Anchor.CENTERCENTER, value, 0.5f, 10, 1f);
 		slider.setMouseClickListener(this::onClick);
 		slider.setColors(new Color(85, 112, 138), new Color(47, 98, 161));
+
+		this.addElement(bar);
+		this.addElement(slider);
 	}
 
 	@Override

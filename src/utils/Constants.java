@@ -7,9 +7,6 @@ public class Constants {
 	public static final int DEFAULT_WIDTH = 960;
 	public static final int DEFAULT_HEIGHT = 600;
 
-
-	public static int RUNTIME = 0;
-
 	public static final String OBJ_PATH = "res/obj/";
 	public static final String SHADER_PATH = "res/shader/";
 	public static final String SKYBOX_PATH = "res/skybox/";

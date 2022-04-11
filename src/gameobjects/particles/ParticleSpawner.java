@@ -29,6 +29,7 @@ public class ParticleSpawner {
 		nextID++;
 		
 		ParticleSpawner out = new ParticleSpawner(type, pos);
+
 		spawner.put(id, out);
 		
 		return id;
@@ -44,7 +45,7 @@ public class ParticleSpawner {
 
 	public static void startSpawning(int id) {
 		ParticleSpawner ps = spawner.get(id);
-		
+
 		if(ps != null) {
 			ps.startSpawning();
 		}
@@ -65,9 +66,17 @@ public class ParticleSpawner {
 			ps.burst(pos, amount);
 		}
 	}
+
+	public static void toggleFreeze(int id) {
+		ParticleSpawner ps = spawner.get(id);
+
+		if(ps != null) {
+			ps.frozen = !ps.frozen;
+		}
+	}
 	
 	public static void cleanUp(int id) {
-		spawner.put(id, null);
+		spawner.remove(id);
 	}
 	
 	public static void cleanUpAll(boolean deleteModel) {
@@ -83,11 +92,13 @@ public class ParticleSpawner {
 	private MassUniform uniform;
 	private ParticleType type;
 
-	private boolean isSpawning = true;
+	private boolean isSpawning = false;
 	private int particlesPerUpdate = 10;
 
 	private List<Particle> particles;
 	private Vector3f position;
+
+	private boolean frozen = false;
 
 	private ParticleSpawner(ParticleType type, Vector3f position) {
 		this.type = type;
@@ -98,6 +109,8 @@ public class ParticleSpawner {
 	}
 
 	private void update(long dt) {
+		if(frozen) return;
+
 		particles.removeAll(particles.stream().filter(Particle::isDead).toList());
 		particles.forEach(p -> p.update(dt));
 
@@ -107,6 +120,8 @@ public class ParticleSpawner {
 	}
 
 	private void render(Matrix4f proj, Matrix4f view) {
+		if(frozen) return;
+
 		GL46.glDepthMask(false);
 		GL46.glEnable(GL11.GL_BLEND);
 		GL46.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);

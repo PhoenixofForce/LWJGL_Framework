@@ -45,8 +45,7 @@ public abstract class GuiElement {
 	protected boolean isClickable = true;
 	private boolean isHidden = false;
 
-	public GuiElement(GuiElement parent, Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height) {
-		this.parent = parent;
+	public GuiElement(Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height) {
 		this.xAnchor = xAnchor;
 		this.yAnchor = yAnchor;
 
@@ -58,21 +57,16 @@ public abstract class GuiElement {
 		this.scaleH = 1;
 
 		children = new ArrayList<>();
-		if(parent != null) parent.addChild(this);
 
 		initComponent();
 	}
 
-	public GuiElement(GuiElement parent, Anchor[] anchors, float xOffset, float yOffset, float width, float height) {
-		this(parent, anchors[0], anchors[1], xOffset, yOffset, width, height);
-	}
-
-	public GuiElement(GuiElement parent, float xOffset, float yOffset, float width, float height) {
-		this(parent, Anchor.CENTER, Anchor.CENTER, xOffset, yOffset, width, height);
+	public GuiElement(Anchor[] anchors, float xOffset, float yOffset, float width, float height) {
+		this(anchors[0], anchors[1], xOffset, yOffset, width, height);
 	}
 
 	public GuiElement(float xOffset, float yOffset, float width, float height) {
-		this(Window.INSTANCE, xOffset, yOffset, width, height);
+		this(Anchor.CENTER, Anchor.CENTER, xOffset, yOffset, width, height);
 	}
 
 	protected abstract void initComponent();
@@ -96,10 +90,11 @@ public abstract class GuiElement {
 		}
 	}
 
-	public void cleanUpGui() {
+	public void cleanUpGui(boolean cleanUpChildren) {
 		for(GuiElement child: children) {
-			child.cleanUpComponent();
+			if(cleanUpChildren) child.cleanUpGui(true);
 		}
+
 		children = new ArrayList<>();
 		cleanUpComponent();
 	}
@@ -108,8 +103,9 @@ public abstract class GuiElement {
 	public void updateComponent(long dt) { }
 	public abstract void cleanUpComponent();
 
-	private void addChild(GuiElement element) {
+	public void addElement(GuiElement element) {
 		children.add(element);
+		element.parent = this;
 	}
 	public void setMouseClickListener(MouseClickListener listener) {
 		this.listener = listener;

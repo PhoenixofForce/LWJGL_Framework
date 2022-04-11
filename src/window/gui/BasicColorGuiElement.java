@@ -19,16 +19,12 @@ public class BasicColorGuiElement extends GuiElement {
 
 	protected float border;
 
-	public BasicColorGuiElement(GuiElement parent, Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height) {
-		super(parent, xAnchor, yAnchor, xOffset, yOffset, width, height);
+	public BasicColorGuiElement(Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height) {
+		super(xAnchor, yAnchor, xOffset, yOffset, width, height);
 	}
 
-	public BasicColorGuiElement(GuiElement parent, Anchor[] anchors, float xOffset, float yOffset, float width, float height) {
-		super(parent, anchors, xOffset, yOffset, width, height);
-	}
-
-	public BasicColorGuiElement(GuiElement parent, float xOffset, float yOffset, float width, float height) {
-		super(parent, xOffset, yOffset, width, height);
+	public BasicColorGuiElement(Anchor[] anchors, float xOffset, float yOffset, float width, float height) {
+		super(anchors, xOffset, yOffset, width, height);
 	}
 
 	public BasicColorGuiElement(float xOffset, float yOffset, float width, float height) {

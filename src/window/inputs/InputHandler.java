@@ -5,6 +5,7 @@ import utils.Constants;
 import utils.Screenshot;
 import window.Window;
 import window.views.TestView;
+import window.views.View;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -65,6 +66,7 @@ public class InputHandler {
 		mouseY = mousePosition[1];
 	}
 
+	private static View view;
 	public static void callbacks() {
 		glfwSetKeyCallback(Window.INSTANCE.window, (window, key, scancode, action, mods) -> {
 			KeyHit click = lastPresses.get(key);
@@ -81,7 +83,10 @@ public class InputHandler {
 			}
 
 			if(action == GLFW_RELEASE && key == GLFW_KEY_1) {
-				Window.INSTANCE.setView(new TestView());
+				if(view == null) view = new TestView();
+				View temp = Window.INSTANCE.getCurrentView();
+				Window.INSTANCE.setView(view, false);
+				view = temp;
 			}
 
 			if(action == GLFW_PRESS) {
