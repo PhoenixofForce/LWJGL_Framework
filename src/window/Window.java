@@ -5,6 +5,7 @@ import assets.TextureHandler;
 import assets.audio.AudioPlayer;
 import assets.models.ScreenRect;
 import gameobjects.particles.ParticleSpawner;
+import org.joml.Vector3f;
 import rendering.ShaderHandler;
 import utils.Constants;
 import utils.Options;
@@ -43,11 +44,10 @@ public class Window extends BasicColorGuiElement {
 
 	private boolean isFullscreen;
 
+	private final Map<String, Long> runtimeCount;
 	private View currentView;
 	private View nextView;
 	private boolean shouldCleanUp;
-
-	private final Map<String, Long> runtimeCount;
 
 	public Window() {
 		super(0, 0, 0, 0);
@@ -156,9 +156,8 @@ public class Window extends BasicColorGuiElement {
 		glEnable(GL_CULL_FACE);
 		glDepthFunc(GL_LEQUAL);
 
-		glClearColor(0, 0, 0, 0.0f);
+		glClearColor(0, 0, 0, 1);
 	}
-
 
 	private GuiElement lastClicked;
 	private void initCallbacks() {
@@ -175,6 +174,10 @@ public class Window extends BasicColorGuiElement {
 		});
 
 		glfwSetWindowSizeCallback(window, (window, width, height) -> {
+			if(height != this.height || width != this.width) {
+				handleResize();
+			}
+
 			this.width = width;
 			this.height = height;
 			glViewport(-1, -1, width, height);
@@ -244,9 +247,9 @@ public class Window extends BasicColorGuiElement {
 				softCleanUp();
 			}
 
-			nextView.init(this);
 			currentView = nextView;
 			nextView = null;
+			currentView.init(this);
 		}
 	}
 
@@ -286,6 +289,10 @@ public class Window extends BasicColorGuiElement {
 
 	public boolean isFullscreen() {
 		return isFullscreen;
+	}
+
+	public void setBackgroundColor(Vector3f color) {
+		glClearColor(color.x, color.y, color.z, 1);
 	}
 
 	public void testOpenGLError() {

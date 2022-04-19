@@ -4,6 +4,7 @@ import maths.MathUtils;
 import utils.Constants;
 import utils.Screenshot;
 import window.Window;
+import window.views.MainMenuView;
 import window.views.TestView;
 import window.views.View;
 
@@ -66,13 +67,12 @@ public class InputHandler {
 		mouseY = mousePosition[1];
 	}
 
-	private static View view;
 	public static void callbacks() {
 		glfwSetKeyCallback(Window.INSTANCE.window, (window, key, scancode, action, mods) -> {
 			KeyHit click = lastPresses.get(key);
 
 			if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-				glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
+				Window.INSTANCE.setView(new MainMenuView(), true);
 			if(key == GLFW_KEY_F2 && action == GLFW_RELEASE) {
 				Screenshot.screenShot();
 			}
@@ -80,13 +80,6 @@ public class InputHandler {
 			if(action == GLFW_RELEASE && ((key == GLFW_KEY_ENTER && isKeyPressed(GLFW_KEY_LEFT_ALT) > 0) ||
 					(key == GLFW_KEY_LEFT_ALT && isKeyPressed(GLFW_KEY_ENTER) > 0))) {
 				Window.INSTANCE.setFullscreen(!Window.INSTANCE.isFullscreen());
-			}
-
-			if(action == GLFW_RELEASE && key == GLFW_KEY_1) {
-				if(view == null) view = new TestView();
-				View temp = Window.INSTANCE.getCurrentView();
-				Window.INSTANCE.setView(view, false);
-				view = temp;
 			}
 
 			if(action == GLFW_PRESS) {

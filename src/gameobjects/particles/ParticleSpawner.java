@@ -67,11 +67,19 @@ public class ParticleSpawner {
 		}
 	}
 
-	public static void toggleFreeze(int id) {
+	public static void freeze(int id) {
 		ParticleSpawner ps = spawner.get(id);
 
 		if(ps != null) {
-			ps.frozen = !ps.frozen;
+			ps.frozen = true;
+		}
+	}
+
+	public static void unFreeze(int id) {
+		ParticleSpawner ps = spawner.get(id);
+
+		if(ps != null) {
+			ps.frozen = false;
 		}
 	}
 	

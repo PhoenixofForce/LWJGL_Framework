@@ -70,7 +70,7 @@ public class TestView implements View {
 		window.addElement(selector);
 		window.addElement(text);
 
-		ParticleSpawner.toggleFreeze(particle);
+		ParticleSpawner.unFreeze(particle);
 		ParticleSpawner.startSpawning(particle);
 		AudioPlayer.playMusic(AudioType.MUSIC);
 	}
@@ -79,8 +79,6 @@ public class TestView implements View {
 	public void update(long dt) {
 		cam.update(dt);
 		long runTime = Window.INSTANCE.getRuntime();
-
-		System.out.println(runTime);
 
 		if(runTime >= 1000) {
 			text.clear().addText("TICKS: ").addText(runTime + "", runTime > 5000? new Vector3f(1, 0, 0): (runTime > 2500? new Vector3f(1, 1, 0): new Vector3f(0, 0, 1))).build();
@@ -97,7 +95,7 @@ public class TestView implements View {
 
 	@Override
 	public void remove() {
-		ParticleSpawner.toggleFreeze(particle);
+		ParticleSpawner.freeze(particle);
 	}
 
 	@Override

@@ -90,6 +90,12 @@ public abstract class GuiElement {
 		}
 	}
 
+	public void handleResize() {
+		if(resizeComponent()) {
+			children.forEach(GuiElement::handleResize);
+		}
+	}
+
 	public void cleanUpGui(boolean cleanUpChildren) {
 		for(GuiElement child: children) {
 			if(cleanUpChildren) child.cleanUpGui(true);
@@ -99,6 +105,9 @@ public abstract class GuiElement {
 		cleanUpComponent();
 	}
 
+	public boolean resizeComponent() {
+		return Math.abs(width) <= 1 || Math.abs(height) <= 1 || this instanceof Window;
+	}
 	public abstract void renderComponent();
 	public void updateComponent(long dt) { }
 	public abstract void cleanUpComponent();

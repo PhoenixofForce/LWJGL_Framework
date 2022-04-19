@@ -129,6 +129,12 @@ public class GuiText extends GuiElement {
 	}
 
 	@Override
+	public boolean resizeComponent() {
+		build();
+		return super.resizeComponent();
+	}
+
+	@Override
 	public void cleanUpComponent() {
 		if(model != null) {
 			model.cleanUp();
