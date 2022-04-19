@@ -1,9 +1,11 @@
 package window.font;
 
 import org.joml.Vector3f;
+import window.gui.Anchor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Text {
 
@@ -11,8 +13,18 @@ public class Text {
 	private List<Vector3f> colors;
 	private List<Float> wobbleStrengths;
 
+	private Anchor alignment;
+
 	public Text() {
-		this.clear();
+		this(Anchor.ALIGN_LEFT);
+	}
+
+	public Text(Anchor alignment) {
+		this.clear(Optional.of(alignment));
+	}
+
+	public Anchor getAlignment() {
+		return alignment;
 	}
 
 	public List<String> getTextFragments() {
@@ -57,12 +69,17 @@ public class Text {
 		return this.addText("\n");
 	}
 
-	public Text clear() {
+	public Text clear(Optional<Anchor> alignment) {
+		this.alignment = alignment.orElse(this.alignment);
 		text = new ArrayList<>();
 		colors = new ArrayList<>();
 		wobbleStrengths = new ArrayList<>();
 
 		return this;
+	}
+
+	public Text clear() {
+		return clear(Optional.empty());
 	}
 
 }

@@ -6,6 +6,7 @@ import rendering.Renderable;
 import utils.Constants;
 import window.font.Font;
 import window.font.Text;
+import window.gui.Anchor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,7 +106,7 @@ public class TextModel extends Renderable {
 		List<List<TextFragment>> lines = preprocess(font, fontSize, text.getTextFragments(), text.getColorFragments(), text.getWobbleFragments());
 		this.width = lines.stream().map(e -> calculateFragmentWidth(font, fontSize, e)).max(Float::compare).orElse(0f) * 2;
 		this.width = Math.max(this.width, width);
-		buildModel(font, fontSize, lines);
+		buildModel(font, fontSize, lines, text.getAlignment());
 	}
 
 	/*
@@ -172,7 +173,7 @@ public class TextModel extends Renderable {
 		return lines;
 	}
 
-	private void buildModel(Font font, float fontSize, List<List<TextFragment>> lines) {
+	private void buildModel(Font font, float fontSize, List<List<TextFragment>> lines, Anchor alignment) {
 		float effectiveWidth = maxWidth == Float.MAX_VALUE? width: maxWidth;
 
 		List<Float> floatsData = new ArrayList<>();
@@ -182,8 +183,10 @@ public class TextModel extends Renderable {
 		chars = 0;
 		int indexes = 0;
 
+		float align = (-alignment.getMultiplier() + 1);
+
 		for(List<TextFragment> line: lines) {
-			x = 0;	//TODO: calculate alignment position here
+			x = effectiveWidth * align - calculateFragmentWidth(font, fontSize, line) * align;	//calculates alignment position here
 					// left = 0
 					// center = this.width - lineWidth
 				    // right = this.width * 2 - lineWidth * 2

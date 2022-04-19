@@ -21,8 +21,17 @@ public enum Anchor {
 		return multiplier * length / 2f;
 	}
 
+	public float getMultiplier() {
+		return multiplier;
+	}
+
 	public static final Anchor[]	BOTTOM_LEFT = {BEGIN, BEGIN}, BOTTOM_CENTER = {CENTER, BEGIN}, BOTTOM_RIGHT = {END, BEGIN},
 									CENTER_LEFT = {BEGIN, CENTER}, CENTERCENTER = {CENTER, CENTER}, CENTER_RIGHT = {END, CENTER},
 									TOP_LEFT = {BEGIN, END}, TOP_CENTER = {CENTER, END}, TOP_RIGHT = {END, END};
+
+	public static final Anchor ALIGN_LEFT = BEGIN,
+								ALIGN_CENTER = CENTER,
+								ALIGN_RIGHT = END;
+
 
 }
