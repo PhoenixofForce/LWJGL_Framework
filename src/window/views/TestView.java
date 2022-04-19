@@ -11,8 +11,11 @@ import utils.Options;
 import window.Window;
 import window.font.Font;
 import window.font.GeneralFont;
+import window.font.Text;
 import window.font.TextureAtlasFont;
 import window.gui.*;
+
+import java.util.Optional;
 
 public class TestView implements View {
 
@@ -48,10 +51,9 @@ public class TestView implements View {
 		Font font2 = new TextureAtlasFont("Font");
 
 		text = new GuiText(Anchor.TOP_LEFT,  20, -20f, 500, font1, 24f, 50)
-				.addText("The quick brown fox jumps over the lazy dog", new Vector3f(1, 0, 0))
+				.setText(new Text().addText("The quick brown fox jumps over the lazy dog", new Vector3f(1, 0, 0))
 				.newLine()
-				.addText("\\<test\\> becomes <test>", new Vector3f(0, 1, 0), 0.02f)
-				.build();
+				.addText("\\<test\\> becomes <test>", new Vector3f(0, 1, 0), 0.02f), 50, -1);
 
 		Window.INSTANCE.setMouseClickListener((e, b) -> {
 			if(e != 2) AudioType.EFFECT.play();
@@ -81,7 +83,13 @@ public class TestView implements View {
 		long runTime = Window.INSTANCE.getRuntime();
 
 		if(runTime >= 1000) {
-			text.clear().addText("TICKS: ").addText(runTime + "", runTime > 5000? new Vector3f(1, 0, 0): (runTime > 2500? new Vector3f(1, 1, 0): new Vector3f(0, 0, 1))).build();
+			text
+			.setFont(Optional.empty(), (runTime % 400 < 200)? 12: 16)
+			.setText(
+				new Text()
+				.addText("TICKS: ")
+				.addText(runTime + "", runTime > 5000? new Vector3f(1, 0, 0): (runTime > 2500? new Vector3f(1, 1, 0): new Vector3f(0, 0, 1)))
+			);
 		}
 	}
 

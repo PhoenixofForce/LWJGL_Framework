@@ -58,6 +58,6 @@ public class GuiSelector extends GuiElement {
 	private void setOption(int option) {
 		this.selectedOption = option % optionCount;
 		while(selectedOption < 0) selectedOption += optionCount;
-		selectionDisplay.clear().addText(options.get(selectedOption)).build();
+		selectionDisplay.setText(options.get(selectedOption));
 	}
 }

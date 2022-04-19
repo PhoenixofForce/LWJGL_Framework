@@ -5,10 +5,10 @@ import org.joml.Vector4f;
 import rendering.Renderable;
 import utils.Constants;
 import window.font.Font;
+import window.font.Text;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
@@ -101,8 +101,8 @@ public class TextModel extends Renderable {
 		glBindVertexArray(0);
 	}
 
-	public void updateInstance(Font font, float fontSize, float width, List<String> textFragments, List<Vector3f> colorFragments, List<Float> wobbleStrengthFragments) {
-		List<List<TextFragment>> lines = preprocess(font, fontSize, textFragments, colorFragments, wobbleStrengthFragments);
+	public void updateInstance(Font font, float fontSize, float width, Text text) {
+		List<List<TextFragment>> lines = preprocess(font, fontSize, text.getTextFragments(), text.getColorFragments(), text.getWobbleFragments());
 		this.width = lines.stream().map(e -> calculateFragmentWidth(font, fontSize, e)).max(Float::compare).orElse(0f) * 2;
 		this.width = Math.max(this.width, width);
 		buildModel(font, fontSize, lines);

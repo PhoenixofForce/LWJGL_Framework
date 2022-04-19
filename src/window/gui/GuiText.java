@@ -1,34 +1,24 @@
 package window.gui;
 
-import assets.audio.AudioSource;
-import assets.audio.AudioType;
 import assets.models.TextModel;
-import org.joml.Vector3f;
 import rendering.Renderer;
 import rendering.ShaderHandler;
 import rendering.uniform.MassUniform;
-import utils.Constants;
-import utils.Options;
 import window.Window;
 import window.font.Font;
+import window.font.Text;
 
-import javax.swing.text.html.Option;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 public class GuiText extends GuiElement {
 
 	//TODO: Alignments
 
 	private Font font;
-
-	private List<String> text;
-	private List<Vector3f> colors;
-	private List<Float> wobbleStrengths;
-
 	private float fontSize;
 
 	private TextModel model;
+	private Text text;
 
 	private long writerDuration = 0;
 	private long displayTime = 0;
@@ -83,12 +73,14 @@ public class GuiText extends GuiElement {
 
 	public GuiText(Anchor[] anchors, float xOff, float yOff, float width, float height, Font font, float fontSize, long writerDuration) {
 		super(anchors, xOff, yOff, width, height);
+		this.text = new Text();
+
 		this.font = font;
 		this.fontSize = fontSize;
 
 		fixedWidth =  width != 0;
 		fixedHeight = height != 0;
-		clear(writerDuration);
+		clear(writerDuration, -1);
 	}
 
 	@Override
@@ -102,7 +94,7 @@ public class GuiText extends GuiElement {
 		displayTime += dt;
 
 		if(clearAfterMS >= 0 && displayTime >= clearAfterMS + writerDuration) {
-			clear().addText("").build();
+			this.setText(" ", 0, -1);
 		}
 	}
 
@@ -115,7 +107,7 @@ public class GuiText extends GuiElement {
 			//getCenterX points to center of the whole text
 			//-getWidth/2 to the left side of the first letter
 			//+fontSize (aka width)/2 to the middle of the first letter
-			float width = font.getWidth(text.get(0).charAt(0) + "", fontSize);
+			float width = font.getWidth(text.getFirstChar() + "", fontSize);
 			float translationX = toScreenSpace(getCenterX() - getWidth() / 2 + (fontSize / width) / 2, Window.INSTANCE.getWidth());
 			float translationY = toScreenSpace(getCenterY() + getHeight() / 2 - (fontSize / 2), Window.INSTANCE.getHeight());
 
@@ -143,50 +135,47 @@ public class GuiText extends GuiElement {
 
 	//>--| BUILDER |--<\\
 
-	public GuiText addText(String string, Vector3f color, float wobbleStrength) {
-		text.add(string.replaceAll("(\r\n|\r)", "\n"));	//we want \n be the only newline character
-		colors.add(color);
-		wobbleStrengths.add(wobbleStrength);
-
+	public GuiText setFont(Optional<Font> font, float fontSize) {
+		this.font = font.orElse(this.font);
+		this.fontSize = fontSize;
+		build();
 		return this;
 	}
 
-	public GuiText addText(String string, Vector3f color) {
-		return this.addText(string, color, 0);
+	public GuiText setText(Text text, long writerDuration, long clearAfterMS) {
+		this.clear(writerDuration, clearAfterMS);
+		this.text = text;
+		build();
+		return this;
 	}
 
-	public GuiText addText(String string) {
-		return this.addText(string, new Vector3f(1));
+	public GuiText setText(Text text) {
+		return this.setText(text, 0, -1L);
 	}
 
-	public GuiText newLine() {
-		return this.addText("\n");
+	public GuiText setText(String s, long writerDuration, long clearAfterMS) {
+		this.clear(writerDuration, clearAfterMS);
+		this.text = new Text().addText(s);
+		build();
+		return this;
 	}
 
-	public GuiText clear() {
-		return clear(0);
+	public GuiText setText(String s) {
+		return this.setText(s, 0, -1);
 	}
 
-	public GuiText clear(long writerDurationPerChar) {
-		return clear(writerDurationPerChar, -1L);
-	}
-
-	public GuiText clear(long writerDurationPerChar, long clearAfterMS) {
+	private void clear(long writerDurationPerChar, long clearAfterMS) {
 		this.writerDuration = writerDurationPerChar;
 		this.clearAfterMS = clearAfterMS;
 
-		text = new ArrayList<>();
-		colors = new ArrayList<>();
-		wobbleStrengths = new ArrayList<>();
-
-		return this;
+		text.clear();
 	}
 
-	public GuiText build() {
+	private void build() {
 		if(model == null) {
 			model = new TextModel(getWidth(), getHeight());
 		}
-		model.updateInstance(font, fontSize, width, text, colors, wobbleStrengths);
+		model.updateInstance(font, fontSize, width, text);
 
 		//writer duration is set per char, so we have to multiply it with the amount of characters
 		displayTime = -writerDuration;
@@ -194,7 +183,5 @@ public class GuiText extends GuiElement {
 
 		if(!fixedWidth) this.setRawWidth(model.getWidth());
 		if(!fixedHeight) this.setRawHeight(model.getHeight());
-
-		return this;
 	}
 }

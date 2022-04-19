@@ -9,8 +9,6 @@ import window.gui.Anchor;
 import window.gui.GuiButton;
 import window.gui.GuiText;
 
-import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
-
 public class MainMenuView implements View {
 
 	private final GuiText title;
@@ -19,7 +17,7 @@ public class MainMenuView implements View {
 	public MainMenuView() {
 		Font font = new GeneralFont("WhitePeaberryOutline", 2);
 		this.title = new GuiText(Anchor.CENTERCENTER, 0.5f, -0.1f, font, 48);
-		this.title.addText(Constants.TITLE).build();
+		this.title.setText(Constants.TITLE);
 
 		this.play = new GuiButton(Anchor.CENTERCENTER, 0.5f, 0.4f, 200, 50);
 
