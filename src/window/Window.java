@@ -255,7 +255,7 @@ public class Window extends BasicColorGuiElement {
 
 	private void softCleanUp() {
 		runtimeCount.remove(currentViewString());
-		AudioPlayer.cleanUp(false);
+		AudioPlayer.cleanUp();
 	}
 
 	private void cleanUp() {
@@ -269,7 +269,7 @@ public class Window extends BasicColorGuiElement {
 
 		cleanUpGui(true);
 		if(currentView != null) currentView.cleanUp();
-		AudioPlayer.cleanUp(true);
+		AudioPlayer.cleanUpAll();
 		ShaderHandler.cleanup();
 		AssetLoader.cleanUp();
 		ParticleSpawner.cleanUpAll(true);
@@ -328,7 +328,7 @@ public class Window extends BasicColorGuiElement {
 		return runtimeCount.getOrDefault(currentViewString(), 0L);
 	}
 
-	private String currentViewString() {
+	public String currentViewString() {
 		return currentView.toString().hashCode() + "";
 	}
 
