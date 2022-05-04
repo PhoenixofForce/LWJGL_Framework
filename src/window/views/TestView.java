@@ -51,9 +51,7 @@ public class TestView implements View {
 		Font font2 = new TextureAtlasFont("Font");
 
 		text = new GuiText(Anchor.TOP_LEFT,  20, -20f, 500, font1, 24f, 50)
-				.setText(new Text().addText("The quick brown fox jumps over the lazy dog", new Vector3f(1, 0, 0))
-				.newLine()
-				.addText("\\<test\\> becomes <test>", new Vector3f(0, 1, 0), 0.02f), 50, -1);
+				.setText(Text.fromString("[color = #FF0000, wobble = 0.02]test[def] is\r\n [color=#28ff84]successfull"));
 
 		Window.INSTANCE.setMouseClickListener((e, b) -> {
 			if(e != 2) AudioType.EFFECT.play();

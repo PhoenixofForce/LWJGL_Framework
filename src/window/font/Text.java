@@ -1,8 +1,13 @@
 package window.font;
 
+import maths.MathUtils;
 import org.joml.Vector3f;
+import org.lwjgl.system.MathUtil;
+import utils.StringUtils;
+import utils.VecUtils;
 import window.gui.Anchor;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -80,6 +85,24 @@ public class Text {
 
 	public Text clear() {
 		return clear(Optional.empty());
+	}
+
+	public static Text fromString(String s) {
+		Text out = new Text();
+
+		List<String> optionTextFraments = StringUtils.splitTextIntoFraments(s, '[', ']', Optional.of("[def]"));
+
+		for(int i = 0; i < optionTextFraments.size(); i += 2) {
+			String options = optionTextFraments.get(i);
+			String text = (i+1 < optionTextFraments.size()? optionTextFraments.get(i + 1): "");
+
+			Vector3f color = MathUtils.vecFromColor(Color.decode(StringUtils.getOption(options, "color", ',', '=').orElse("#FFFFFF")));
+			float wobble = Float.parseFloat(StringUtils.getOption(options, "wobble", ',', '=').orElse("0"));
+
+			out.addText(text, color, wobble);
+		}
+
+		return out;
 	}
 
 }
