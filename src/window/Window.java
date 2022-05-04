@@ -259,6 +259,8 @@ public class Window extends BasicColorGuiElement {
 	}
 
 	private void cleanUp() {
+		Options.save();
+
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);
 		glfwDestroyWindow(window);

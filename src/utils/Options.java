@@ -2,11 +2,14 @@ package utils;
 
 import window.inputs.KeyCodes;
 
+import java.io.*;
 import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Options {
+
+	private static final String optionsFile = "options";
 
 	public static boolean useVsync = true;
 	public static int fps = 60; //0 for unlimited
@@ -50,5 +53,46 @@ public class Options {
 
 	public static int getGamepadAction(ControllableAction action) {
 		return gamepadMapping.get(action);
+	}
+
+
+	public static void save() {
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(optionsFile));
+
+			writer.write(useVsync? "1": "0");
+			writer.newLine();
+			writer.write(fps + "");
+			writer.newLine();
+			writer.write(totalVolume + "");
+			writer.newLine();
+			writer.write(musicVolume + "");
+			writer.newLine();
+			writer.write(effectVolume + "");
+			writer.newLine();
+			writer.write(fullScreen? "1": "0");
+			writer.newLine();
+
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void load() {
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(optionsFile));
+
+			useVsync = reader.readLine().equals("1");
+			fps = Integer.parseInt(reader.readLine());
+			totalVolume = Float.parseFloat(reader.readLine());
+			musicVolume = Float.parseFloat(reader.readLine());
+			effectVolume = Float.parseFloat(reader.readLine());
+			fullScreen = reader.readLine().equals("1");
+
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

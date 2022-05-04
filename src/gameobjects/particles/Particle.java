@@ -17,6 +17,7 @@ public class Particle {
 	private final Vector3f movementDirection;
 	private final Vector3f directionChange;
 
+	private float maxLifeTime;
 	private float  lifetime;
 	private final Vector3f color;
 
@@ -29,6 +30,7 @@ public class Particle {
 		this.size = size;
 		this.sizeChange = sizeChange;
 		this.lifetime = lifetime;
+		this.maxLifeTime = lifetime;
 
 		Color c = new Color(new Random().nextInt());
 		color = new Vector3f(c.getRed() / 255f, Math.min(c.getGreen() - 20, c.getRed()) / 255f / 2, c.getBlue() / 255f / 4);

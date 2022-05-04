@@ -122,7 +122,7 @@ public class GuiText extends GuiElement {
 
 	@Override
 	public boolean resizeComponent() {
-		build();
+		//build();
 		return super.resizeComponent();
 	}
 
