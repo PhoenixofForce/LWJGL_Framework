@@ -24,6 +24,7 @@ public class GuiText extends GuiElement {
 	private long displayTime = 0;
 
 	private long clearAfterMS;
+	private boolean shouldRebuild;
 
 	private boolean fixedWidth;
 	private boolean fixedHeight;
@@ -91,6 +92,13 @@ public class GuiText extends GuiElement {
 	@Override
 	public void updateGui(long dt) {
 		super.updateGui(dt);
+
+
+		if(shouldRebuild) {
+			build();
+			shouldRebuild = false;
+		}
+
 		displayTime += dt;
 
 		if(clearAfterMS >= 0 && displayTime >= clearAfterMS + writerDuration) {
@@ -122,8 +130,13 @@ public class GuiText extends GuiElement {
 
 	@Override
 	public boolean resizeComponent() {
-		//build();
-		return super.resizeComponent();
+		boolean out = super.resizeComponent();
+
+		if(out) {
+			shouldRebuild = true;
+		}
+
+		return out;
 	}
 
 	@Override
@@ -175,7 +188,9 @@ public class GuiText extends GuiElement {
 		if(model == null) {
 			model = new TextModel(getWidth(), getHeight());
 		}
-		model.updateInstance(font, fontSize, width, text);
+
+		model.clear(getWidth(), getHeight());
+		model.updateInstance(font, fontSize, getWidth(), text);
 
 		//writer duration is set per char, so we have to multiply it with the amount of characters
 		displayTime = -writerDuration;

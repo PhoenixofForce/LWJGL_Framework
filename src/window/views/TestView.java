@@ -50,8 +50,8 @@ public class TestView implements View {
 		Font font1 = new GeneralFont("WhitePeaberryOutline", 2);
 		Font font2 = new TextureAtlasFont("Font");
 
-		text = new GuiText(Anchor.TOP_LEFT,  20, -20f, 500, font1, 24f, 50)
-				.setText(Text.fromString("[color = #FF0000, wobble = 0.02]test[def] is\r\n [color=#28ff84]successfull"));
+		text = new GuiText(Anchor.TOP_LEFT,  20, -20f, 0.2f, font1, 24f, 50)
+				.setText(Text.fromString("[color = #FF0000, wobble = 0.02]test[end] is\r\n [color=#28ff84]successfull"));
 
 		Window.INSTANCE.setMouseClickListener((e, b) -> {
 			if(e != 2) AudioType.EFFECT.play();

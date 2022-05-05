@@ -9,6 +9,7 @@ import window.font.Text;
 import window.gui.Anchor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL30.*;
@@ -43,8 +44,7 @@ public class TextModel extends Renderable {
 
 	public TextModel(float maxWidth, float maxHeight) {
 		super();
-		this.maxWidth = (maxWidth == 0? Float.MAX_VALUE: maxWidth);
-		this.maxHeight = (maxHeight == 0? Float.MAX_VALUE: maxHeight);
+		clear(maxWidth, maxHeight);
 
 		initVao();
 		createInstanceVBO();
@@ -350,6 +350,10 @@ public class TextModel extends Renderable {
 		return out;
 	}
 
+	public void clear(float maxWidth, float maxHeight) {
+		this.maxWidth = (maxWidth == 0? Float.MAX_VALUE: maxWidth);
+		this.maxHeight = (maxHeight == 0? Float.MAX_VALUE: maxHeight);
+	}
 
 	@Override
 	public void cleanUp() {

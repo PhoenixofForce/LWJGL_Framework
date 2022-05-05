@@ -251,12 +251,13 @@ public abstract class GuiElement {
 
 	public float getWidth() {
 		float out = 0;
+		GuiElement upper = (parent == null? Window.INSTANCE: parent);
 
-		if(parent != null && Math.abs(width) <= 1) {
-			out += width * parent.getWidth();
+		if(Math.abs(width) <= 1) {
+			out += width * upper.getWidth();
 		} else {
 			out = width;
-			if(width < 0 && parent != null) out += parent.getWidth();
+			if(width < 0) out += upper.getWidth();
 		}
 
 		return out * scaleW;
