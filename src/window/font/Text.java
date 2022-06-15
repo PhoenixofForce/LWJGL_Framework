@@ -51,6 +51,9 @@ public class Text {
 		return s.charAt(0);
 	}
 
+	public boolean hasChanged() {
+		return false;
+	}
 
 	//>--| BUILDER |--<\\
 

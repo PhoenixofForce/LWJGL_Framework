@@ -93,8 +93,7 @@ public class GuiText extends GuiElement {
 	public void updateGui(long dt) {
 		super.updateGui(dt);
 
-
-		if(shouldRebuild) {
+		if(shouldRebuild || text.hasChanged()) {
 			build();
 			shouldRebuild = false;
 		}

@@ -9,13 +9,8 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import utils.Options;
 import window.Window;
-import window.font.Font;
-import window.font.GeneralFont;
-import window.font.Text;
-import window.font.TextureAtlasFont;
+import window.font.*;
 import window.gui.*;
-
-import java.util.Optional;
 
 public class TestView implements View {
 
@@ -50,8 +45,15 @@ public class TestView implements View {
 		Font font1 = new GeneralFont("WhitePeaberryOutline", 2);
 		Font font2 = new TextureAtlasFont("Font");
 
+
 		text = new GuiText(Anchor.TOP_LEFT,  20, -20f, 0.2f, font1, 24f, 50)
-				.setText(Text.fromString("[color = #FF0000, wobble = 0.02]test[end] is\r\n [color=#28ff84]successfull"));
+				.setText(new AutoUpdateText() {
+					@Override
+					public String getText() {
+						long runTime = Window.INSTANCE.getRuntime();
+						return "[color=#ff0000]Ticks: " + runTime;
+					}
+				});
 
 		Window.INSTANCE.setMouseClickListener((e, b) -> {
 			if(e != 2) AudioType.EFFECT.play();
@@ -78,17 +80,6 @@ public class TestView implements View {
 	@Override
 	public void update(long dt) {
 		cam.update(dt);
-		long runTime = Window.INSTANCE.getRuntime();
-
-		if(runTime >= 1000) {
-			text
-			.setFont(Optional.empty(), (runTime % 400 < 200)? 12: 16)
-			.setText(
-				new Text()
-				.addText("TICKS: ")
-				.addText(runTime + "", runTime > 5000? new Vector3f(1, 0, 0): (runTime > 2500? new Vector3f(1, 1, 0): new Vector3f(0, 0, 1)))
-			);
-		}
 	}
 
 	@Override

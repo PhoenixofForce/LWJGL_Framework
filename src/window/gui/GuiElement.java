@@ -98,6 +98,7 @@ public abstract class GuiElement {
 
 	public void cleanUpGui(boolean cleanUpChildren) {
 		for(GuiElement child: children) {
+			child.parent = null;
 			if(cleanUpChildren) child.cleanUpGui(true);
 		}
 

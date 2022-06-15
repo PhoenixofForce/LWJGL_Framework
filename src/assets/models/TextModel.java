@@ -9,7 +9,6 @@ import window.font.Text;
 import window.gui.Anchor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL30.*;
@@ -334,7 +333,7 @@ public class TextModel extends Renderable {
 		float currentLength = 0;
 
 		for(String character: word) {
-			if(currentLength + font.getAdvance(character, fontSize) >= maxLength) {
+			if(currentLength + font.getAdvance(character, fontSize) >= maxLength && currentLine.size() > 0) {
 				currentLine.add("-");
 				out.add(currentLine);
 				out.add(new ArrayList<>(List.of("\n")));
