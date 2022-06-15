@@ -1,6 +1,6 @@
 package window.views;
 
-import maths.MathUtils;
+import utils.MathUtils;
 import utils.Constants;
 import window.Window;
 import window.font.Font;

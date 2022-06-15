@@ -4,7 +4,8 @@ import assets.audio.AudioPlayer;
 import assets.audio.AudioType;
 import gameobjects.entities.Camera;
 import gameobjects.particles.ParticleSpawner;
-import maths.MathUtils;
+import gameobjects.particles.ParticleType;
+import utils.MathUtils;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import utils.Options;
@@ -23,7 +24,8 @@ public class TestView implements View {
 
 	public TestView() {
 		cam = new Camera();
-		this.particle = ParticleSpawner.getNewSpawner(new Vector3f(0, 5, 0), new ParticleSpawner.ParticleType().setDirection(MathUtils.randomVectorAround(new Vector3f(1, 0, 0), 360), 0, new Vector3f(0)));
+		this.particle = ParticleSpawner.getNewSpawner(new Vector3f(0, 5, 0),
+				new ParticleType().setDirection(MathUtils.randomVectorAround(new Vector3f(1, 0, 0), 360), 0));
 
 		healthBar = new BasicColorGuiElement(Anchor.BEGIN, Anchor.BEGIN, 20, 20, 200, 20);
 		staminaBar = new BasicColorGuiElement(Anchor.BOTTOM_RIGHT, -20, 20, 200, 20);

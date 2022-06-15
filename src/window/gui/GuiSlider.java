@@ -1,6 +1,6 @@
 package window.gui;
 
-import maths.MathUtils;
+import utils.MathUtils;
 import window.inputs.InputHandler;
 import window.listener.SliderChangeListener;
 

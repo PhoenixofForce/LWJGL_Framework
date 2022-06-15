@@ -1,6 +1,5 @@
 package gameobjects.particles;
 
-import maths.MathUtils;
 import assets.models.ParticleModel;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -19,11 +18,10 @@ public class ParticleSpawner {
 
 	public static final int MAX_PARTICLES = 1000;
 	private static final Map<Integer, ParticleSpawner> spawner = new HashMap<>();
+	private static int nextID = 0;
 
 	public static final ParticleType DEFAULT = new ParticleType();
 
-	private static int nextID = 0;
-	
 	public static int getNewSpawner(Vector3f pos, ParticleType type) {
 		int id = nextID;
 		nextID++;
@@ -161,71 +159,5 @@ public class ParticleSpawner {
 
 	public void stopSpawning() {
 		isSpawning = false;
-	}
-
-	public static class ParticleType {
-		//TODO: make changes a function
-		//TODO: color
-		//TODO: death emitter
-
-		private float minSize = 0.1f, maxSize = 0.4f;
-		private float sizeChange = -0.03f;
-
-		private float minSpeed = 3f, maxSpeed = 8f;
-		private float speedChange = 0.01f;
-
-		private Vector3f movementDirection = new Vector3f(0, 1, 0);
-		private float angleOffset = 20f * (float) (Math.PI * 2) / 360f;
-		private Vector3f directionChange = new Vector3f(0, 0, 0f);
-
-		private Vector3f positionOffset = new Vector3f(1, 0.3f, 1);
-		private float minLifetime = 200, maxLifetime = 500;
-
-		Particle generate(Vector3f position) {
-			float size = MathUtils.random(minSize, maxSize);
-			float speed = MathUtils.random(minSpeed, maxSpeed);
-			Vector3f thisMovementDirection = MathUtils.randomVectorAround(movementDirection, angleOffset);
-			float lifetime = MathUtils.random(minLifetime, maxLifetime);
-
-			Vector3f thisPosition = new Vector3f(position).add(
-					MathUtils.random(-positionOffset.x, positionOffset.x),
-					MathUtils.random(-positionOffset.y, positionOffset.y),
-					MathUtils.random(-positionOffset.z, positionOffset.z)
-			);
-
-			return new Particle(thisPosition, thisMovementDirection, directionChange, speed, speedChange, size, sizeChange, lifetime);
-		}
-
-		public ParticleType setSize(float min, float max, float change) {
-			this.minSize = min;
-			this.maxSize = max;
-			this.sizeChange = change;
-			return this;
-		}
-
-		public ParticleType setSpeed(float min, float max, float change) {
-			this.minSpeed = min;
-			this.maxSpeed = max;
-			this.speedChange = change;
-			return this;
-		}
-
-		public ParticleType setDirection(Vector3f dir, float angle, Vector3f change) {
-			this.movementDirection = dir;
-			this.angleOffset = angle;
-			this.directionChange = change;
-			return this;
-		}
-
-		public ParticleType setLifetime(float min, float max) {
-			this.minLifetime = min;
-			this.maxLifetime = max;
-			return this;
-		}
-
-		public ParticleType setPositionOffset(Vector3f off) {
-			this.positionOffset = off;
-			return this;
-		}
 	}
 }

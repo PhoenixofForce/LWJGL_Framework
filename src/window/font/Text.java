@@ -1,10 +1,8 @@
 package window.font;
 
-import maths.MathUtils;
+import utils.MathUtils;
 import org.joml.Vector3f;
-import org.lwjgl.system.MathUtil;
 import utils.StringUtils;
-import utils.VecUtils;
 import window.gui.Anchor;
 
 import java.awt.*;

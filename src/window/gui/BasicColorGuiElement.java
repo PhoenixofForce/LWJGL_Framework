@@ -1,7 +1,7 @@
 package window.gui;
 
 import assets.models.ScreenRect;
-import maths.MathUtils;
+import utils.MathUtils;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import rendering.Renderer;

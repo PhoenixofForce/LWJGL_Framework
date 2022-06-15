@@ -1,7 +1,7 @@
 package gameobjects.component_system.components;
 
 import gameobjects.Entity;
-import maths.MathUtils;
+import utils.MathUtils;
 import org.joml.Vector3f;
 
 public class RestrictedPositionComponent extends PositionComponent {

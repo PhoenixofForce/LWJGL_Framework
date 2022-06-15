@@ -1,4 +1,4 @@
-package maths;
+package utils;
 
 import org.joml.Vector3f;
 

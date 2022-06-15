@@ -1,19 +1,16 @@
 package window.inputs;
 
-import maths.MathUtils;
+import utils.MathUtils;
 import utils.Constants;
 import utils.Options;
 import utils.Screenshot;
 import window.Window;
 import window.views.MainMenuView;
-import window.views.TestView;
-import window.views.View;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.lwjgl.glfw.GLFW.*;
 
