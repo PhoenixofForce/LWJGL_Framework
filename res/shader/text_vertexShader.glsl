@@ -13,12 +13,15 @@ layout(location = 6) in float wobbleStrength;
 layout(location = 100) uniform sampler2D atlas;
 layout(location = 200) uniform float translationX;
 layout(location = 201) uniform float translationY;
-layout(location = 202) uniform float windowWidth;
-layout(location = 203) uniform float windowHeight;
-layout(location = 204) uniform float ticks;
-layout(location = 205) uniform float maxChars;
-layout(location = 206) uniform float writerProgess;
+layout(location = 202) uniform float textBoxWidth;
+layout(location = 203) uniform float textBoxHeight;
+layout(location = 204) uniform float windowWidth;
+layout(location = 205) uniform float windowHeight;
+layout(location = 206) uniform float ticks;
+layout(location = 207) uniform float maxChars;
+layout(location = 208) uniform float writerProgess;
 
+out vec4 boxSize;
 out vec3 color;
 out vec2 fragTexCoord;
 out float charID;
@@ -39,14 +42,12 @@ vec2 atlasUv(vec2 uv, sampler2D spriteSheet, vec4 bounds, float flipX, float fli
 
 void main()
 {
-
     vec2 shakey = random2((spriteSheetBounds.xy + vec2(1)) * ticks * charIndex) * wobbleStrength;
     shakey = vec2(shakey.x, shakey.y * 1.4);
 
     float wobble = sin((ticks + charIndex * 2) * 0.1f) * wobbleStrength;
 
     vec2 offset = vec2(posOffset.x / windowWidth, posOffset.y / windowHeight);
-
     mat4 transformation = mat4(
         posOffset.z / windowWidth, 0, 0, 0,
         0, posOffset.w / windowHeight, 0, 0,
@@ -54,7 +55,7 @@ void main()
         offset.x + translationX, offset.y + translationY, 0, 1
     );
 
-
+    boxSize = vec4(((translationX + 1) / 2) * windowWidth, ((translationY + 1) / 2) * windowHeight, textBoxWidth, textBoxHeight);
     gl_Position = transformation * cPosition + vec4(0, 0 + wobble, 0, 0);
 
     fragTexCoord = atlasUv(cTexCoord, atlas, spriteSheetBounds, 0, 1);

@@ -5,18 +5,19 @@ import window.gui.Anchor;
 
 import java.util.List;
 
-public abstract class AutoUpdateText extends Text {
+public abstract class DynamicText implements Text {
 
-	private Text text;
+	private StaticText text;
 	private String lastText = "";
 	private boolean hasChanged = false;
+	private Anchor alignment;
 
-	public AutoUpdateText() {
+	public DynamicText() {
 		this(Anchor.ALIGN_LEFT);
 	}
 
-	public AutoUpdateText(Anchor alignment) {
-		super(alignment);
+	public DynamicText(Anchor alignment) {
+		this.alignment = alignment;
 		updateText();
 	}
 
@@ -47,11 +48,16 @@ public abstract class AutoUpdateText extends Text {
 	private void updateText() {
 		String newText = getText();
 		if(!newText.equals(lastText) && !hasChanged) {
-			text = Text.fromString(newText);
+			text = StaticText.fromString(newText);
 			lastText = newText;
 			hasChanged = true;
 		} else {
 			hasChanged = false;
 		}
+	}
+
+	@Override
+	public Anchor getAlignment() {
+		return alignment;
 	}
 }

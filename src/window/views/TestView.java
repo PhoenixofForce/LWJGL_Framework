@@ -49,7 +49,7 @@ public class TestView implements View {
 
 
 		text = new GuiText(Anchor.TOP_LEFT,  20, -20f, 0.2f, font1, 24f, 50)
-				.setText(new AutoUpdateText() {
+				.setText(new DynamicText() {
 					@Override
 					public String getText() {
 						long runTime = Window.INSTANCE.getRuntime();

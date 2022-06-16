@@ -6,13 +6,12 @@ import rendering.ShaderHandler;
 import rendering.uniform.MassUniform;
 import window.Window;
 import window.font.Font;
+import window.font.StaticText;
 import window.font.Text;
 
 import java.util.Optional;
 
-public class GuiText extends GuiElement {
-
-	//TODO: Alignments
+public class GuiText extends BasicColorGuiElement {
 
 	private Font font;
 	private float fontSize;
@@ -74,7 +73,7 @@ public class GuiText extends GuiElement {
 
 	public GuiText(Anchor[] anchors, float xOff, float yOff, float width, float height, Font font, float fontSize, long writerDuration) {
 		super(anchors, xOff, yOff, width, height);
-		this.text = new Text();
+		this.text = new StaticText();
 
 		this.font = font;
 		this.fontSize = fontSize;
@@ -86,7 +85,7 @@ public class GuiText extends GuiElement {
 
 	@Override
 	protected void initComponent() {
-		//super.initComponent();
+		super.initComponent();
 	}
 
 	@Override
@@ -108,7 +107,7 @@ public class GuiText extends GuiElement {
 	@Override
 	public void renderComponent() {
 		if(model != null) {
-			//super.renderComponent();
+			super.renderComponent();
 
 			//(translationX, translationY) needs to be the center of the first char
 			//getCenterX points to center of the whole text
@@ -121,7 +120,7 @@ public class GuiText extends GuiElement {
 			ShaderHandler.ShaderType type = ShaderHandler.ShaderType.TEXT;
 			MassUniform u = new MassUniform();
 			u.setTextures(font.getAtlas());
-			u.setFloats(translationX, translationY, Window.INSTANCE.getWidth(), Window.INSTANCE.getHeight(), Window.INSTANCE.getRuntime(), model.charCount(), (float) displayTime / writerDuration);
+			u.setFloats(translationX, translationY, getWidth(), getHeight(), Window.INSTANCE.getWidth(), Window.INSTANCE.getHeight(), Window.INSTANCE.getRuntime(), model.charCount(), (float) displayTime / writerDuration);
 
 			Renderer.renderArraysInstanced(type, model, u, model.charCount());
 		}
@@ -167,7 +166,7 @@ public class GuiText extends GuiElement {
 
 	public GuiText setText(String s, long writerDuration, long clearAfterMS) {
 		this.clear(writerDuration, clearAfterMS);
-		this.text = new Text().addText(s);
+		this.text = new StaticText().addText(s);
 		build();
 		return this;
 	}
@@ -179,8 +178,7 @@ public class GuiText extends GuiElement {
 	private void clear(long writerDurationPerChar, long clearAfterMS) {
 		this.writerDuration = writerDurationPerChar;
 		this.clearAfterMS = clearAfterMS;
-
-		text.clear();
+		this.text = new StaticText();
 	}
 
 	private void build() {
