@@ -198,7 +198,7 @@ public class TextModel extends Renderable {
 				float fontWidth = font.getWidth(texture, fontSize);
 				float fontHeight = font.getHeight(texture, fontSize);
 
-				addData(floatsData, x + font.getXoffset(texture, fontSize), y - font.getYoffset(texture, fontSize) , fontWidth, fontHeight);
+				addData(floatsData, x + font.getXoffset(texture, fontSize), y - font.getYoffset(texture, fontSize), fontWidth, fontHeight);
 				addData(floatsData, font.getBounds(texture));
 				addData(floatsData, character.color);
 				addData(floatsData, indexes, character.wobbleStrength);

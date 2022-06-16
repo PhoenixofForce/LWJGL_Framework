@@ -11,7 +11,7 @@ import window.font.Text;
 
 import java.util.Optional;
 
-public class GuiText extends BasicColorGuiElement {
+public class GuiText extends GuiElement {
 
 	private Font font;
 	private float fontSize;
@@ -85,7 +85,7 @@ public class GuiText extends BasicColorGuiElement {
 
 	@Override
 	protected void initComponent() {
-		super.initComponent();
+		//super.initComponent();
 	}
 
 	@Override
@@ -107,7 +107,7 @@ public class GuiText extends BasicColorGuiElement {
 	@Override
 	public void renderComponent() {
 		if(model != null) {
-			super.renderComponent();
+			//super.renderComponent();
 
 			//(translationX, translationY) needs to be the center of the first char
 			//getCenterX points to center of the whole text
@@ -120,7 +120,10 @@ public class GuiText extends BasicColorGuiElement {
 			ShaderHandler.ShaderType type = ShaderHandler.ShaderType.TEXT;
 			MassUniform u = new MassUniform();
 			u.setTextures(font.getAtlas());
-			u.setFloats(translationX, translationY, getWidth(), getHeight(), Window.INSTANCE.getWidth(), Window.INSTANCE.getHeight(), Window.INSTANCE.getRuntime(), model.charCount(), (float) displayTime / writerDuration);
+			u.setFloats(translationX, translationY,
+					getCenterX(), getCenterY(), getWidth(), getHeight(),
+					Window.INSTANCE.getWidth(), Window.INSTANCE.getHeight(),
+					Window.INSTANCE.getRuntime(), model.charCount(), (float) displayTime / writerDuration);
 
 			Renderer.renderArraysInstanced(type, model, u, model.charCount());
 		}

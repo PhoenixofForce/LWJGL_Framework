@@ -48,12 +48,12 @@ public class TestView implements View {
 		Font font2 = new TextureAtlasFont("Font");
 
 
-		text = new GuiText(Anchor.TOP_LEFT,  20, -20f, 0.2f, font1, 24f, 50)
+		text = new GuiText(Anchor.TOP_LEFT,  20, -20f, 0.2f, 0.075f, font1, 24f, 50)
 				.setText(new DynamicText() {
 					@Override
 					public String getText() {
 						long runTime = Window.INSTANCE.getRuntime();
-						return "[color=#ff0000]Ticks: " + runTime;
+						return "[color=#ff0000]Ticks: " + runTime + "\r\nLorem ipsum dol";
 					}
 				});
 

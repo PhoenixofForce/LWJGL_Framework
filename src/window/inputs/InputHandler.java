@@ -26,7 +26,7 @@ public class InputHandler {
 		mouseDX = Math.signum(mousePosition[0] - mouseX) * Constants.MOUSE_SENSITIVITY;
 		mouseDY = Math.signum(mousePosition[1] - mouseY) * Constants.MOUSE_SENSITIVITY;
 
-
+		//TODO: Write function that handles this
 		float movement = Math.abs(MathUtils.clamp(-1, mouseDX, 0));
 		KeyHit hit = lastPresses.getOrDefault(KeyCodes.MOUSE_MOVE_LEFT, null);
 		if(hit != null && movement == 0) hit.setValue(0);
@@ -40,8 +40,6 @@ public class InputHandler {
 		if(hit == null) hit = new KeyHit(KeyCodes.MOUSE_MOVE_RIGHT, 0);
 		hit.setValue(movement);
 		lastPresses.put(KeyCodes.MOUSE_MOVE_RIGHT, hit);
-
-
 
 		movement = Math.abs(MathUtils.clamp(-1, mouseDY, 0));
 		hit = lastPresses.getOrDefault(KeyCodes.MOUSE_MOVE_DOWN, null);

@@ -3,18 +3,23 @@
 in vec3 color;
 in vec2 fragTexCoord;
 in float charID;
-in vec4 boxSize;
+in vec4 textBoxSize;
+in vec4 characterPosition;
 
 out vec4 finalColor;
 
 layout(location = 100) uniform sampler2D atlas;
-layout(location = 207) uniform float maxChars;
-layout(location = 208) uniform float writerProgess;
+layout(location = 209) uniform float maxChars;
+layout(location = 210) uniform float writerProgess;
 
 void main() {
 
-    //if(gl_FragCoord.x < boxSize.x || gl_FragCoord.x >= boxSize.x + boxSize.z ||
-    //   gl_FragCoord.y < boxSize.y - boxSize.w / 2 || gl_FragCoord.y >= boxSize.y + boxSize.w) discard;    //TODO: this is the basic concept of cutting text into the right size
+    //if(gl_FragCoord.x < textBoxSize.x || gl_FragCoord.x >= textBoxSize.x + textBoxSize.z ||                           //pixel perfect
+    //   gl_FragCoord.y < textBoxSize.y || gl_FragCoord.y >= textBoxSize.y + textBoxSize.w) discard;    //TODO: this is the basic concept of cutting text into the right size
+
+    //if(characterPosition.x + characterPosition.z < textBoxSize.x || characterPosition.x >= textBoxSize.x + textBoxSize.z ||     //render whole char if character is in the box
+    //   characterPosition.y < textBoxSize.y - textBoxSize.w / 2 || characterPosition.y >= textBoxSize.y + textBoxSize.w) discard;    //could be improved
+
     vec4 texColor = texture(atlas, fragTexCoord);
     if(texColor.a < 1.0 || writerProgess * maxChars < charID) discard;
 
