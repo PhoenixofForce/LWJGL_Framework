@@ -16,7 +16,7 @@ public class StringUtils {
 		List<String> out = new ArrayList<>();
 
 		if(!text.startsWith(start + "") && prefix.isPresent()) {
-			text = prefix + text;
+			text = prefix.get() + text;
 		}
 
 		String currentString = "";

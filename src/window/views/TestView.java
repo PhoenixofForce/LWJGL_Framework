@@ -19,6 +19,7 @@ public class TestView implements View {
 	private GuiText text;
 	private GuiElement healthBar, staminaBar, manaBar, currentMana, crosshair, button, checkbox, selector;
 	private GuiSlider slider;
+	private GuiTextField field;
 
 	private int particle;
 
@@ -47,15 +48,16 @@ public class TestView implements View {
 		Font font1 = new GeneralFont("WhitePeaberryOutline", 2);
 		Font font2 = new TextureAtlasFont("Font");
 
-
 		text = new GuiText(Anchor.TOP_LEFT,  20, -20f, 0.2f, 0.075f, font1, 24f, 50)
-				.setText(new DynamicText() {
-					@Override
-					public String getText() {
-						long runTime = Window.INSTANCE.getRuntime();
-						return "[color=#ff0000]Ticks: " + runTime + "\r\nLorem ipsum dol";
-					}
-				});
+			.setText(new DynamicText() {
+				@Override
+				public String getText() {
+					long runTime = Window.INSTANCE.getRuntime();
+					return "[color=#ff0000]Ticks: " + runTime + "\r\nLorem ipsum dol";
+				}
+			});
+
+		field = new GuiTextField(Anchor.BOTTOM_RIGHT, -50, 320, 200, 50);
 
 		Window.INSTANCE.setMouseClickListener((e, b) -> {
 			if(e != 2) AudioType.EFFECT.play();
@@ -73,6 +75,7 @@ public class TestView implements View {
 		window.addElement(checkbox);
 		window.addElement(selector);
 		window.addElement(text);
+		window.addElement(field);
 
 		ParticleSpawner.unFreeze(particle);
 		ParticleSpawner.startSpawning(particle);

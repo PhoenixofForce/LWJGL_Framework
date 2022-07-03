@@ -17,6 +17,7 @@ public abstract class DynamicText implements Text {
 	}
 
 	public DynamicText(Anchor alignment) {
+		this.text = StaticText.fromString("");
 		this.alignment = alignment;
 		updateText();
 	}
@@ -47,6 +48,7 @@ public abstract class DynamicText implements Text {
 
 	private void updateText() {
 		String newText = getText();
+
 		if(!newText.equals(lastText) && !hasChanged) {
 			text = StaticText.fromString(newText);
 			lastText = newText;

@@ -11,6 +11,7 @@ import utils.Constants;
 import utils.Options;
 import utils.TimeUtils;
 import window.gui.*;
+import window.inputs.FocusHolder;
 import window.inputs.InputHandler;
 
 import java.nio.*;
@@ -18,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Map;
+
+import window.inputs.KeyHit;
 import window.views.View;
 
 import org.lwjgl.*;
@@ -31,7 +34,7 @@ import static org.lwjgl.opengl.GL46.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
-public class Window extends BasicColorGuiElement {
+public class Window extends BasicColorGuiElement implements FocusHolder {
 
 	public static Window INSTANCE;
 
@@ -336,5 +339,20 @@ public class Window extends BasicColorGuiElement {
 
 	public View getCurrentView() {
 		return currentView;
+	}
+
+	@Override
+	public void charStartRepeat(char c) {
+
+	}
+
+	@Override
+	public void handleStart(KeyHit hit) { }
+
+	@Override
+	public void handleRepeat(KeyHit hit) { }
+
+	@Override
+	public void handleEnd(KeyHit hit) {
 	}
 }

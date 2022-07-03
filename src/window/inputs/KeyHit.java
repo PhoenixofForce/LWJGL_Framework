@@ -60,6 +60,10 @@ public class KeyHit {
 		this.value = value;
 	}
 
+	public int getKeyCode() {
+		return keyCode;
+	}
+
 	@Override
 	public String toString() {
 		return "Click " + ((char) keyCode) + "(" + keyCode + ") (" + clickStart + " - " + clickEnd + ") " + (finishedClick? "finished": "in progress");

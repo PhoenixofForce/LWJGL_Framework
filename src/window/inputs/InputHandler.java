@@ -1,5 +1,6 @@
 package window.inputs;
 
+import org.lwjgl.glfw.GLFWCharCallback;
 import utils.MathUtils;
 import utils.Constants;
 import utils.Options;
@@ -11,60 +12,46 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-
 public class InputHandler {
+
+	private static Stack<FocusHolder> focusStack = new Stack<>();
+	private static FocusHolder getCurrentFocusHolder() {
+		if(!focusStack.isEmpty()) {
+			return focusStack.peek();
+		}
+
+		return Window.INSTANCE;
+	}
+
+	public static boolean hasFocus(FocusHolder focusHolder) {
+		return getCurrentFocusHolder() == focusHolder;
+	}
+
+	public static void requestFocus(FocusHolder focus) {
+		focusStack.push(focus);
+	}
+
+	public static boolean dequestFocus(FocusHolder focus) {
+		if(!focusStack.isEmpty() && focusStack.peek() == focus) {
+			focusStack.pop();
+			return true;
+		}
+
+		return false;
+	}
 
 	public static float mouseX = 0, mouseY = 0;
 	public static float mouseDX, mouseDY;
 
-	public static void getInputs() {
-		float[] mousePosition = getMousePosition();
-
-		mouseDX = Math.signum(mousePosition[0] - mouseX) * Constants.MOUSE_SENSITIVITY;
-		mouseDY = Math.signum(mousePosition[1] - mouseY) * Constants.MOUSE_SENSITIVITY;
-
-		//TODO: Write function that handles this
-		float movement = Math.abs(MathUtils.clamp(-1, mouseDX, 0));
-		KeyHit hit = lastPresses.getOrDefault(KeyCodes.MOUSE_MOVE_LEFT, null);
-		if(hit != null && movement == 0) hit.setValue(0);
-		if(hit == null) hit = new KeyHit(KeyCodes.MOUSE_MOVE_LEFT, 0);
-		hit.setValue(movement);
-		lastPresses.put(KeyCodes.MOUSE_MOVE_LEFT, hit);
-
-		movement = Math.abs(MathUtils.clamp(0, mouseDX, 1));
-		hit = lastPresses.getOrDefault(KeyCodes.MOUSE_MOVE_RIGHT, null);
-		if(hit != null && movement == 0) hit.setValue(0);
-		if(hit == null) hit = new KeyHit(KeyCodes.MOUSE_MOVE_RIGHT, 0);
-		hit.setValue(movement);
-		lastPresses.put(KeyCodes.MOUSE_MOVE_RIGHT, hit);
-
-		movement = Math.abs(MathUtils.clamp(-1, mouseDY, 0));
-		hit = lastPresses.getOrDefault(KeyCodes.MOUSE_MOVE_DOWN, null);
-		if(hit != null && movement == 0) hit.setValue(0);
-		if(hit == null) hit = new KeyHit(KeyCodes.MOUSE_MOVE_DOWN, 0);
-		hit.setValue(movement);
-		lastPresses.put(KeyCodes.MOUSE_MOVE_DOWN, hit);
-
-		movement = Math.abs(MathUtils.clamp(0, mouseDY, 1));
-		hit = lastPresses.getOrDefault(KeyCodes.MOUSE_MOVE_UP, null);
-		if(hit != null && movement == 0) hit.setValue(0);
-		if(hit == null) hit = new KeyHit(KeyCodes.MOUSE_MOVE_UP, 0);
-		hit.setValue(movement);
-		lastPresses.put(KeyCodes.MOUSE_MOVE_UP, hit);
-
-		if(Constants.GRAB_MOUSE) {
-			glfwSetCursorPos(Window.INSTANCE.window, Constants.DEFAULT_WIDTH / 2.0f, Constants.DEFAULT_HEIGHT / 2.0f);
-			mousePosition = getMousePosition();
-		}
-
-		mouseX = mousePosition[0];
-		mouseY = mousePosition[1];
-	}
-
 	public static void callbacks() {
+		glfwSetCharCallback(Window.INSTANCE.window, (window, charAsInt) -> {
+			getCurrentFocusHolder().charStartRepeat((char) charAsInt);
+		});
+
 		glfwSetKeyCallback(Window.INSTANCE.window, (window, key, scancode, action, mods) -> {
 			KeyHit click = lastPresses.get(key);
 
@@ -83,10 +70,19 @@ public class InputHandler {
 			if(action == GLFW_PRESS) {
 				click = new KeyHit(key);
 				lastPresses.put(key, click);
+
+				getCurrentFocusHolder().handleStart(click);
 			} else if(action == GLFW_RELEASE) {
-				if(click != null) click.setEnd();
+				if(click != null) {
+					click.setEnd();
+					getCurrentFocusHolder().handleEnd(click);
+				}
 				else System.err.println("click null");
-			} else if(action == GLFW_REPEAT) { }
+			} else if(action == GLFW_REPEAT) {
+				if(click != null) {
+					getCurrentFocusHolder().handleRepeat(click);
+				}
+			}
 			else {
 				System.err.println("Unknown action " + action);
 			}
@@ -94,96 +90,81 @@ public class InputHandler {
 	}
 
 	public static void update() {
-		getInputs();
+		getMouseInputs();
+		getControllerInputs();
+	}
 
+	private static void getMouseInputs() {
+		float[] mousePosition = getMousePosition();
+
+		mouseDX = Math.signum(mousePosition[0] - mouseX) * Constants.MOUSE_SENSITIVITY;
+		mouseDY = Math.signum(mousePosition[1] - mouseY) * Constants.MOUSE_SENSITIVITY;
+
+		putMouseInputInMap(KeyCodes.MOUSE_MOVE_LEFT, -1, mouseDX, 0);
+		putMouseInputInMap(KeyCodes.MOUSE_MOVE_RIGHT, 0, mouseDX, 1);
+		putMouseInputInMap(KeyCodes.MOUSE_MOVE_DOWN, -1, mouseDY, 0);
+		putMouseInputInMap(KeyCodes.MOUSE_MOVE_UP, 0, mouseDY, 1);
+
+		if(Constants.GRAB_MOUSE) {
+			glfwSetCursorPos(Window.INSTANCE.window, Constants.DEFAULT_WIDTH / 2.0f, Constants.DEFAULT_HEIGHT / 2.0f);
+			mousePosition = getMousePosition();
+		}
+
+		mouseX = mousePosition[0];
+		mouseY = mousePosition[1];
+	}
+
+	private static void putMouseInputInMap(int code, float min, float mouseDD, float max) {
+		float movement = Math.abs(MathUtils.clamp(min, mouseDD, max));
+		KeyHit hit = lastPresses.getOrDefault(code, null);
+		if(hit != null && movement == 0) hit.setValue(0);
+		if(hit == null) hit = new KeyHit(code, 0);
+		hit.setValue(movement);
+		lastPresses.put(code, hit);
+	}
+
+	private static void getControllerInputs() {
 		for (int c = 0; c < 16; c++) {
 			if (glfwJoystickPresent(GLFW_JOYSTICK_1 + c) && glfwJoystickIsGamepad(GLFW_JOYSTICK_1 + c)) {
 				ByteBuffer values = glfwGetJoystickButtons(GLFW_JOYSTICK_1 + c);
 				for (int i = 0; i < values.limit(); i++) {
-					boolean pressed = values.get(i) == 1;
-					int code = 100 + i;
-
-					KeyHit hit = lastPresses.get(code);
-
-					if(pressed) {
-						if(hit == null || !hit.isClickInProgress()) {
-							hit = new KeyHit(code);
-							lastPresses.put(code, hit);
-						}
-					} else {
-						if(hit != null && hit.isClickInProgress()) {
-							hit.setEnd();
-						}
-					}
+							putControllerInputInMap(100 + i, values.get(i) == 1, 1);
 				}
 
 				FloatBuffer values2 = glfwGetJoystickAxes(GLFW_JOYSTICK_1 + c);
 				for (int j = 0; j < values2.limit(); j++) {
 					if (j == GLFW_GAMEPAD_AXIS_LEFT_TRIGGER || j == GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER) {
 						float triggerValue = (values2.get(j) + 1f) / 2f;
-						int code = 115 + j;
+						putControllerInputInMap(115 + j, triggerValue > 0, triggerValue);
 
-						KeyHit hit = lastPresses.get(code);
-						boolean pressed = triggerValue > 0;
-						if(pressed) {
-							if(hit == null || !hit.isClickInProgress()) {
-								hit = new KeyHit(code, triggerValue);
-								lastPresses.put(code, hit);
-							}
-
-							if(hit.isClickInProgress()) {
-								hit.setValue(triggerValue);
-							}
-						} else {
-							if(hit != null && hit.isClickInProgress()) {
-								hit.setEnd();
-							}
-						}
 					} else {
 
 						float up_left = -Math.min(0, values2.get(j) + Constants.STICK_DEAD_ZONE) / (1 - Constants.STICK_DEAD_ZONE);
-						boolean pressed = up_left != 0;
-
-						int code = 115 + j;
-						KeyHit hit = lastPresses.get(code);
-
-						if(pressed) {
-							if(hit == null || !hit.isClickInProgress()) {
-								hit = new KeyHit(code, up_left);
-								lastPresses.put(code, hit);
-							}
-
-							if(hit.isClickInProgress()) {
-								hit.setValue(up_left);
-							}
-						} else {
-							if(hit != null && hit.isClickInProgress()) {
-								hit.setEnd();
-							}
-						}
+						putControllerInputInMap(115 + j, up_left != 0, up_left);
 
 						float down_right = Math.max(0, values2.get(j) - Constants.STICK_DEAD_ZONE) / (1 - Constants.STICK_DEAD_ZONE);
-						pressed = down_right != 0;
-
-						code = 121 + j;
-						hit = lastPresses.get(code);
-
-						if(pressed) {
-							if(hit == null || !hit.isClickInProgress()) {
-								hit = new KeyHit(code, down_right);
-								lastPresses.put(code, hit);
-							}
-
-							if(hit.isClickInProgress()) {
-								hit.setValue(down_right);
-							}
-						} else {
-							if(hit != null && hit.isClickInProgress()) {
-								hit.setEnd();
-							}
-						}
+						putControllerInputInMap(121 + j, down_right != 0, down_right);
 					}
 				}
+			}
+		}
+	}
+
+	private static void putControllerInputInMap(int code, boolean pressed, float value) {
+		KeyHit hit = lastPresses.get(code);
+
+		if(pressed) {
+			if(hit == null || !hit.isClickInProgress()) {
+				hit = new KeyHit(code, value);
+				lastPresses.put(code, hit);
+			}
+
+			if(hit.isClickInProgress()) {
+				hit.setValue(value);
+			}
+		} else {
+			if(hit != null && hit.isClickInProgress()) {
+				hit.setEnd();
 			}
 		}
 	}
@@ -193,6 +174,12 @@ public class InputHandler {
 	private static final Map<Integer, KeyHit> lastPresses = new HashMap<>();
 
 	public static float isKeyPressed(int keyCode) {
+		return isKeyPressed(Window.INSTANCE, keyCode);
+	}
+
+	public static float isKeyPressed(FocusHolder focus, int keyCode) {
+		if(getCurrentFocusHolder() != focus) return 0;
+
 		int action = glfwGetKey(Window.INSTANCE.window, keyCode);
 
 		if(keyCode == KeyCodes.MOUSE_MOVE_UP) {
@@ -208,6 +195,12 @@ public class InputHandler {
 	}
 
 	public static float isKeyPressed(int keyCode, long timeBuffer) {
+		return isKeyPressed(Window.INSTANCE, keyCode, timeBuffer);
+	}
+
+	public static float isKeyPressed(FocusHolder focus, int keyCode, long timeBuffer) {
+		if(getCurrentFocusHolder() != focus) return 0;
+
 		if(lastPresses.containsKey(keyCode) && lastPresses.get(keyCode).timeSinceEnd() <= timeBuffer) {
 			return lastPresses.get(keyCode).value;
 		}
@@ -216,12 +209,24 @@ public class InputHandler {
 	}
 
 	public static float isKeyPressedConsume(int keyCode, long timeBuffer) {
+		return isKeyPressedConsume(Window.INSTANCE, keyCode, timeBuffer);
+	}
+
+	public static float isKeyPressedConsume(FocusHolder focus, int keyCode, long timeBuffer) {
+		if(getCurrentFocusHolder() != focus) return 0;
+
 		float out = isKeyPressed(keyCode, timeBuffer);
-		if(out > 0.0f) consumeClick(keyCode);
+		if(out > 0.0f) consumeClick(focus, keyCode);
 		return out;
 	}
 
 	public static float isLongClick(int keyCode, long minimumForLong) {
+		return isLongClick(Window.INSTANCE, keyCode, minimumForLong);
+	}
+
+	public static float isLongClick(FocusHolder focus, int keyCode, long minimumForLong) {
+		if(getCurrentFocusHolder() != focus) return 0;
+
 		if(lastPresses.containsKey(keyCode)) {
 			KeyHit hit = lastPresses.get(keyCode);
 			if(hit == null) return 0.0f;
@@ -233,12 +238,24 @@ public class InputHandler {
 	}
 
 	public static float isLongClickConsume(int keyCode, long minimumForLong) {
+		return isLongClickConsume(Window.INSTANCE, keyCode, minimumForLong);
+	}
+
+	public static float isLongClickConsume(FocusHolder focus, int keyCode, long minimumForLong) {
+		if(getCurrentFocusHolder() != focus) return 0;
+
 		float out = isLongClick(keyCode, minimumForLong);
-		if(out > 0.0) consumeClick(keyCode);
+		if(out > 0.0) consumeClick(focus, keyCode);
 		return out;
 	}
 
 	public static void consumeClick(int keycode) {
+		consumeClick(Window.INSTANCE, keycode);
+	}
+
+	public static void consumeClick(FocusHolder focus, int keycode) {
+		if(getCurrentFocusHolder() != focus) return;
+
 		KeyHit click = lastPresses.get(keycode);
 		if(click != null) click.reset();
 	}

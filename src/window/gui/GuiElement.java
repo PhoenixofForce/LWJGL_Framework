@@ -1,5 +1,6 @@
 package window.gui;
 
+import window.inputs.FocusHolder;
 import window.inputs.InputHandler;
 import window.Window;
 import window.listener.MouseClickListener;
@@ -144,6 +145,9 @@ public abstract class GuiElement {
 		}
 
 		if(!isClickOnChild && this.isClickable) {
+			FocusHolder holder = (this instanceof FocusHolder? (FocusHolder) this : Window.INSTANCE);
+			InputHandler.requestFocus(holder);
+
 			onClick(event, button);
 		}
 
