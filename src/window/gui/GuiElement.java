@@ -15,7 +15,7 @@ import java.util.List;
  *  - a negative offset means that point is specified from the oposite border of the parent
  *  - position are always from the bottom left of the parent
  *
- *	         +---------+
+ *           +---------+
  *           | v       |
  *           |>*       |
  *           |         |

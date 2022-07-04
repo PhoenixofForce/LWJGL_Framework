@@ -29,15 +29,15 @@ public class GuiText extends GuiElement {
 	private boolean fixedHeight;
 
 	/*
-		There are two types of texts
-		With the first type you specify the Text
+        There are two types of texts
+        With the first type you specify the Text
 
-		Lorem Ipsum
-		Dolor sit
+        Lorem Ipsum
+        Dolor sit
 
-		And the width and height get set automatically
+        And the width and height get set automatically
 
-		+-----------+
+        +-----------+
         |Lorem Ipsum|
         |Dolor sit  |
         +-----------+

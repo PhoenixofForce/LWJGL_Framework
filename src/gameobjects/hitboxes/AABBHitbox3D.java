@@ -29,14 +29,14 @@ public class AABBHitbox3D {
 	}
 
 	/*
-	 * 	Return true if two rectangles(2d) or  cuboids(3d) overlap
-	 *    +--------+
-	 *    |        |
-	 *    |     +--------+
-	 *    |     |  |     |
-	 *    +-----|--+     |
-	 *          +--------+
-	 */
+     * Return true if two rectangles(2d) or  cuboids(3d) overlap
+     *    +--------+
+     *    |        |
+     *    |     +--------+
+     *    |     |  |     |
+     *    +-----|--+     |
+     *          +--------+
+     */
 	public boolean collides(AABBHitbox3D box) {
 		return ((x + width) > box.x && (box.x + box.width) > x &&
 				(y + height) > box.y && (box.y + box.height) > y &&
@@ -44,12 +44,12 @@ public class AABBHitbox3D {
 
 	}
 
-	/*
-	 * Return the direction of a gives hitbox in relation to this box
-	 * LUR
-	 * L#R    - # this box
-	 * LDR
-	 */
+    /*
+     * Return the direction of a gives hitbox in relation to this box
+     * LUR
+     * L#R    - # this box
+     * LDR
+     */
 	public HitboxDirection direction(AABBHitbox3D box) {
 		if (collides(box)) return HitboxDirection.COLLIDE;
 
@@ -62,16 +62,16 @@ public class AABBHitbox3D {
 
 	}
 
-	/*
-	 * 	the amount of the given direction the second object has to be moved to avoid collision
-	 *    +--------+                 +--------+
-	 *    |        |                 |        |
-	 *    |     +--------+           |        |+--------+
-	 *    |     |  |     |           |        ||        |
-	 *    +-----|--+     |           +--------+|        |
-	 *          +--------+                     +--------+
-	 *          >>>>(4)       =>
-	 */
+    /*
+     * the amount of the given direction the second object has to be moved to avoid collision
+     *    +--------+                 +--------+
+     *    |        |                 |        |
+     *    |     +--------+           |        |+--------+
+     *    |     |  |     |           |        ||        |
+     *    +-----|--+     |           +--------+|        |
+     *          +--------+                     +--------+
+     *          >>>>(4)       =>
+     */
 	public float collisionDepth(AABBHitbox3D box, float ax, float ay, float az) {
 		if (!collides(box)) return 0;
 
