@@ -55,24 +55,13 @@ public class GuiText extends GuiElement {
         +-----+
 	 */
 
-	public GuiText(float xOff, float yOff, Font font, float fontSize) {
-		this(Anchor.TOP_LEFT, xOff, yOff, font, fontSize);
+	public GuiText(GuiConfig config, Font font, float fontSize) {
+		this(config, font, fontSize, 0);
 	}
 
-	public GuiText(Anchor[] anchors, float xOff, float yOff, Font font, float fontSize) {
-		this(anchors, xOff, yOff, font, fontSize, 0);
-	}
+	public GuiText(GuiConfig config, Font font, float fontSize, long writerDuration) {
+		super(config);
 
-	public GuiText(Anchor[] anchors, float xOff, float yOff, Font font, float fontSize, long writerDuration) {
-		this(anchors, xOff, yOff, 0, font, fontSize, writerDuration);
-	}
-
-	public GuiText(Anchor[] anchors, float xOff, float yOff, float width, Font font, float fontSize, long writerDuration) {
-		this(anchors, xOff, yOff, width, 0, font, fontSize, writerDuration);
-	}
-
-	public GuiText(Anchor[] anchors, float xOff, float yOff, float width, float height, Font font, float fontSize, long writerDuration) {
-		super(anchors, xOff, yOff, width, height);
 		this.text = new StaticText();
 
 		this.font = font;

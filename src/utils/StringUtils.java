@@ -6,6 +6,10 @@ import java.util.Optional;
 
 public class StringUtils {
 
+	public static String insert(String old, int pos, String toInsert) {
+		return old.substring(0, pos) + toInsert + old.substring(pos);
+	}
+
 	/*
 		[test] abc [test]
 		=>

@@ -53,7 +53,7 @@ public class Window extends BasicColorGuiElement implements FocusHolder {
 	private boolean shouldCleanUp;
 
 	public Window() {
-		super(0, 0, 0, 0);
+		super(new GuiConfig(0, 0, 0, 0));
 		INSTANCE = this;
 		this.runtimeCount = new HashMap<>();
 		init();

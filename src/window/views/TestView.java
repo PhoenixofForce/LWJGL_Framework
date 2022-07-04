@@ -13,6 +13,8 @@ import window.Window;
 import window.font.*;
 import window.gui.*;
 
+import java.util.Optional;
+
 public class TestView implements View {
 
 	private Camera cam;
@@ -28,27 +30,27 @@ public class TestView implements View {
 		this.particle = ParticleSpawner.getNewSpawner(new Vector3f(0, 5, 0),
 				new ParticleType().setDirection(MathUtils.randomVectorAround(new Vector3f(1, 0, 0), 360), 0));
 
-		healthBar = new BasicColorGuiElement(Anchor.BEGIN, Anchor.BEGIN, 20, 20, 200, 20);
-		staminaBar = new BasicColorGuiElement(Anchor.BOTTOM_RIGHT, -20, 20, 200, 20);
-		manaBar = new BasicColorGuiElement(Anchor.BOTTOM_CENTER, 0.5f, 20, 200, 20);
-		currentMana = new BasicColorGuiElement(Anchor.TOP_LEFT, 0, 1, 0.3f, 20);
+		healthBar = new BasicColorGuiElement(new GuiConfig(Anchor.BEGIN, Anchor.BEGIN, 20, 20, 200, 20));
+		staminaBar = new BasicColorGuiElement(new GuiConfig(Anchor.BOTTOM_RIGHT, -20, 20, 200, 20));
+		manaBar = new BasicColorGuiElement(new GuiConfig(Anchor.BOTTOM_CENTER, 0.5f, 20, 200, 20));
+		currentMana = new BasicColorGuiElement(new GuiConfig(Anchor.TOP_LEFT, 0, 1, 0.3f, 20));
 
 		manaBar.addElement(currentMana);
 
-		crosshair = new BasicColorGuiElement(0.5f, 0.5f, 10, 10);
+		crosshair = new BasicColorGuiElement(new GuiConfig(0.5f, 0.5f, 10, 10));
 
-		slider = new GuiSlider(Anchor.BOTTOM_LEFT, 50, 200, 200, 20);
+		slider = new GuiSlider(new GuiConfig(Anchor.BOTTOM_LEFT, 50, 200, 200, 20));
 		slider.setValue(Options.musicVolume);
 		slider.setChangeListener(v -> Options.musicVolume = v);
 
-		button = new GuiButton(Anchor.CENTERCENTER, 150, 275, 200, 50);
-		checkbox = new GuiCheckbox(Anchor.BOTTOM_LEFT, 50, 320, 20, 20);
-		selector = new GuiSelector(Anchor.BOTTOM_LEFT, 50, 400, 200, 50);
+		button = new GuiButton(new GuiConfig(Anchor.CENTERCENTER, 150, 275, 200, 50));
+		checkbox = new GuiCheckbox(new GuiConfig(Anchor.BOTTOM_LEFT, 50, 320, 20, 20), false);
+		selector = new GuiSelector(new GuiConfig(Anchor.BOTTOM_LEFT, 50, 400, 200, 50));
 
 		Font font1 = new GeneralFont("WhitePeaberryOutline", 2);
 		Font font2 = new TextureAtlasFont("Font");
 
-		text = new GuiText(Anchor.TOP_LEFT,  20, -20f, 0.2f, 0.075f, font1, 24f, 50)
+		text = new GuiText(new GuiConfig(Anchor.TOP_LEFT,  20, -20f, 0.2f, 0.075f), font1, 24f, 50)
 			.setText(new DynamicText() {
 				@Override
 				public String getText() {
@@ -57,7 +59,7 @@ public class TestView implements View {
 				}
 			});
 
-		field = new GuiTextField(Anchor.BOTTOM_RIGHT, -50, 320, 200, 50);
+		field = new GuiTextField(new GuiConfig(Anchor.BOTTOM_RIGHT, -50, 320, 200, 50), "Enter name...", Optional.of(new TextConfirmer.WordConfirmer()));
 
 		Window.INSTANCE.setMouseClickListener((e, b) -> {
 			if(e != 2) AudioType.EFFECT.play();

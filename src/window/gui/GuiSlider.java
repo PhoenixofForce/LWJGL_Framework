@@ -14,24 +14,16 @@ public class GuiSlider extends GuiElement {
 
 	private SliderChangeListener changeListener;
 
-	public GuiSlider(Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height) {
-		super(xAnchor, yAnchor, xOffset, yOffset, width, height);
-	}
-
-	public GuiSlider(Anchor[] anchors, float xOffset, float yOffset, float width, float height) {
-		super(anchors, xOffset, yOffset, width, height);
-	}
-
-	public GuiSlider(float xOffset, float yOffset, float width, float height) {
-		super(xOffset, yOffset, width, height);
+	public GuiSlider(GuiConfig config) {
+		super(config);
 	}
 
 	protected void initComponent() {
-		bar = new BasicColorGuiElement(Anchor.CENTERCENTER, 0.5f, 0.5f, 1f, 0.1f);
+		bar = new BasicColorGuiElement(new GuiConfig(Anchor.CENTERCENTER, 0.5f, 0.5f, 1f, 0.1f));
 		bar.setMouseClickListener(this::onClick);
 		bar.setColors(new Color(200, 200, 200));
 
-		slider = new BasicColorGuiElement(Anchor.CENTERCENTER, value, 0.5f, 10, 1f);
+		slider = new BasicColorGuiElement(new GuiConfig(Anchor.CENTERCENTER, value, 0.5f, 10, 1f));
 		slider.setMouseClickListener(this::onClick);
 		slider.setColors(new Color(85, 112, 138), new Color(47, 98, 161));
 

@@ -1,5 +1,6 @@
 package window.gui;
 
+import window.font.DynamicText;
 import window.font.TextureAtlasFont;
 
 import java.util.List;
@@ -20,23 +21,22 @@ public class GuiSelector extends GuiElement {
 	private GuiButton right;
 	private GuiText selectionDisplay;
 
-	public GuiSelector(Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height) {
-		super(xAnchor, yAnchor, xOffset, yOffset, width, height);
-	}
-
-	public GuiSelector(Anchor[] anchors, float xOffset, float yOffset, float width, float height) {
-		super(anchors, xOffset, yOffset, width, height);
-	}
-
-	public GuiSelector(float xOffset, float yOffset, float width, float height) {
-		super(xOffset, yOffset, width, height);
+	public GuiSelector(GuiConfig config) {
+		super(config);
 	}
 
 	@Override
 	protected void initComponent() {
-		left = new GuiButton(Anchor.BOTTOM_LEFT, 0, 0, 0.1f, 1f);
-		right = new GuiButton(Anchor.BOTTOM_RIGHT, 1f, 0, 0.1f, 1f);
-		selectionDisplay = new GuiText(Anchor.CENTERCENTER, 0.5f, 0.5f, new TextureAtlasFont("Font"), 16f);
+		left = new GuiButton(new GuiConfig(Anchor.BOTTOM_LEFT, 0, 0, 0.1f, 1f));
+		right = new GuiButton(new GuiConfig(Anchor.BOTTOM_RIGHT, 1f, 0, 0.1f, 1f));
+		selectionDisplay = new GuiText(new GuiConfig(Anchor.CENTERCENTER, 0.5f, 0.5f, 0, 0), new TextureAtlasFont("Font"), 16f);
+
+		selectionDisplay.setText(new DynamicText() {
+			@Override
+			public String getText() {
+				return options.get(selectedOption);
+			}
+		});
 
 		left.setClickListener(() -> setOption(selectedOption - 1));
 		right.setClickListener(() -> setOption(selectedOption + 1));
@@ -58,6 +58,5 @@ public class GuiSelector extends GuiElement {
 	private void setOption(int option) {
 		this.selectedOption = option % optionCount;
 		while(selectedOption < 0) selectedOption += optionCount;
-		selectionDisplay.setText(options.get(selectedOption));
 	}
 }

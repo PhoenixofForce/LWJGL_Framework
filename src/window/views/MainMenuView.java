@@ -7,6 +7,7 @@ import window.font.Font;
 import window.font.GeneralFont;
 import window.gui.Anchor;
 import window.gui.GuiButton;
+import window.gui.GuiConfig;
 import window.gui.GuiText;
 
 public class MainMenuView implements View {
@@ -16,10 +17,10 @@ public class MainMenuView implements View {
 
 	public MainMenuView() {
 		Font font = new GeneralFont("WhitePeaberryOutline", 2);
-		this.title = new GuiText(Anchor.CENTERCENTER, 0.5f, -0.1f, font, 48);
+		this.title = new GuiText(new GuiConfig(Anchor.CENTERCENTER, 0.5f, -0.1f, 0, 0), font, 48);
 		this.title.setText(Constants.TITLE);
 
-		this.play = new GuiButton(Anchor.CENTERCENTER, 0.5f, 0.4f, 200, 50);
+		this.play = new GuiButton(new GuiConfig(Anchor.CENTERCENTER, 0.5f, 0.4f, 200, 50));
 
 		play.setClickListener(() -> Window.INSTANCE.setView(new TestView(), true));
 	}
