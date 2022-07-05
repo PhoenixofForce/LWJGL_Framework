@@ -46,7 +46,7 @@ public abstract class GuiElement {
 	protected boolean isClickable = true;
 	private boolean isHidden = false;
 
-	private GuiElement(Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height) {
+	private GuiElement(Anchor xAnchor, Anchor yAnchor, float xOffset, float yOffset, float width, float height, boolean initComponent) {
 		this.xAnchor = xAnchor;
 		this.yAnchor = yAnchor;
 		this.xOffset = xOffset;
@@ -59,11 +59,15 @@ public abstract class GuiElement {
 
 		children = new ArrayList<>();
 
-		initComponent();
+		if(initComponent) initComponent();
 	}
 
 	public GuiElement(GuiConfig config) {
-		this(config.xAnchor, config.yAnchor, config.xOffset, config.yOffset, config.width, config.height);
+		this(config, true);
+	}
+
+	public GuiElement(GuiConfig config, boolean initComponent) {
+		this(config.xAnchor, config.yAnchor, config.xOffset, config.yOffset, config.width, config.height,  initComponent);
 	}
 
 	protected abstract void initComponent();

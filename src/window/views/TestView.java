@@ -13,6 +13,7 @@ import window.Window;
 import window.font.*;
 import window.gui.*;
 
+import java.util.List;
 import java.util.Optional;
 
 public class TestView implements View {
@@ -45,7 +46,9 @@ public class TestView implements View {
 
 		button = new GuiButton(new GuiConfig(Anchor.CENTERCENTER, 150, 275, 200, 50));
 		checkbox = new GuiCheckbox(new GuiConfig(Anchor.BOTTOM_LEFT, 50, 320, 20, 20), false);
-		selector = new GuiSelector(new GuiConfig(Anchor.BOTTOM_LEFT, 50, 400, 200, 50));
+		selector = new GuiSelector(new GuiConfig(Anchor.BOTTOM_LEFT, 50, 400, 200, 50),
+				List.of("Option 1", "Option 2", "Option 3", "Option 4")
+		);
 
 		Font font1 = new GeneralFont("WhitePeaberryOutline", 2);
 		Font font2 = new TextureAtlasFont("Font");

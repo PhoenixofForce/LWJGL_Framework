@@ -14,7 +14,8 @@ public class GuiTextField extends BasicColorGuiElement implements FocusHolder {
 
 	//TODO: proper background
 	//TODO: blinking cursor
-
+	//TODO: paste
+	
 	private String currentString;
 	private GuiText inputDisplay;
 
@@ -103,6 +104,8 @@ public class GuiTextField extends BasicColorGuiElement implements FocusHolder {
 	@Override
 	public void handleEnd(KeyHit hit) {
 		handleRepeat(hit);
+
+		if(hit.getKeyCode() == GLFW.GLFW_KEY_ENTER) InputHandler.dequestFocus(this);
 	}
 
 	public String getString() {

@@ -8,6 +8,8 @@ import java.awt.*;
 
 public class GuiButton extends BasicColorGuiElement {
 
+	//TODO: Button Text
+
 	private SmoothFloat size;
 	private ButtonClickListener listener;
 

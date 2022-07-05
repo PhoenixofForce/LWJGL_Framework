@@ -8,14 +8,20 @@ import java.awt.*;
 
 public class GuiSlider extends GuiElement {
 
-	private float value = 0.5f;
+	private float value;
 	private BasicColorGuiElement bar;
 	private BasicColorGuiElement slider;
 
 	private SliderChangeListener changeListener;
 
 	public GuiSlider(GuiConfig config) {
-		super(config);
+		this(config, 0.5f);
+	}
+
+	public GuiSlider(GuiConfig config, float value) {
+		super(config, false);
+		this.value = value;
+		initComponent();
 	}
 
 	protected void initComponent() {

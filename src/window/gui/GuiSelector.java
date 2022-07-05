@@ -7,12 +7,7 @@ import java.util.List;
 
 public class GuiSelector extends GuiElement {
 
-	private static List<String> options = List.of(
-			"Option 1",
-			"Option 2",
-			"Option 3",
-			"Option 4"
-	);
+	private List<String> options;
 
 	private int selectedOption;
 	private int optionCount;
@@ -21,8 +16,10 @@ public class GuiSelector extends GuiElement {
 	private GuiButton right;
 	private GuiText selectionDisplay;
 
-	public GuiSelector(GuiConfig config) {
-		super(config);
+	public GuiSelector(GuiConfig config, List<String> options) {
+		super(config, false);
+		this.options = options;
+		initComponent();
 	}
 
 	@Override
@@ -31,10 +28,13 @@ public class GuiSelector extends GuiElement {
 		right = new GuiButton(new GuiConfig(Anchor.BOTTOM_RIGHT, 1f, 0, 0.1f, 1f));
 		selectionDisplay = new GuiText(new GuiConfig(Anchor.CENTERCENTER, 0.5f, 0.5f, 0, 0), new TextureAtlasFont("Font"), 16f);
 
+		optionCount = options.size();
+		setOption(0);
+
 		selectionDisplay.setText(new DynamicText() {
 			@Override
 			public String getText() {
-				return options.get(selectedOption);
+				return options == null? "": options.get(selectedOption);
 			}
 		});
 
@@ -44,9 +44,6 @@ public class GuiSelector extends GuiElement {
 		this.addElement(left);
 		this.addElement(right);
 		this.addElement(selectionDisplay);
-
-		optionCount = options.size();
-		setOption(0);
 	}
 
 	@Override

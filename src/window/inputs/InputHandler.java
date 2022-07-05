@@ -18,7 +18,7 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class InputHandler {
 
-	private static Stack<FocusHolder> focusStack = new Stack<>();
+	private static Stack<FocusHolder> focusStack = new Stack<>();	//maybe change to single Holder to avoid filling up. or clear stack if window gets focus
 	private static FocusHolder getCurrentFocusHolder() {
 		if(!focusStack.isEmpty()) {
 			return focusStack.peek();
@@ -32,7 +32,13 @@ public class InputHandler {
 	}
 
 	public static void requestFocus(FocusHolder focus) {
-		focusStack.push(focus);
+		if(focus instanceof Window) {
+			focusStack.clear();
+		}
+
+		else if(focusStack.isEmpty() || focusStack.peek() != focus) {
+			focusStack.push(focus);
+		}
 	}
 
 	public static boolean dequestFocus(FocusHolder focus) {
