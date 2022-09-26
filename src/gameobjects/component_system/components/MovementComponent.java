@@ -3,7 +3,9 @@ package gameobjects.component_system.components;
 import gameobjects.Entity;
 import gameobjects.component_system.Component;
 import gameobjects.input_provider.InputProvider;
+import gameobjects.input_provider.InputState;
 import org.joml.Vector3f;
+import utils.ControllableAction;
 
 public class MovementComponent extends Component {
 
@@ -38,16 +40,17 @@ public class MovementComponent extends Component {
 	@Override
 	public void update(long dt) {
 		float dts = dt / 1000.0f;
+		InputState state = inputProvider.getInputState();
 
 		float dx = 0, dy = 0, dz = 0;
-		dz -= movementSpeed * inputProvider.moveBackward();
-		dz += movementSpeed * inputProvider.moveForward();
+		dz -= movementSpeed * state.getValue(ControllableAction.MOVE_BACKWARD);
+		dz += movementSpeed * state.getValue(ControllableAction.MOVE_FORWARD);
 
-		dx += movementSpeed * inputProvider.moveRight();
-		dx -= movementSpeed * inputProvider.moveLeft();
+		dx += movementSpeed * state.getValue(ControllableAction.MOVE_RIGHT);
+		dx -= movementSpeed * state.getValue(ControllableAction.MOVE_LEFT);
 
-		dy += movementSpeed * inputProvider.moveUp();
-		dy -= movementSpeed * inputProvider.moveDown();
+		dy += movementSpeed * state.getValue(ControllableAction.MOVE_UP);
+		dy -= movementSpeed * state.getValue(ControllableAction.MOVE_DOWN);
 
 		pc.add(lc.getForwardAxis().mul(dz * dts));
 		pc.add(lc.getRightAxis().mul(dx * dts));
@@ -55,11 +58,11 @@ public class MovementComponent extends Component {
 
 
 		float rotateY = 0, rotateX = 0;
-		rotateY += rotationSpeed * dts * inputProvider.turnLeft();
-		rotateY -= rotationSpeed * dts * inputProvider.turnRight();
+		rotateY += rotationSpeed * dts * state.getValue(ControllableAction.TURN_LEFT);
+		rotateY -= rotationSpeed * dts * state.getValue(ControllableAction.TURN_RIGHT);
 
-		rotateX += rotationSpeed * dts * inputProvider.turnUp();
-		rotateX -= rotationSpeed * dts * inputProvider.turnDown();
+		rotateX += rotationSpeed * dts * state.getValue(ControllableAction.TURN_UP);
+		rotateX -= rotationSpeed * dts * state.getValue(ControllableAction.TURN_DOWN);
 
 		rotation.add(rotateX, rotateY, 0);
 		rotation.x = Math.min((float) Math.PI/2-0.05f, Math.max((float) -Math.PI/2 + 0.05f, rotation.x));

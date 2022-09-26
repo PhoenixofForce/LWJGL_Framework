@@ -10,7 +10,6 @@ public class KeyCodes {
 			MOUSE_MOVE_UP = 202,
 			MOUSE_MOVE_DOWN = 203;
 
-
 	public static final int
 			GAMEPAD_1_BUTTON_A = 100  + GLFW_GAMEPAD_BUTTON_A,
 			GAMEPAD_1_BUTTON_B = 100  + GLFW_GAMEPAD_BUTTON_B,

@@ -1,6 +1,5 @@
 package window.inputs;
 
-import org.lwjgl.glfw.GLFWCharCallback;
 import utils.MathUtils;
 import utils.Constants;
 import utils.Options;

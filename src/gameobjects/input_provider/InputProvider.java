@@ -1,17 +1,20 @@
 package gameobjects.input_provider;
 
-public interface InputProvider {
+import gameobjects.input_provider.middleware.InputMiddleware;
 
-	float moveLeft();
-	float moveRight();
-	float moveUp();
-	float moveDown();
-	float moveForward();
-	float moveBackward();
+import java.util.List;
 
-	float turnLeft();
-	float turnRight();
-	float turnUp();
-	float turnDown();
+public class InputProvider {
 
+	private List<InputMiddleware> middlewares;
+
+	public InputProvider(InputMiddleware... middlewares) {
+		this.middlewares = List.of(middlewares);
+	}
+
+	public InputState getInputState() {
+		InputState out = new InputState();
+		middlewares.forEach(e -> e.change(out));
+		return out;
+	}
 }
